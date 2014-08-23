@@ -14,9 +14,7 @@ return [
      * If you leave this blank, it will assume your
      * folder is <current directory>/system
      */
-    /*
-    'system_path' => '/path/to/your/system',
-    */
+    'system_path' => __DIR__.'/system',
 
     /**
      * Spoof $_SERVER variables
@@ -32,12 +30,17 @@ return [
      * credentials based on HTTP_HOST
      * in your config.php.
      */
-    /*
     'server' => [
         'HTTP_HOST' => 'localhost',
-        'DOCUMENT_ROOT' => '/path/to/your/root',
+        'DOCUMENT_ROOT' => __DIR__,
     ],
-    */
+
+    /**
+     * Assign variables to config
+     */
+    'assign_to_config' => [
+        #'foo' => 'bar',
+    ],
 
     /**
      * Custom commands
@@ -45,9 +48,7 @@ return [
      * An array of Command class names of
      * custom commands.
      */
-    /*
     'commands' => [
-        '\\Your\\Custom\\Command',
+        #'\\Your\\Custom\\Command',
     ],
-    */
 ];

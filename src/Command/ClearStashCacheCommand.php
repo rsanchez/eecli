@@ -1,6 +1,6 @@
 <?php
 
-namespace eecli\eecli\Command;
+namespace eecli\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

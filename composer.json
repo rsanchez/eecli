@@ -8,7 +8,7 @@
         }
     ],
     "autoload": {
-        "psr-4": { "eecli\\eecli\\": "src/" }
+        "psr-4": { "eecli\\": "src/" }
     },
     "bin": [
         "bin/eecli"

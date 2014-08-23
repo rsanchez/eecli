@@ -1,6 +1,8 @@
 <?php
 
-namespace eecli\eecli\Application;
+namespace eecli\Application;
+
+use Symfony\Component\Console\Application;
 
 class Config
 {
@@ -11,9 +13,9 @@ class Config
 
     /**
      * The path to the system folder
-     * @var string|null
+     * @var string
      */
-    protected $systemPath;
+    protected $systemPath = "system";
 
     /**
      * A list of Command objects
@@ -23,6 +25,8 @@ class Config
 
     public function __construct()
     {
+        global $assign_to_config;
+
         $config = $this->getConfig();
 
         if (isset($config['system_path'])) {
@@ -31,6 +35,10 @@ class Config
 
         if (isset($config['server']) && is_array($config['server'])) {
             $_SERVER = array_merge($_SERVER, $config['server']);
+        }
+
+        if (isset($config['assign_to_config']) && is_array($config['assign_to_config'])) {
+            $assign_to_config = array_merge($assign_to_config, $config['assign_to_config']);
         }
 
         // Session class needs this
@@ -45,23 +53,11 @@ class Config
 
     /**
      * Get the path of the system folder
-     * @return string|null
+     * @return string
      */
     public function getSystemPath()
     {
         return $this->systemPath;
-    }
-
-    /**
-     * Get additional user-defined Commands.
-     * Should either be a class name string or
-     * a Closure that returns a Command object.
-     *
-     * @return array
-     */
-    public function getCommands()
-    {
-        return $this->commands;
     }
 
     /**
@@ -91,5 +87,22 @@ class Config
         }
 
         return $config;
+    }
+
+    /**
+     * Find any user-defined Commands in the config
+     * and add them
+     * @return void
+     */
+    public function addUserDefinedCommands(Application $app)
+    {
+        foreach ($this->commands as $classname) {
+            // is it a callback or a string?
+            if (is_callable($classname)) {
+                $app->add(call_user_func($classname));
+            } else {
+                $app->add(new $classname);
+            }
+        }
     }
 }
