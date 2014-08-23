@@ -99,7 +99,7 @@ class Config
         foreach ($this->commands as $classname) {
             // is it a callback or a string?
             if (is_callable($classname)) {
-                $app->add(call_user_func($classname));
+                $app->add(call_user_func($classname, $app, $config));
             } else {
                 $app->add(new $classname);
             }
