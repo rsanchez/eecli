@@ -3,7 +3,7 @@
 
 global $assign_to_config, $system_path, $debug, $CFG, $URI, $IN, $OUT, $LANG, $SEC, $loader;
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/../../../autoload.php';
 
 $assign_to_config = [];
 
