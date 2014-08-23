@@ -8,11 +8,17 @@ Command line interface for ExpressionEngine
 composer global require eecli/eecli dev-master
 ```
 
+Make sure your global composer installation is added to your PATH in your `~/.bash_profile` (or `~/.profile` or `~/.bashrc` or `~/.zshrc`) so that you may run the binary from the command line:
+
+```
+export PATH=~/.composer/vendor/bin:$PATH
+```
+
 ## Configuration
 
-Copy [`sample.eecli.php`](https://github.com/rsanchez/eecli/blob/master/sample.eecli.php) to the root of your EE installation with the filename `.eecli.php`.
+Run `eecli init` to create a `.eecli.php` config file in the current working directory.
 
-Follow the instructions found in the file's comments to configure your EE setup.
+Open `.eecli.php` and follow the instructions found in the file's comments to configure your EE setup.
 
 ## Usage
 
@@ -72,4 +78,52 @@ You may also simply specify the addon name in the command. You can specify a bra
 ```
 eecli install low_replace
 eecli install stash dev
+```
+
+## Custom Commands
+
+You can add custom commands to your `.eecli.php` config file by adding the class name to the 'commands' array.
+
+Here is a simple example Command:
+
+```
+<?php
+
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class RemoveBannedMembersCommand extends Command
+{
+    protected function configure()
+    {
+        $this->setName('delete_banned_members');
+        $this->setDescription('Removes members that are banned.');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        ee()->db->delete('members', ['group_id' => 2]);
+
+        $output->writeln('<info>Banned members removed.</info>');
+    }
+}
+```
+
+And your configuration would be:
+
+```php
+'commands' => [
+    'RemoveBannedMembersCommand',
+],
+```
+
+You may also use a callback to instantiate your object, useful if you need to inject dependencies.
+
+```php
+'commands' => [
+    function($app, $config) {
+        return new CustomCacheClearingCommand(new RedisClient);
+    },
+],
 ```
