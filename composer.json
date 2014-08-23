@@ -1,0 +1,16 @@
+{
+    "name": "eecli/eecli",
+    "description": "Command line interface for ExpressionEngine",
+    "authors": [
+        {
+            "name": "Rob Sanchez",
+            "email": "info@robsanchez.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "eecli\\eecli\\": "src/" }
+    },
+    "require": {
+        "symfony/console": "~2.5"
+    }
+}

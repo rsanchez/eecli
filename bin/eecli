@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+use eecli\eecli\Application\Config;
+use eecli\eecli\Application\Application;
+
+global $assign_to_config, $system_path, $debug, $CFG, $URI, $IN, $OUT, $LANG, $SEC, $loader;
+
+require __DIR__.'/../vendor/autoload.php';
+
+$config = new Config();
+
+$system_path = $config->getSystemPath();
+
+require __DIR__.'/../src/bootstrap.php';
+
+$application = new Application($config);
+
+$application->run();
