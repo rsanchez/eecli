@@ -86,7 +86,7 @@ You can add custom commands to your `.eecli.php` config file by adding the class
 
 Here is a simple example Command:
 
-```
+```php
 <?php
 
 use Symfony\Component\Console\Command\Command;
