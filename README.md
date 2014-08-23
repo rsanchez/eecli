@@ -10,7 +10,7 @@ composer global require eecli/eecli dev-master
 
 ## Configuration
 
-Copy (`sample.eecli.php`)[https://github.com/rsanchez/eecli/blob/master/sample.eecli.php] to the root of your EE installation with the filename `.eecli.php`.
+Copy [`sample.eecli.php`](https://github.com/rsanchez/eecli/blob/master/sample.eecli.php) to the root of your EE installation with the filename `.eecli.php`.
 
 Follow the instructions found in the file's comments to configure your EE setup.
 
