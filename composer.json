@@ -10,6 +10,9 @@
     "autoload": {
         "psr-4": { "eecli\\eecli\\": "src/" }
     },
+    "bin": [
+        "bin/eecli"
+    ],
     "require": {
         "symfony/console": "~2.5"
     }
