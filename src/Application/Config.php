@@ -33,6 +33,11 @@ class Config
             $_SERVER = array_merge($_SERVER, $config['server']);
         }
 
+        // Session class needs this
+        if (! isset($_SERVER['REMOTE_ADDR'])) {
+            $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        }
+
         if (isset($config['commands']) && is_array($config['commands'])) {
             $this->commands = $config['commands'];
         }
