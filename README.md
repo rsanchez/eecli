@@ -17,7 +17,7 @@ export PATH=~/.composer/vendor/bin:$PATH
 You can also install this locally:
 
 ```
-composer global require eecli/eecli dev-master
+composer require eecli/eecli dev-master
 ```
 
 Then the command would be found in your `vendor/bin` folder, so you'd run this at your command line:
@@ -33,6 +33,8 @@ Run `eecli init` to create a `.eecli.php` config file in the current working dir
 Open `.eecli.php` and follow the instructions found in the file's comments to configure your EE setup.
 
 If your system folder is the default `system` and is in the current working directory, you *may* not need a config file.
+
+You will receive a warning message if your system folder cannot be found.
 
 ## Usage
 
