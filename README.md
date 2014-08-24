@@ -14,6 +14,18 @@ Make sure your global composer installation is added to your PATH in your `~/.ba
 export PATH=~/.composer/vendor/bin:$PATH
 ```
 
+You can also install this locally:
+
+```
+composer global require eecli/eecli dev-master
+```
+
+Then the command would be found in your `vendor/bin` folder, so you'd run this at your command line:
+
+```
+vendor/bin/eecli <your command>
+```
+
 ## Configuration
 
 Run `eecli init` to create a `.eecli.php` config file in the current working directory.
@@ -84,9 +96,9 @@ eecli install stash dev
 
 ## Custom Commands
 
-You can add custom commands to your `.eecli.php` config file by adding the class name to the 'commands' array.
+eecli custom commands are [Symfony Console](http://symfony.com/doc/current/components/console/introduction.html) Command objects. You can add custom commands to your `.eecli.php` config file by adding the class name to the 'commands' array.
 
-Here is a simple example Command:
+Here is a simple example custom command (it is assumed your custom command classes are in your autoloader):
 
 ```php
 <?php
@@ -99,7 +111,7 @@ class RemoveBannedMembersCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('delete_banned_members');
+        $this->setName('remove_banned_members');
         $this->setDescription('Removes members that are banned.');
     }
 
@@ -118,6 +130,12 @@ And your configuration would be:
 'commands' => [
     'RemoveBannedMembersCommand',
 ],
+```
+
+Then you could run this do remove banned members, in a cron job for instance.
+
+```
+eecli remove_banned_members
 ```
 
 You may also use a callback to instantiate your object, useful if you need to inject dependencies.
