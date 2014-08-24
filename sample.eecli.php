@@ -33,6 +33,8 @@ return [
     'server' => [
         'HTTP_HOST' => 'localhost',
         'DOCUMENT_ROOT' => __DIR__,
+        'REQUEST_URI' => '/',
+        'REMOTE_ADDR' => '127.0.0.1',
     ],
 
     /**
