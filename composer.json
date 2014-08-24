@@ -14,6 +14,7 @@
         "bin/eecli"
     ],
     "require": {
-        "symfony/console": "~2.5"
+        "symfony/console": "~2.5",
+        "eecli/bootstrap": "~1.0"
     }
 }
