@@ -58,7 +58,7 @@ eecli cache:clear:ee tag
 
 ### Clear Stash Cache
 
-Clears the entire Stash cache.
+Clears the entire Stash cache by truncating the `exp_stash` table.
 
 ```
 eecli cache:clear:stash
@@ -105,6 +105,8 @@ Here is a simple example custom command (it is assumed your custom command class
 ```php
 <?php
 
+namespace MyApp\Command;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -130,7 +132,7 @@ And your configuration would be:
 
 ```php
 'commands' => [
-    'RemoveBannedMembersCommand',
+    '\\MyApp\\Command\\RemoveBannedMembersCommand',
 ],
 ```
 
@@ -144,7 +146,7 @@ You may also use a callback to instantiate your object, useful if you need to in
 
 ```php
 'commands' => [
-    function($app, $config) {
+    function($app) {
         return new CustomCacheClearingCommand(new RedisClient);
     },
 ],

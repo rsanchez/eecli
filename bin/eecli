@@ -1,38 +1,18 @@
 #!/usr/bin/env php
 <?php
 
-global $assign_to_config, $system_path, $debug, $CFG, $URI, $IN, $OUT, $LANG, $SEC, $loader;
-
 require __DIR__.'/../../../autoload.php';
 
+// these must be initialized in the global context
+$system_path = null;
 $assign_to_config = [];
 
-$config = new eecli\Application\Config();
+$app = new eecli\Application();
 
-$bootstrapped = is_dir($config->getSystemPath());
-
-if ($bootstrapped) {
-    $system_path = $config->getSystemPath();
-
+if ($app->canBeBootstrapped()) {
     require __DIR__.'/../../../eecli/bootstrap/bootstrap-ee2.php';
 }
 
-$app = new Symfony\Component\Console\Application('eecli', '0.0.0-alpha');
-
-// add commands that don't require EE bootstrapped
-$app->add(new eecli\Command\InitCommand());
-
-if ($bootstrapped) {
-    $app->addCommands([
-        new eecli\Command\ClearStashCacheCommand(),
-        new eecli\Command\ClearCeCacheCommand(),
-        new eecli\Command\ClearEECacheCommand(),
-        new eecli\Command\GithubAddonInstallerCommand(),
-    ]);
-
-    $config->addUserDefinedCommands($app);
-} else {
-    (new Symfony\Component\Console\Output\ConsoleOutput)->writeln("<error>******************************************\n*  Your system path could not be found.  *\n******************************************</error>\n");
-}
+$app->addUserDefinedCommands();
 
 $app->run();
