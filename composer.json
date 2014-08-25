@@ -16,6 +16,7 @@
     "require": {
         "symfony/console": "~2.5",
         "symfony/event-dispatcher": "~2.5",
-        "eecli/bootstrap": "~1.0"
+        "eecli/bootstrap": "~1.0",
+        "d11wtq/boris": "~1.0"
     }
 }

@@ -54,6 +54,7 @@ class Application extends ConsoleApplication
         $this->add(new Command\ClearCeCacheCommand());
         $this->add(new Command\ClearEECacheCommand());
         $this->add(new Command\GithubAddonInstallerCommand());
+        $this->add(new Command\ReplCommand());
     }
 
     /**
