@@ -6,7 +6,12 @@
  * Rename this file to .eecli.php in your site root.
  */
 
-return [
+// Quit if this is not being requested via the CLI
+if (php_sapi_name() !== 'cli') {
+    exit;
+}
+
+return array(
     /**
      * System path
      *
@@ -30,19 +35,19 @@ return [
      * credentials based on HTTP_HOST
      * in your config.php.
      */
-    'server' => [
+    'server' => array(
         'HTTP_HOST' => 'localhost',
         'DOCUMENT_ROOT' => __DIR__,
         'REQUEST_URI' => '/',
         'REMOTE_ADDR' => '127.0.0.1',
-    ],
+    ),
 
     /**
      * Assign variables to config
      */
-    'assign_to_config' => [
+    'assign_to_config' => array(
         #'foo' => 'bar',
-    ],
+    ),
 
     /**
      * Custom commands
@@ -50,7 +55,7 @@ return [
      * An array of Command class names of
      * custom commands.
      */
-    'commands' => [
+    'commands' => array(
         #'\\Your\\Custom\\Command',
-    ],
-];
+    ),
+);
