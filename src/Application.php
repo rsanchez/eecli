@@ -103,9 +103,10 @@ class Application extends ConsoleApplication
      */
     protected function loadConfig()
     {
+        // Load configuration file(s)
         $config = array();
 
-        // look for ~/.eecli.php in the user's home directory
+        // Look for ~/.eecli.php in the user's home directory
         if (isset($_SERVER['HOME']) && file_exists($_SERVER['HOME'].self::FILENAME)) {
             $temp = require $_SERVER['HOME'].self::FILENAME;
 
@@ -116,7 +117,7 @@ class Application extends ConsoleApplication
             unset($temp);
         }
 
-        // look for .eecli.php in the current working directory
+        // Look for the config file in the current working directory
         if (file_exists(getcwd().self::FILENAME)) {
             $temp = require getcwd().self::FILENAME;
 
@@ -127,15 +128,18 @@ class Application extends ConsoleApplication
             unset($temp);
         }
 
+        // Spoof $_SERVER variables
         if (isset($config['server']) && is_array($config['server'])) {
             $_SERVER = array_merge($_SERVER, $config['server']);
         }
 
+        // Assign variables to EE config
         if (isset($config['assign_to_config']) && is_array($config['assign_to_config'])) {
             global $assign_to_config;
             $assign_to_config = $config['assign_to_config'];
         }
 
+        // Check the EE system path and set it if valid
         $systemPath = isset($config['system_path']) ? $config['system_path'] : 'system';
 
         if ($this->hasValidSystemPath = is_dir($systemPath)) {
@@ -148,6 +152,7 @@ class Application extends ConsoleApplication
             $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         }
 
+        // Add user-defined commands from config
         if (isset($config['commands']) && is_array($config['commands'])) {
             $this->userDefinedCommands = $config['commands'];
         }

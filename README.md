@@ -79,6 +79,14 @@ eecli cache:clear:ce_cache local/blog/detail/foo local/blog/detail/bar
 eecli cache:clear:ce_cache --tags foo bar
 ```
 
+### REPL
+
+```
+eecli repl
+```
+
+Starts an interactive shell.
+
 ### Github Addon Installer
 
 If you have [Github Addon Installer](https://github.com/rsanchez/github_addon_installer) installed, you can use the `install` command.
