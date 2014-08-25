@@ -42,7 +42,7 @@ class ClearCeCacheCommand extends Command
 
             require_once PATH_THIRD.'ce_cache/libraries/Ce_cache_factory.php';
 
-            $drivers = \Ce_cache_factory::factory(['file', 'db', 'static', 'apc', 'memcache', 'memcached', 'redis', 'dummy']);
+            $drivers = \Ce_cache_factory::factory(array('file', 'db', 'static', 'apc', 'memcache', 'memcached', 'redis', 'dummy'));
 
             foreach ($drivers as $driver) {
                 $driverName = lang('ce_cache_driver_'. $driver->name());
@@ -64,7 +64,7 @@ class ClearCeCacheCommand extends Command
 
             $which = $tags ? 1 : 0;
 
-            $defaultArgs = [[], [], false];
+            $defaultArgs = array(array(), array(), false);
 
             foreach ($items as $item) {
 

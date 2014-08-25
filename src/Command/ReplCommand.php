@@ -17,7 +17,7 @@ class ReplCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $requiredExtensions = ['readline', 'posix', 'pcntl'];
+        $requiredExtensions = array('readline', 'posix', 'pcntl');
 
         foreach ($requiredExtensions as $extension) {
             if (! extension_loaded($extension)) {

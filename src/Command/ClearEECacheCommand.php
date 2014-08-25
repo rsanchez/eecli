@@ -23,9 +23,11 @@ class ClearEECacheCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $validTypes = array('page', 'tag', 'db', 'all');
+
         $type = $input->getArgument('type') ?: 'all';
 
-        if (! in_array($type, ['page', 'tag', 'db', 'all'])) {
+        if (! in_array($type, $validTypes)) {
             $output->writeln('<error>Invalid cache type</error>');
 
             return;

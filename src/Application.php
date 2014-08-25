@@ -35,7 +35,7 @@ class Application extends ConsoleApplication
      * A list of Command objects
      * @var array
      */
-    protected $userDefinedCommands = [];
+    protected $userDefinedCommands = array();
 
     public function __construct()
     {
@@ -43,7 +43,7 @@ class Application extends ConsoleApplication
 
         $dispatcher = new EventDispatcher();
 
-        $dispatcher->addListener(ConsoleEvents::COMMAND, [$this, 'onCommand']);
+        $dispatcher->addListener(ConsoleEvents::COMMAND, array($this, 'onCommand'));
 
         $this->setDispatcher($dispatcher);
 
@@ -63,7 +63,7 @@ class Application extends ConsoleApplication
      */
     protected function getCommandsExemptFromBootstrap()
     {
-        return ['help', 'list', 'init'];
+        return array('help', 'list', 'init');
     }
 
     /**
@@ -103,7 +103,7 @@ class Application extends ConsoleApplication
      */
     protected function loadConfig()
     {
-        $config = [];
+        $config = array();
 
         // look for ~/.eecli.php in the user's home directory
         if (isset($_SERVER['HOME']) && file_exists($_SERVER['HOME'].self::FILENAME)) {

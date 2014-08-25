@@ -5,7 +5,7 @@ require __DIR__.'/../../../autoload.php';
 
 // these must be initialized in the global context
 $system_path = null;
-$assign_to_config = [];
+$assign_to_config = array();
 
 $app = new eecli\Application();
 
