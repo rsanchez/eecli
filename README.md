@@ -176,7 +176,6 @@ These commands yet to be implemented. Pull requests welcome.
 - `create:global_variable`
 - `create:snippet`
 - `create:low_variable`
-- `create fields`
 - `sync:fields`
 - `sync:templates`
 - `sync:snippets`
