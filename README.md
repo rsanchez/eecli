@@ -159,3 +159,25 @@ You may also use a callback to instantiate your object, useful if you need to in
     },
 ],
 ```
+
+## Commands yet to be implemented
+
+Pull requests welcome.
+
+-`create:channel`
+-`create:category`
+-`create:category_group`
+-`create:template`
+-`create:template_group`
+-`create:member`
+-`create:member_group`
+-`create:field`
+-`create:field_group`
+-`create:global_variable`
+-`create:snippet`
+-`create:low_variable`
+-`create fields`
+-`sync:fields`
+-`sync:templates`
+-`sync:snippets`
+-`sync:global_variables`
