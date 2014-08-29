@@ -103,6 +103,18 @@ eecli repl
 
 Starts an interactive shell.
 
+### Show Config
+
+Show config items.
+
+```
+# Show all config items in a table
+eecli show:config
+
+# Show the specified config item
+eecil show:config <key>
+```
+
 ### Github Addon Installer
 
 If you have [Github Addon Installer](https://github.com/rsanchez/github_addon_installer) installed, you can use the `install` command.
