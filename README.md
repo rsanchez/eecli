@@ -36,7 +36,23 @@ If your system folder is the default `system` and is in the current working dire
 
 You will receive a warning message if your system folder cannot be found.
 
-## Usage
+## Commands
+
+### Help
+
+Display information about a command and its arguments/options.
+
+```
+eecli help <command>
+```
+
+### List
+
+List the available commands.
+
+```
+eecli list
+```
 
 ### Clear EE Cache
 
