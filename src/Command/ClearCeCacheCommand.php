@@ -31,7 +31,6 @@ class ClearCeCacheCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        ee()->load->library('session');
         ee()->lang->loadfile('ce_cache', 'ce_cache');
 
         $items = $input->getArgument('items');
