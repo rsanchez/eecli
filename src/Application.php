@@ -37,6 +37,12 @@ class Application extends ConsoleApplication
      */
     protected $userDefinedCommands = array();
 
+    /**
+     * A list of callbacks to fire on events
+     * @var array
+     */
+    protected $eventCallbacks = array();
+
     public function __construct()
     {
         parent::__construct(self::NAME, self::VERSION);
@@ -158,6 +164,11 @@ class Application extends ConsoleApplication
         if (isset($config['commands']) && is_array($config['commands'])) {
             $this->userDefinedCommands = $config['commands'];
         }
+
+        // Add event callbacks from the config
+        if (isset($config['callbacks']) && is_array($config['callbacks'])) {
+            $this->eventCallbacks = $config['callbacks'];
+        }
     }
 
     /**
@@ -174,6 +185,18 @@ class Application extends ConsoleApplication
             } else {
                 $this->add(new $classname);
             }
+        }
+    }
+
+    /**
+     * Fire an event callback
+     * @param  string $event
+     * @return void
+     */
+    public function fire($event)
+    {
+        if (isset($this->eventCallbacks[$event]) && is_callable($this->eventCallbacks[$event])) {
+            call_user_func($this->eventCallbacks[$event], $this);
         }
     }
 }

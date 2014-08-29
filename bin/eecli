@@ -9,9 +9,13 @@ $assign_to_config = array();
 
 $app = new eecli\Application();
 
+$app->fire('bootstrap.before');
+
 if ($app->canBeBootstrapped()) {
     require __DIR__.'/../../../eecli/bootstrap/bootstrap-ee2.php';
 }
+
+$app->fire('bootstrap.after');
 
 $app->addUserDefinedCommands();
 

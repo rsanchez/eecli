@@ -59,4 +59,19 @@ return array(
     'commands' => array(
         #'\\Your\\Custom\\Command',
     ),
+
+    /**
+     * Event Callbacks
+     *
+     * An array of callback functions to be
+     * invoked on the specified event.
+     */
+    'callbacks' => array(
+        /*
+        'bootstrap.before' => function($app) {
+        },
+        'bootstrap.after' => function($app) {
+        },
+        */
+    ),
 );
