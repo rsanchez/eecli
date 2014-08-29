@@ -40,6 +40,7 @@ return array(
         'DOCUMENT_ROOT' => __DIR__,
         'REQUEST_URI' => '/',
         'REMOTE_ADDR' => '127.0.0.1',
+        'HTTP_USER_AGENT' => 'eecli',
     ),
 
     /**
