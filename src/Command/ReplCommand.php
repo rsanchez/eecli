@@ -2,20 +2,25 @@
 
 namespace eecli\Command;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Illuminate\Console\Command;
 use Boris\Boris;
 
 class ReplCommand extends Command
 {
-    protected function configure()
-    {
-        $this->setName('repl');
-        $this->setDescription('Start a REPL.');
-    }
+    /**
+     * {@inheritdoc}
+     */
+    protected $name = 'repl';
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritdoc}
+     */
+    protected $description = 'Start an interactive shell.';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function fire()
     {
         $requiredExtensions = array('readline', 'posix', 'pcntl');
 

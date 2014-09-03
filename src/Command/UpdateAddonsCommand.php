@@ -2,56 +2,72 @@
 
 namespace eecli\Command;
 
-use Symfony\Component\Console\Command\Command;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\Table;
 
 class UpdateAddonsCommand extends Command
 {
-    protected function configure()
-    {
-        $this->setName('update:addons');
-        $this->setDescription('Run addon updates.');
+    /**
+     * {@inheritdoc}
+     */
+    protected $name = 'update:addons';
 
-        $this->addArgument(
-            'type',
-            InputArgument::OPTIONAL,
-            'Which addon type do you want to update? modules, extensions, fieldtypes, or accessories? (Leave blank to update all)'
+    /**
+     * {@inheritdoc}
+     */
+    protected $description = 'Run addon updates.';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getArguments()
+    {
+        return array(
+            array(
+                'type',
+                InputArgument::OPTIONAL,
+                'Which addon type do you want to update? modules, extensions, fieldtypes, or accessories? (Leave blank to update all)',
+            ),
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritdoc}
+     */
+    protected function fire()
     {
         $validTypes = array('modules', 'extensions', 'fieldtypes', 'accessories', 'all');
 
-        $type = $input->getArgument('type') ?: 'all';
+        $type = $this->argument('type') ?: 'all';
 
         if (! in_array($type, $validTypes)) {
-            $output->writeln('<error>Invalid addon type.</error>');
+            $this->error('Invalid addon type.');
 
             return;
         }
 
         if ($type === 'all' || $type === 'modules') {
-            $this->updateModules($output);
+            $this->updateModules();
         }
 
         if ($type === 'all' || $type === 'extensions') {
-            $this->updateExtensions($output);
+            $this->updateExtensions();
         }
 
         if ($type === 'all' || $type === 'fieldtypes') {
-            $this->updateFieldtypes($output);
+            $this->updateFieldtypes();
         }
 
         if ($type === 'all' || $type === 'accessories') {
-            $this->updateAccessories($output);
+            $this->updateAccessories();
         }
     }
 
-    protected function updateModules(OutputInterface $output)
+    /**
+     * Run module updates
+     * @return void
+     */
+    protected function updateModules()
     {
         ee()->load->library('addons');
 
@@ -78,7 +94,7 @@ class UpdateAddonsCommand extends Command
 
             ee()->load->add_package_path($data['path']);
 
-            $updater = new $updaterClass;
+            $updater = new $updaterClass();
 
             $updater->_ee_path = APPPATH;
 
@@ -91,7 +107,7 @@ class UpdateAddonsCommand extends Command
 
                     $modulesUpdated++;
 
-                    $output->writeln(sprintf('<comment>%s updated from %s to %s.</comment>', $name, $data['module_version'], $updater->version));
+                    $this->comment(sprintf('%s updated from %s to %s.', $name, $data['module_version'], $updater->version));
                 }
             }
 
@@ -99,18 +115,23 @@ class UpdateAddonsCommand extends Command
         }
 
         if ($modulesUpdated > 0) {
-            $output->writeln('<info>Modules updated.</info>');
+            $this->info('Modules updated.');
         } else {
-            $output->writeln('<info>Modules already up-to-date.</info>');
+            $this->info('Modules already up-to-date.');
         }
     }
 
-    protected function updateExtensions(OutputInterface $output)
+    /**
+     * Run extension updates
+     * @return void
+     */
+    protected function updateExtensions()
     {
         ee()->load->model('addons_model');
 
         if (ee()->config->item('allow_extensions') !== 'y') {
-            $output->writeln('<comment>Extensions not enabled.</comment>');
+            $this->comment('Extensions not enabled.');
+
             return;
         }
 
@@ -118,7 +139,7 @@ class UpdateAddonsCommand extends Command
 
         $extensionsUpdated = 0;
 
-        foreach($extensions as $name => $data) {
+        foreach ($extensions as $name => $data) {
             require_once $data['path'].$data['file'];
 
             if (! method_exists($data['class'], 'update_extension') || ! is_callable(array($data['class'], 'update_extension'))) {
@@ -127,7 +148,7 @@ class UpdateAddonsCommand extends Command
 
             ee()->load->add_package_path($data['path']);
 
-            $extension = new $data['class'];
+            $extension = new $data['class']();
 
             if (version_compare($data['version'], $extension->version, '<')) {
                 $extension->update_extension($data['version']);
@@ -136,20 +157,24 @@ class UpdateAddonsCommand extends Command
 
                 $extensionsUpdated++;
 
-                $output->writeln(sprintf('<comment>%s updated from %s to %s.</comment>', $data['name'], $data['version'], $extension->version));
+                $this->comment(sprintf('%s updated from %s to %s.', $data['name'], $data['version'], $extension->version));
             }
 
             ee()->load->remove_package_path($data['path']);
         }
 
         if ($extensionsUpdated > 0) {
-            $output->writeln('<info>Extensions updated.</info>');
+            $this->info('Extensions updated.');
         } else {
-            $output->writeln('<info>Extensions already up-to-date.</info>');
+            $this->info('Extensions already up-to-date.');
         }
     }
 
-    protected function updateFieldtypes(OutputInterface $output)
+    /**
+     * Run fieldtype updates
+     * @return void
+     */
+    protected function updateFieldtypes()
     {
         ee()->load->library('api');
 
@@ -182,18 +207,22 @@ class UpdateAddonsCommand extends Command
 
                 $fieldtypesUpdated++;
 
-                $output->writeln(sprintf('<comment>%s updated from %s to %s.</comment>', $name, $data['version'], $fieldtype->info['version']));
+                $this->comment(sprintf('%s updated from %s to %s.', $name, $data['version'], $fieldtype->info['version']));
            }
         }
 
         if ($fieldtypesUpdated > 0) {
-            $output->writeln('<info>Fieldtypes updated.</info>');
+            $this->info('Fieldtypes updated.');
         } else {
-            $output->writeln('<info>Fieldtypes already up-to-date.</info>');
+            $this->info('Fieldtypes already up-to-date.');
         }
     }
 
-    protected function updateAccessories(OutputInterface $output)
+    /**
+     * Run accessory updates
+     * @return void
+     */
+    protected function updateAccessories()
     {
         ee()->load->model('addons_model');
 
@@ -212,7 +241,7 @@ class UpdateAddonsCommand extends Command
                 ee()->load->add_package_path($data['path']);
             }
 
-            $accessory = new $data['class'];
+            $accessory = new $data['class']();
 
             if (version_compare($data['accessory_version'], $accessory->version, '<')) {
                 $updated = $accessory->update();
@@ -222,7 +251,7 @@ class UpdateAddonsCommand extends Command
 
                     $accessoriesUpdated++;
 
-                    $output->writeln(sprintf('<comment>%s updated from %s to %s.</comment>', $name, $data['accessory_version'], $accessory->version));
+                    $this->comment(sprintf('%s updated from %s to %s.', $name, $data['accessory_version'], $accessory->version));
                 }
             }
 
@@ -232,9 +261,9 @@ class UpdateAddonsCommand extends Command
         }
 
         if ($accessoriesUpdated > 0) {
-            $output->writeln('<info>Accessories updated.</info>');
+            $this->info('Accessories updated.');
         } else {
-            $output->writeln('<info>Accessories already up-to-date.</info>');
+            $this->info('Accessories already up-to-date.');
         }
     }
 }

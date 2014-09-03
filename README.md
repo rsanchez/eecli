@@ -155,7 +155,7 @@ eecli install stash dev
 
 ## Custom Commands
 
-eecli custom commands are [Symfony Console](http://symfony.com/doc/current/components/console/introduction.html) Command objects. You can add custom commands to your `.eecli.php` config file by adding the class name to the 'commands' array.
+eecli custom commands are [Laravel Console](http://laravel.com/docs/commands#building-a-command) Command objects, which extend [Symfony Console](http://symfony.com/doc/current/components/console/introduction.html) Command objects. You can add custom commands to your `.eecli.php` config file by adding the class name to the 'commands' array.
 
 Here is a simple example custom command (it is assumed your custom command classes are in your autoloader):
 
@@ -164,23 +164,18 @@ Here is a simple example custom command (it is assumed your custom command class
 
 namespace MyApp\Command;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Illuminate\Console\Command;
 
 class RemoveBannedMembersCommand extends Command
 {
-    protected function configure()
-    {
-        $this->setName('remove_banned_members');
-        $this->setDescription('Removes members that are banned.');
-    }
+    protected $name = 'remove_banned_members';
+    protected $description = 'Removes members that are banned.';
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function fire()
     {
-        ee()->db->delete('members', ['group_id' => 2]);
+        ee()->db->delete('members', array('group_id' => 2));
 
-        $output->writeln('<info>Banned members removed.</info>');
+        $this->info('Banned members removed.');
     }
 }
 ```
@@ -188,9 +183,9 @@ class RemoveBannedMembersCommand extends Command
 And your configuration would be:
 
 ```php
-'commands' => [
+'commands' => array(
     '\\MyApp\\Command\\RemoveBannedMembersCommand',
-],
+),
 ```
 
 Then you could run this do remove banned members, in a cron job for instance.
@@ -203,11 +198,15 @@ You may also use a callback to instantiate your object, useful if you need to in
 
 ```php
 'commands' => [
-    function($app) {
+    function ($app) {
         return new CustomCacheClearingCommand(new RedisClient);
     },
 ],
 ```
+
+## Contributing
+
+Please send pull requests to the [develop branch](https://github.com/rsanchez/eecli/tree/develop). Please be sure to follow the [PSR-1](http://www.php-fig.org/psr/psr-1/) coding standard and the [PSR-2](http://www.php-fig.org/psr/psr-2/) style guide.
 
 ## Command Wishlist
 
