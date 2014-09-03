@@ -68,9 +68,9 @@ return array(
      */
     'callbacks' => array(
         /*
-        'bootstrap.before' => function($app) {
+        'bootstrap.before' => function ($app) {
         },
-        'bootstrap.after' => function($app) {
+        'bootstrap.after' => function ($app) {
         },
         */
     ),

@@ -4,7 +4,6 @@ namespace eecli;
 
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\ConsoleEvents;
 
@@ -183,7 +182,7 @@ class Application extends ConsoleApplication
             if (is_callable($classname)) {
                 $this->add(call_user_func($classname, $this));
             } else {
-                $this->add(new $classname);
+                $this->add(new $classname());
             }
         }
     }
