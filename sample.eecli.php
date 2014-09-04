@@ -74,4 +74,14 @@ return array(
         },
         */
     ),
+
+    /**
+     * The default addon author name used when generating addons.
+     */
+    'addon_author_name' => '',
+
+    /**
+     * The default addon author URL used when generating addons.
+     */
+    'addon_author_url' => '',
 );

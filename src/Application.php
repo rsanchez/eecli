@@ -42,6 +42,24 @@ class Application extends ConsoleApplication
      */
     protected $eventCallbacks = array();
 
+    /**
+     * Path to the system folder
+     * @var string
+     */
+    protected $systemPath = 'system';
+
+    /**
+     * Author name for generated addons
+     * @var string
+     */
+    protected $addonAuthorName = '';
+
+    /**
+     * Author url for generated addons
+     * @var string
+     */
+    protected $addonAuthorUrl = '';
+
     public function __construct()
     {
         parent::__construct(self::NAME, self::VERSION);
@@ -63,6 +81,7 @@ class Application extends ConsoleApplication
         $this->add(new Command\ShowConfigCommand());
         $this->add(new Command\UpdateAddonsCommand());
         $this->add(new Command\GenerateCommandCommand());
+        $this->add(new Command\GenerateAddonCommand());
     }
 
     /**
@@ -100,7 +119,7 @@ class Application extends ConsoleApplication
      */
     public function canBeBootstrapped()
     {
-        return $this->hasValidSystemPath;
+        return is_dir($this->systemPath);
     }
 
     /**
@@ -148,11 +167,13 @@ class Application extends ConsoleApplication
         }
 
         // Check the EE system path and set it if valid
-        $systemPath = isset($config['system_path']) ? $config['system_path'] : 'system';
+        if (isset($config['system_path'])) {
+            $this->systemPath = $config['system_path'];
 
-        if ($this->hasValidSystemPath = is_dir($systemPath)) {
-            global $system_path;
-            $system_path = $systemPath;
+            if (is_dir($this->systemPath)) {
+                global $system_path;
+                $system_path = $this->systemPath;
+            }
         }
 
         // Session class needs this
@@ -169,6 +190,50 @@ class Application extends ConsoleApplication
         if (isset($config['callbacks']) && is_array($config['callbacks'])) {
             $this->eventCallbacks = $config['callbacks'];
         }
+
+        if (isset($config['addon_author_name'])) {
+            $this->addonAuthorName = $config['addon_author_name'];
+        }
+
+        if (isset($config['addon_author_url'])) {
+            $this->addonAuthorUrl = $config['addon_author_url'];
+        }
+    }
+
+    /**
+     * Get the path to the system folder
+     * @return string
+     */
+    public function getSystemPath()
+    {
+        return $this->systemPath;
+    }
+
+    /**
+     * Get the name of the system folder
+     * @return string
+     */
+    public function getSystemFolder()
+    {
+        return basename($this->systemPath);
+    }
+
+    /**
+     * Get the default addon author name
+     * @return string
+     */
+    public function getAddonAuthorName()
+    {
+        return $this->addonAuthorName;
+    }
+
+    /**
+     * Get the default addon author URL
+     * @return string
+     */
+    public function getAddonAuthorUrl()
+    {
+        return $this->addonAuthorUrl;
     }
 
     /**
