@@ -82,6 +82,7 @@ class Application extends ConsoleApplication
         $this->add(new Command\UpdateAddonsCommand());
         $this->add(new Command\GenerateCommandCommand());
         $this->add(new Command\GenerateAddonCommand());
+        $this->add(new Command\GenerateHtaccessCommand());
     }
 
     /**
