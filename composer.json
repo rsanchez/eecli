@@ -17,6 +17,7 @@
         "illuminate/console": "~4.2",
         "symfony/event-dispatcher": "~2.5",
         "eecli/bootstrap": "~1.0",
-        "d11wtq/boris": "~1.0"
+        "d11wtq/boris": "~1.0",
+        "xamin/handlebars.php": "dev-master#bacde14221ff7ba6bdfbfc2cd4e99a99e434b0b5"
     }
 }
