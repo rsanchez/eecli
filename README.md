@@ -75,6 +75,15 @@ eecli generate:command --has-options --has-arguments your_command
 eecli generate:command --description="Clear custom cache" cache:clear:custom
 ```
 
+### Generate .htaccess
+
+Generate the official EE .htaccess file (as found in the [EE documentation](https://ellislab.com/expressionengine/user-guide/urls/remove_index.php.html)).
+
+```
+# generates in the current directory
+eecli generate:htaccess
+```
+
 ### Clear EE Cache
 
 Clears the native EE cache(s).
