@@ -84,6 +84,16 @@ Generate the official EE .htaccess file (as found in the [EE documentation](http
 eecli generate:htaccess
 ```
 
+### Generate Addon(s)
+
+Generate an addon using a wizard interface.
+
+```
+eecli generate:addon
+```
+
+![Screencast of addon generation](https://rsanchez.github.io/eecli/images/eecli-generate-addon.gif)
+
 ### Clear EE Cache
 
 Clears the native EE cache(s).
