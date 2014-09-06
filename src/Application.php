@@ -2,6 +2,7 @@
 
 namespace eecli;
 
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -253,6 +254,33 @@ class Application extends ConsoleApplication
     public function getAddonAuthorUrl()
     {
         return $this->addonAuthorUrl;
+    }
+
+    /**
+     * Find any commands defined in addons
+     * and add them to the Application
+     */
+    public function addThirdPartyCommands()
+    {
+        if (! $this->canBeBootstrapped()) {
+            return;
+        }
+
+        if (! ee()->extensions->active_hook('eecli_add_commands')) {
+            return;
+        }
+
+        $commands = array();
+
+        $commands = ee()->extensions->call('eecli_add_commands', $commands, $this);
+
+        if (is_array($commands)) {
+            foreach ($commands as $command) {
+                if ($command instanceOf SymfonyCommand) {
+                    $this->add($command);
+                }
+            }
+        }
     }
 
     /**

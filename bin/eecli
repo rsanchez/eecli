@@ -17,6 +17,7 @@ if ($app->canBeBootstrapped()) {
 
 $app->fire('bootstrap.after');
 
+$app->addThirdPartyCommands();
 $app->addUserDefinedCommands();
 
 $app->run();

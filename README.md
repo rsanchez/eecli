@@ -211,9 +211,31 @@ eecli install low_replace
 eecli install stash dev
 ```
 
+## Third Party Commands
+
+ExpressionEngine addons can add custom commands to eecli using the `eecli_add_commands` hook:
+
+```php
+public function eecli_add_commands($commands, $app)
+{
+    if (ee()->extensions->last_call !== FALSE)
+    {
+        $commands = ee()->extensions->last_call;
+    }
+
+    require_once PATH_THIRD.'my_addon/src/MyCustomCommand.php';
+
+    $commands[] = new MyCustomCommand();
+
+    return $commands;
+}
+```
+
 ## Custom Commands
 
 eecli custom commands are [Laravel Console](http://laravel.com/docs/commands#building-a-command) Command objects, which extend [Symfony Console](http://symfony.com/doc/current/components/console/introduction.html) Command objects. You can add custom commands to your `.eecli.php` config file by adding the class name to the 'commands' array.
+
+You can generate a custom command file using the `eecli generate:command` command.
 
 Here is a simple example custom command (it is assumed your custom command classes are in your autoloader):
 
