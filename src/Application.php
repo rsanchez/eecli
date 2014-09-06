@@ -143,6 +143,35 @@ class Application extends ConsoleApplication
     }
 
     /**
+     * Traverse up a directory to find a config file
+     *
+     * @param  string|null $dir defaults to getcwd if null
+     * @return string|null
+     */
+    protected function findConfigFile($dir = null)
+    {
+        if (is_null($dir)) {
+            $dir = getcwd();
+        }
+
+        if ($dir === '/') {
+            return null;
+        }
+
+        if (file_exists($dir.'/'.self::FILENAME)) {
+            return $dir.'/'.self::FILENAME;
+        }
+
+        $parentDir = dirname($dir);
+
+        if ($parentDir && is_dir($parentDir)) {
+            return $this->findConfigFile($parentDir);
+        }
+
+        return null;
+    }
+
+    /**
      * Looks for ~/.eecli.php and ./.eecli.php
      * and combines them into an array
      *
@@ -164,9 +193,11 @@ class Application extends ConsoleApplication
             unset($temp);
         }
 
+        $configFile = $this->findConfigFile();
+
         // Look for the config file in the current working directory
-        if (file_exists(getcwd().self::FILENAME)) {
-            $temp = require getcwd().self::FILENAME;
+        if ($configFile) {
+            $temp = require $configFile;
 
             if (is_array($temp)) {
                 $config = array_merge($config, $temp);
