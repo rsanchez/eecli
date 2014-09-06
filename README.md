@@ -196,10 +196,10 @@ eecil show:config <key>
 
 ### Github Addon Installer
 
-If you have [Github Addon Installer](https://github.com/rsanchez/github_addon_installer) installed, you can use the `install` command.
+If you have [Github Addon Installer](https://github.com/rsanchez/github_addon_installer) installed, you can use the `install:addon` command.
 
 ```
-eecli install
+eecli install:addon
 ```
 
 This will prompt you to enter an addon name. Start typing to trigger autocomplete.

@@ -10,12 +10,12 @@ class GithubAddonInstallerCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $name = 'install';
+    protected $name = 'install:addon';
 
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Install addons (requires Github Addon Installer module)';
+    protected $description = 'Install an addon (requires Github Addon Installer module).';
 
     /**
      * {@inheritdoc}
