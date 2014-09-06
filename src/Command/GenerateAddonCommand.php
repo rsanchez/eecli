@@ -76,6 +76,7 @@ class GenerateAddonCommand extends Command
 
     /**
      * Prompt the user for input.
+     * Validate the answer as required.
      *
      * @param  string $question
      * @param  string $default
@@ -95,6 +96,11 @@ class GenerateAddonCommand extends Command
         return $helper->ask($this->input, $this->output, $question);
     }
 
+    /**
+     * Ask for multiple extension hooks
+     * @param  array $extensionHooks
+     * @return void
+     */
     protected function askForHook(&$extensionHooks)
     {
         $hasHooks = count($extensionHooks) > 0;
@@ -117,6 +123,11 @@ class GenerateAddonCommand extends Command
         }
     }
 
+    /**
+     * Create a directory if it doesn't already exist
+     * @param  string $pathname
+     * @return void
+     */
     protected function mkdir($pathname)
     {
         if (! is_dir($pathname)) {
@@ -126,6 +137,30 @@ class GenerateAddonCommand extends Command
         }
     }
 
+    /**
+     * Create nested directories, if they don't already exist
+     * @param  string $pathname
+     * @return void
+     */
+    protected function mkdirRecursive($pathname)
+    {
+        $folders = explode('/', $pathname);
+
+        $pathname = '';
+
+        foreach ($folders as $folder) {
+            $pathname .= $folder.'/';
+
+            $this->mkdir($pathname);
+        }
+    }
+
+    /**
+     * Render a file from a Handlebars template
+     * @param  string $template    name of template
+     * @param  string $destination where to save the file
+     * @return void
+     */
     protected function template($template, $destination)
     {
         $handle = fopen($destination, 'w');
@@ -148,8 +183,8 @@ class GenerateAddonCommand extends Command
             'loader' => new FilesystemLoader(__DIR__.'/../templates/addon/'),
         ));
 
-        $systemPath = PATH_THIRD;
-        $themePath = PATH_THIRD_THEMES;
+        $systemPath = defined('PATH_THIRD') ? PATH_THIRD : null;
+        $themePath = defined('PATH_THIRD_THEMES') ? PATH_THIRD_THEMES : null;
 
         $gitUser = trim(shell_exec('git config --get github.user'));
         $defaultAuthorName = $this->getApplication()->getAddonAuthorName() ?: $gitUser;
@@ -190,6 +225,7 @@ class GenerateAddonCommand extends Command
 
         $this->vars['addonTypes'] = array();
 
+        // parse the chosen types into an array
         foreach ($addonTypes as $type) {
             foreach (explode(' + ', $type) as $type) {
                 $this->vars['addonTypes'][] = $type;
@@ -218,11 +254,19 @@ class GenerateAddonCommand extends Command
 
         $this->vars['hasTheme'] = $this->confirm('Does this add-on need theme files?', false);
 
-        /*
-        $systemPath = $this->ask('What is the system path?', $systemPath);
+        if (is_null($systemPath)) {
+            $systemPath = $this->ask('What is the system path?', 'system/expressionengine/third_party/');
+        }
 
-        $themePath = $this->vars['hasTheme'] ? $this->ask('What is the theme path?', $themePath) : '';
-        */
+        $this->mkdirRecursive($systemPath);
+
+        if ($this->vars['hasTheme']) {
+            if (is_null($themePath)) {
+                $themePath = $this->ask('What is the theme path?', 'themes/third_party/');
+            }
+
+            $this->mkdirRecursive($themePath);
+        }
 
         $this->vars['hasExtensionSettings'] = $this->vars['hasExtension'] ? $this->confirm('Does the extension have settings?', false) : false;
 

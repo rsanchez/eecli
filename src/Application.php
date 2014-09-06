@@ -93,7 +93,7 @@ class Application extends ConsoleApplication
      */
     protected function getCommandsExemptFromBootstrap()
     {
-        return array('help', 'list', 'init', 'generate:command');
+        return array('help', 'list', 'init', 'generate:command', 'generate:addon');
     }
 
     /**
@@ -117,12 +117,12 @@ class Application extends ConsoleApplication
     }
 
     /**
-     * Whether or not a system folder was found
+     * Whether or not a valid system folder was found
      * @return bool
      */
     public function canBeBootstrapped()
     {
-        return is_dir($this->systemPath);
+        return is_dir(rtrim($this->systemPath, '/').'/codeigniter');
     }
 
     /**
@@ -221,7 +221,7 @@ class Application extends ConsoleApplication
         if (isset($config['system_path'])) {
             $this->systemPath = $config['system_path'];
 
-            if (is_dir($this->systemPath)) {
+            if ($this->canBeBootstrapped()) {
                 global $system_path;
                 $system_path = $this->systemPath;
             }
