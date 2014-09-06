@@ -83,6 +83,7 @@ class Application extends ConsoleApplication
         $this->add(new Command\GenerateCommandCommand());
         $this->add(new Command\GenerateAddonCommand());
         $this->add(new Command\GenerateHtaccessCommand());
+        $this->add(new Command\DbDumpCommand());
     }
 
     /**
@@ -121,6 +122,23 @@ class Application extends ConsoleApplication
     public function canBeBootstrapped()
     {
         return is_dir($this->systemPath);
+    }
+
+    /**
+     * Get the environment from ENV PHP constant,
+     * defined in config.php, or an environment
+     * variable called ENV
+     * @return string|null
+     */
+    public function getEnvironment()
+    {
+        if (defined('ENV')) {
+            return ENV;
+        } elseif (getenv('ENV')) {
+            return getenv('ENV');
+        }
+
+        return null;
     }
 
     /**
