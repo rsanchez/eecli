@@ -26,7 +26,7 @@ class GenerateHtaccessCommand extends Command
     {
         return array(
             array(
-                'location',
+                'path',
                 InputArgument::OPTIONAL,
                 'Where to create the .htaccess file.',
             ),
@@ -39,21 +39,21 @@ class GenerateHtaccessCommand extends Command
     protected function fire()
     {
         // where to create the file, default to current directory
-        $location = $this->argument('location') ?: '.';
+        $path = $this->argument('path') ?: '.';
 
         // make sure it has a trailing slash
-        $location = rtrim($location, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
         $handlebars = new Handlebars(array(
             'loader' => new FilesystemLoader(__DIR__.'/../templates/'),
         ));
 
-        $destination = $location.'.htaccess';
+        $destination = $path.'.htaccess';
 
         if (file_exists($destination)) {
-            $location = realpath($location).DIRECTORY_SEPARATOR;
+            $path = realpath($path).DIRECTORY_SEPARATOR;
 
-            $confirmed = $this->confirm("An .htaccess file already exists in {$location}. Do you want to overwrite? [yN] ", false);
+            $confirmed = $this->confirm("An .htaccess file already exists in {$path}. Do you want to overwrite? [yN] ", false);
 
             if (! $confirmed) {
                 $this->info('Did not create .htaccess file.');
