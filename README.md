@@ -231,6 +231,10 @@ public function eecli_add_commands($commands, $app)
 }
 ```
 
+## Autocompletion
+
+If you use [Oh My ZSH](https://github.com/robbyrussell/oh-my-zsh), you can install the [eecli ZSH autocompletion plugin](https://github.com/rsanchez/eecli/tree/zsh-plugin).
+
 ## Custom Commands
 
 eecli custom commands are [Laravel Console](http://laravel.com/docs/commands#building-a-command) Command objects, which extend [Symfony Console](http://symfony.com/doc/current/components/console/introduction.html) Command objects. You can add custom commands to your `.eecli.php` config file by adding the class name to the 'commands' array.
