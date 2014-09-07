@@ -315,6 +315,17 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
             $this->vars['fieldtypeSupport'] = array();
 
             foreach ($fieldtypeSupport as $type) {
+                if ($type === 'ALL') {
+                    $this->vars['fieldtypeSupport'] = array(
+                        'matrix',
+                        'grid',
+                        'low_variables',
+                        'content_elements',
+                    );
+
+                    break;
+                }
+
                 foreach (explode(' + ', $type) as $type) {
                     $this->vars['fieldtypeSupport'][] = $type;
                 }
