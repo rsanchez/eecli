@@ -3,6 +3,10 @@
 namespace eecli;
 
 use eecli\Command\ExemptFromBootstrapInterface;
+use eecli\CodeIgniter\ConsoleOutput as CodeIgniterConsoleOutput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -86,6 +90,22 @@ class Application extends ConsoleApplication
         $this->add(new Command\GenerateAddonCommand());
         $this->add(new Command\GenerateHtaccessCommand());
         $this->add(new Command\DbDumpCommand());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function run(InputInterface $input = null, OutputInterface $output = null)
+    {
+        if (null === $output) {
+            $output = new ConsoleOutput();
+        }
+
+        if ($this->canBeBootstrapped()) {
+            ee()->output = new CodeIgniterConsoleOutput($output);
+        }
+
+        return parent::run($input, $output);
     }
 
     /**
