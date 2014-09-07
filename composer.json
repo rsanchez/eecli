@@ -14,9 +14,11 @@
         "bin/eecli"
     ],
     "require": {
-        "symfony/console": "~2.5",
+        "illuminate/console": "~4.2",
         "symfony/event-dispatcher": "~2.5",
         "eecli/bootstrap": "~1.0",
-        "d11wtq/boris": "~1.0"
+        "d11wtq/boris": "~1.0",
+        "xamin/handlebars.php": "~0.8",
+        "symfony/finder": "~2.5"
     }
 }

@@ -2,23 +2,32 @@
 
 namespace eecli\Command;
 
-use Symfony\Component\Console\Command\Command;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\Table;
 
 class ShowConfigCommand extends Command
 {
-    protected function configure()
-    {
-        $this->setName('show:config');
-        $this->setDescription('Show config items.');
+    /**
+     * {@inheritdoc}
+     */
+    protected $name = 'show:config';
 
-        $this->addArgument(
-            'key',
-            InputArgument::OPTIONAL,
-            'Which config item do you want to show? (Leave blank to show all)'
+    /**
+     * {@inheritdoc}
+     */
+    protected $description = 'Show config items.';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getArguments()
+    {
+        return array(
+            array(
+                'key',
+                InputArgument::OPTIONAL,
+                'Which config item do you want to show? (Leave blank to show all)',
+            ),
         );
     }
 
@@ -36,22 +45,25 @@ class ShowConfigCommand extends Command
         return $value;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritdoc}
+     */
+    protected function fire()
     {
-        $key = $input->getArgument('key');
+        $key = $this->argument('key');
 
         if ($key) {
 
             $value = $this->dump(ee()->config->item($key));
 
-            $output->writeln($value);
+            $this->line($value);
 
             return;
         }
 
-        $table = new Table($output);
+        $headers = array('Key', 'Value');
 
-        $table->setHeaders(array('Key', 'Value'));
+        $rows = array();
 
         $config = ee()->config->config;
 
@@ -62,9 +74,9 @@ class ShowConfigCommand extends Command
                 $value = $this->dump($value);
             }
 
-            $table->addRow(array($key, $value));
+            $rows[] = array($key, $value);
         }
 
-        $table->render();
+        $this->table($headers, $rows);
     }
 }

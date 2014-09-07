@@ -2,9 +2,10 @@
 
 namespace eecli;
 
+use eecli\Command\ExemptFromBootstrapInterface;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\ConsoleEvents;
 
@@ -43,6 +44,24 @@ class Application extends ConsoleApplication
      */
     protected $eventCallbacks = array();
 
+    /**
+     * Path to the system folder
+     * @var string
+     */
+    protected $systemPath = 'system';
+
+    /**
+     * Author name for generated addons
+     * @var string
+     */
+    protected $addonAuthorName = '';
+
+    /**
+     * Author url for generated addons
+     * @var string
+     */
+    protected $addonAuthorUrl = '';
+
     public function __construct()
     {
         parent::__construct(self::NAME, self::VERSION);
@@ -64,15 +83,26 @@ class Application extends ConsoleApplication
         $this->add(new Command\ShowConfigCommand());
         $this->add(new Command\UpdateAddonsCommand());
         $this->add(new Command\CreateChannelCommand());
+        $this->add(new Command\GenerateCommandCommand());
+        $this->add(new Command\GenerateAddonCommand());
+        $this->add(new Command\GenerateHtaccessCommand());
+        $this->add(new Command\DbDumpCommand());
     }
 
     /**
-     * List of commands that do no require EE bootstrapping
-     * @return array
+     * Check whether a command should be exempt from bootstrapping
+     * @param  \Symfony\Component\Console\Command\Command $command
+     * @return boolean
      */
-    protected function getCommandsExemptFromBootstrap()
+    protected function isCommandExemptFromBootstrap(SymfonyCommand $command)
     {
-        return array('help', 'list', 'init');
+        $commandName = $command->getName();
+
+        if ($commandName === 'help' || $commandName === 'list') {
+            return true;
+        }
+
+        return $command instanceof ExemptFromBootstrapInterface;
     }
 
     /**
@@ -87,21 +117,69 @@ class Application extends ConsoleApplication
     public function onCommand(ConsoleCommandEvent $event)
     {
         $command = $event->getCommand();
-        $commandName = $command->getName();
-        $output = $event->getOutput();
 
-        if (! $this->canBeBootstrapped() && ! in_array($commandName, $this->getCommandsExemptFromBootstrap())) {
-            throw new \Exception('Your system path could not be found.');
+        if (! $this->isCommandExemptFromBootstrap($command)) {
+            if (! $this->canBeBootstrapped()) {
+                throw new \Exception('Your system path could not be found.');
+            }
+
+            // bootstrap_ee();
         }
     }
 
     /**
-     * Whether or not a system folder was found
+     * Whether or not a valid system folder was found
      * @return bool
      */
     public function canBeBootstrapped()
     {
-        return $this->hasValidSystemPath;
+        return is_dir(rtrim($this->systemPath, '/').'/codeigniter');
+    }
+
+    /**
+     * Get the environment from ENV PHP constant,
+     * defined in config.php, or an environment
+     * variable called ENV
+     * @return string|null
+     */
+    public function getEnvironment()
+    {
+        if (defined('ENV')) {
+            return ENV;
+        } elseif (getenv('ENV')) {
+            return getenv('ENV');
+        }
+
+        return null;
+    }
+
+    /**
+     * Traverse up a directory to find a config file
+     *
+     * @param  string|null $dir defaults to getcwd if null
+     * @return string|null
+     */
+    protected function findConfigFile($dir = null)
+    {
+        if (is_null($dir)) {
+            $dir = getcwd();
+        }
+
+        if ($dir === '/') {
+            return null;
+        }
+
+        if (file_exists($dir.'/'.self::FILENAME)) {
+            return $dir.'/'.self::FILENAME;
+        }
+
+        $parentDir = dirname($dir);
+
+        if ($parentDir && is_dir($parentDir)) {
+            return $this->findConfigFile($parentDir);
+        }
+
+        return null;
     }
 
     /**
@@ -126,9 +204,11 @@ class Application extends ConsoleApplication
             unset($temp);
         }
 
+        $configFile = $this->findConfigFile();
+
         // Look for the config file in the current working directory
-        if (file_exists(getcwd().self::FILENAME)) {
-            $temp = require getcwd().self::FILENAME;
+        if ($configFile) {
+            $temp = require $configFile;
 
             if (is_array($temp)) {
                 $config = array_merge($config, $temp);
@@ -149,11 +229,13 @@ class Application extends ConsoleApplication
         }
 
         // Check the EE system path and set it if valid
-        $systemPath = isset($config['system_path']) ? $config['system_path'] : 'system';
+        if (isset($config['system_path'])) {
+            $this->systemPath = $config['system_path'];
 
-        if ($this->hasValidSystemPath = is_dir($systemPath)) {
-            global $system_path;
-            $system_path = $systemPath;
+            if ($this->canBeBootstrapped()) {
+                global $system_path;
+                $system_path = $this->systemPath;
+            }
         }
 
         // Session class needs this
@@ -170,6 +252,77 @@ class Application extends ConsoleApplication
         if (isset($config['callbacks']) && is_array($config['callbacks'])) {
             $this->eventCallbacks = $config['callbacks'];
         }
+
+        if (isset($config['addon_author_name'])) {
+            $this->addonAuthorName = $config['addon_author_name'];
+        }
+
+        if (isset($config['addon_author_url'])) {
+            $this->addonAuthorUrl = $config['addon_author_url'];
+        }
+    }
+
+    /**
+     * Get the path to the system folder
+     * @return string
+     */
+    public function getSystemPath()
+    {
+        return $this->systemPath;
+    }
+
+    /**
+     * Get the name of the system folder
+     * @return string
+     */
+    public function getSystemFolder()
+    {
+        return basename($this->systemPath);
+    }
+
+    /**
+     * Get the default addon author name
+     * @return string
+     */
+    public function getAddonAuthorName()
+    {
+        return $this->addonAuthorName;
+    }
+
+    /**
+     * Get the default addon author URL
+     * @return string
+     */
+    public function getAddonAuthorUrl()
+    {
+        return $this->addonAuthorUrl;
+    }
+
+    /**
+     * Find any commands defined in addons
+     * and add them to the Application
+     */
+    public function addThirdPartyCommands()
+    {
+        if (! $this->canBeBootstrapped()) {
+            return;
+        }
+
+        if (! ee()->extensions->active_hook('eecli_add_commands')) {
+            return;
+        }
+
+        $commands = array();
+
+        $commands = ee()->extensions->call('eecli_add_commands', $commands, $this);
+
+        if (is_array($commands)) {
+            foreach ($commands as $command) {
+                if ($command instanceOf SymfonyCommand) {
+                    $this->add($command);
+                }
+            }
+        }
     }
 
     /**
@@ -184,7 +337,7 @@ class Application extends ConsoleApplication
             if (is_callable($classname)) {
                 $this->add(call_user_func($classname, $this));
             } else {
-                $this->add(new $classname);
+                $this->add(new $classname());
             }
         }
     }

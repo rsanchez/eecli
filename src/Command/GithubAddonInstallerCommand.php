@@ -2,37 +2,49 @@
 
 namespace eecli\Command;
 
-use Symfony\Component\Console\Command\Command;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class GithubAddonInstallerCommand extends Command
 {
-    protected function configure()
+    /**
+     * {@inheritdoc}
+     */
+    protected $name = 'install:addon';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $description = 'Install an addon (requires Github Addon Installer module).';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getArguments()
     {
-        $this->setName('install');
-        $this->setDescription('Install addons (requires Github Addon Installer module)');
-
-        $this->addArgument(
-            'addon',
-            InputArgument::OPTIONAL,
-            'Which addon do you want to install?'
-        );
-
-        $this->addArgument(
-            'branch',
-            InputArgument::OPTIONAL,
-            'Which branch do you want to install? (Leave blank to install the master branch)'
+        return array(
+            array(
+                'addon',
+                InputArgument::OPTIONAL,
+                'Which addon do you want to install?',
+            ),
+            array(
+                'branch',
+                InputArgument::OPTIONAL,
+                'Which branch do you want to install? (Leave blank to install the master branch)',
+            ),
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritdoc}
+     */
+    protected function fire()
     {
         $manifestFile = PATH_THIRD.'github_addon_installer/config/manifest.js';
 
         if (! file_exists($manifestFile)) {
-            $output->writeln('<error>Could not find the Github Addon Installer manifest.</error>');
+            $this->error('Could not find the Github Addon Installer manifest.');
 
             return;
         }
@@ -40,7 +52,7 @@ class GithubAddonInstallerCommand extends Command
         $manifestContents = file_get_contents($manifestFile);
 
         if ($manifestContents === false) {
-            $output->writeln('<error>Could not load the Github Addon Installer manifest.</error>');
+            $this->error('Could not load the Github Addon Installer manifest.');
 
             return;
         }
@@ -48,15 +60,15 @@ class GithubAddonInstallerCommand extends Command
         $manifest = json_decode($manifestContents, true);
 
         if (! $manifest) {
-            $output->writeln('<error>Could not load the Github Addon Installer manifest.</error>');
+            $this->error('Could not load the Github Addon Installer manifest.');
 
             return;
         }
 
         ksort($manifest);
 
-        $addon = $input->getArgument('addon');
-        $branch = $input->getArgument('branch') ?: 'master';
+        $addon = $this->argument('addon');
+        $branch = $this->argument('branch') ?: 'master';
 
         $askForBranch = false;
 
@@ -73,14 +85,14 @@ class GithubAddonInstallerCommand extends Command
                 call_user_func($validation, $addon);
             } catch (\Exception $e) {
 
-                $output->writeln('<error>'.$e->getMessage().'</error>');
+                $this->error($e->getMessage());
 
                 return;
             }
         } else {
             $dialog = $this->getHelper('dialog');
 
-            $addon = $dialog->askAndValidate($output, 'Which addon do you want to install? ', $validation, false, null, array_keys($manifest));
+            $addon = $dialog->askAndValidate($this->output, 'Which addon do you want to install? ', $validation, false, null, array_keys($manifest));
 
             $askForBranch = true;
         }
@@ -93,7 +105,7 @@ class GithubAddonInstallerCommand extends Command
             $branch = isset($params['branch']) ? $params['branch'] : 'master';
 
             $params['branch'] = $dialog->ask(
-                $output,
+                $this->output,
                 sprintf('Which branch would you like to install? (Defaults to %s) ', $branch),
                 $branch
             );
@@ -103,28 +115,22 @@ class GithubAddonInstallerCommand extends Command
         ee()->load->library('github_addon_installer');
         ee()->load->remove_package_path(PATH_THIRD.'github_addon_installer/');
 
-        try
-        {
+        try {
             $repo = ee()->github_addon_installer->repo($params);
 
-            try
-            {
+            try {
                 $repo->install();
-            }
-            catch(\Exception $e)
-            {
-                $output->writeln('<error>'.$e->getMessage().'</error>');
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
 
                 return;
             }
-        }
-        catch(\Exception $e)
-        {
-            $output->writeln('<error>'.$e->getMessage().'</error>');
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
 
             return;
         }
 
-        $output->writeln('<info>'.$addon.' installed.</info>');
+        $this->info($addon.' installed.');
     }
 }

@@ -68,10 +68,20 @@ return array(
      */
     'callbacks' => array(
         /*
-        'bootstrap.before' => function($app) {
+        'bootstrap.before' => function ($app) {
         },
-        'bootstrap.after' => function($app) {
+        'bootstrap.after' => function ($app) {
         },
         */
     ),
+
+    /**
+     * The default addon author name used when generating addons.
+     */
+    'addon_author_name' => '',
+
+    /**
+     * The default addon author URL used when generating addons.
+     */
+    'addon_author_url' => '',
 );
