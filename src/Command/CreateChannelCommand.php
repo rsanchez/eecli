@@ -2,36 +2,48 @@
 
 namespace eecli\Command;
 
-use Symfony\Component\Console\Command\Command;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateChannelCommand extends Command
 {
-    protected function configure()
-    {
-        $this->setName('craete:ee:channel');
-        $this->setDescription('Creates An EE Channel');
 
-        $this->addArgument(
-            'channel',
-            InputArgument::REQUIRED,
-            'What is the channel name that you want to set'
-        );
-        $this->addArgument(
-            'field_group',
-            InputArgument::OPTIONAL,
-            'Which channel field do you want to assign this channel to'
+    /**
+     * {@inheritdoc}
+     */
+    protected $name = 'craete:ee:channel';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $description = 'Creates An EE Channel';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getArguments()
+    {
+        return array(
+            array(
+                'channel',
+                InputArgument::REQUIRED,
+                'What is the channel name that you want to set'
+            ),
+            array(
+                'field_group',
+                InputArgument::OPTIONAL,
+                'Which channel field do you want to assign this channel to'
+            ),
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+
+    protected function fire()
     {
         ee()->load->model('channel_model');
         ee()->load->helper('url');
-        $channel_title= $input->getArgument('channel');
+        $channel_title= $this->argument('channel');
         $channel_name = url_title($channel_title);
 
         //mimic the functionality in admin_content channel_update() method
@@ -42,8 +54,7 @@ class CreateChannelCommand extends Command
         ee()->db->select('group_id');
         ee()->db->where('site_id', ee()->config->item('site_id'));
         $query = ee()->db->get('field_groups');
-        if ($query->num_rows() == 1)
-        {
+        if ($query->num_rows() == 1){
             $field_group = $query->row('group_id');
         }
         $site_id = ee()->config->item('site_id');
@@ -61,7 +72,7 @@ class CreateChannelCommand extends Command
         //ee()->channel_model->create_channel($data);
 
 
-        $output->writeln("<info>New Channel $data </info>");
+        $this->info('New Channel $data </info>');
     }
 }
 
