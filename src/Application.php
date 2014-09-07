@@ -2,6 +2,7 @@
 
 namespace eecli;
 
+use eecli\Command\ExemptFromBootstrapInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -88,12 +89,19 @@ class Application extends ConsoleApplication
     }
 
     /**
-     * List of commands that do no require EE bootstrapping
-     * @return array
+     * Check whether a command should be exempt from bootstrapping
+     * @param  \Symfony\Component\Console\Command\Command $command
+     * @return boolean
      */
-    protected function getCommandsExemptFromBootstrap()
+    protected function isCommandExemptFromBootstrap(SymfonyCommand $command)
     {
-        return array('help', 'list', 'init', 'generate:command', 'generate:addon');
+        $commandName = $command->getName();
+
+        if ($commandName === 'help' || $commandName === 'list') {
+            return true;
+        }
+
+        return $command instanceof ExemptFromBootstrapInterface;
     }
 
     /**
@@ -108,11 +116,13 @@ class Application extends ConsoleApplication
     public function onCommand(ConsoleCommandEvent $event)
     {
         $command = $event->getCommand();
-        $commandName = $command->getName();
-        $output = $event->getOutput();
 
-        if (! $this->canBeBootstrapped() && ! in_array($commandName, $this->getCommandsExemptFromBootstrap())) {
-            throw new \Exception('Your system path could not be found.');
+        if (! $this->isCommandExemptFromBootstrap($command)) {
+            if (! $this->canBeBootstrapped()) {
+                throw new \Exception('Your system path could not be found.');
+            }
+
+            // bootstrap_ee();
         }
     }
 

@@ -2,12 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\ExemptFromBootstrapInterface;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Question\Question;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
-class GenerateAddonCommand extends Command
+class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterface
 {
     /**
      * {@inheritdoc}
