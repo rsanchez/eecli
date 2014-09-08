@@ -16,7 +16,7 @@ class CreateChannelCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Creates An EE Channel';
+    protected $description = 'Create a channel.';
 
     /**
      * {@inheritdoc}
@@ -27,57 +27,147 @@ class CreateChannelCommand extends Command
             array(
                 'channel_name',
                 InputArgument::REQUIRED,
-                'What is the channel short name that you want to set'
+                'What is the short name of the channel? (ex. blog_articles)',
             ),
             array(
-                'field_group',
+                'channel_title',
                 InputArgument::OPTIONAL,
-                'Which field group do you want to assign this channel to'
+                'What is the title of the channel? (ex. Blog Articles)',
             ),
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function getOptions()
+    {
+        return array(
+            array(
+                'field_group',
+                'f',
+                InputOption::VALUE_OPTIONAL,
+                'Which field group do you want to assign this channel to?',
+            ),
+            array(
+                'status_group',
+                's',
+                InputOption::VALUE_OPTIONAL,
+                'Which status group do you want to assign this channel to?',
+            ),
+            array(
+                'cat_group',
+                'c',
+                InputOption::VALUE_OPTIONAL,
+                'Which cat group(s) do you want to assign this channel to? Separate multiple with | char.',
+            ),
+            array(
+                'channel_url',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'What is the url for this channel?',
+                '',
+            ),
+            array(
+                'channel_description',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'What is the description for this channel?',
+            ),
+            array(
+                'default_entry_title',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'What is the default entry title for this channel?',
+            ),
+            array(
+                'url_title_prefix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'What is the URL Title prefix for this channel?',
+            ),
+            array(
+                'deft_status',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'What is the default status for this channel?',
+                'open',
+            ),
+            array(
+                'deft_category',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'What is the default category ID for this channel?',
+            ),
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function fire()
     {
         ee()->load->model('channel_model');
+
         $channel_name = $this->argument('channel_name');
-        $field_group = $this->argument('field_group') ? $this->argument('field_group'): null;
-        $channel_title = ucwords(str_replace('_',' ',$channel_name));
 
-        //mimic the functionality in admin_content channel_update() method
-        $channel_url    = ee()->functions->fetch_site_index();
-        $channel_lang   = ee()->config->item('xml_lang');
-        $site_id = ee()->config->item('site_id');
+        $query = ee()->db->where('channel_name', $channel_name)
+            ->where('site_id', ee()->config->item('site_id'))
+            ->get('channels');
 
-        //if there is only one field group assign it, otherwise for now leave unassigned
-        ee()->db->select('group_id');
-        ee()->db->where('site_id', $site_id);
-        if (!$field_group !== null){
-            $query = ee()->db->get('field_groups');
-            if ($query->num_rows() == 1)
-            {
-                $field_group = $query->row('group_id');
+        if ($query->num_rows() > 0) {
+            throw new \RuntimeException("The channel \"{$channel_name}\" already exists.");
+        }
+
+        $query->free_result();
+
+        $data = array(
+            'channel_name' => $channel_name,
+            'channel_title' => $this->argument('channel_title') ?: ucwords(str_replace('_', ' ', $channel_name)),
+            'channel_url' => $this->option('channel_url'),
+            'channel_description' => $this->option('channel_description'),
+            'default_entry_title' => $this->option('default_entry_title'),
+            'url_title_prefix' => $this->option('url_title_prefix'),
+            'deft_status' => $this->option('deft_status'),
+            'deft_category' => $this->option('deft_category'),
+            'field_group' => $this->option('field_group'),
+            'status_group' => $this->option('status_group'),
+            'cat_group' => $this->option('field_group'),
+            'channel_lang' => ee()->config->item('xml_lang'),
+            'site_id' => ee()->config->item('site_id'),
+        );
+
+        if (! $data['field_group']) {
+            //if there is only one field group assign it, otherwise for now leave unassigned
+            $query = ee()->db->select('group_id')
+                ->where('site_id', ee()->config->item('site_id'))
+                ->get('field_groups');
+
+            if ($query->num_rows() === 1) {
+                $data['field_group'] = $query->row('group_id');
             }
 
+            $query->free_result();
         }
-        $default_entry_title = '';
-        $url_title_prefix = '';
 
-        //get the necessary data and fill it in and run the channel model command
-        $data = array(
-            'channel_name'          => $channel_name,
-            'channel_title'         => $channel_title,
-            'channel_url'           => $channel_url,
-            'channel_lang'          => $channel_lang,
-            'site_id'               => $site_id,
-            'field_group'           => $field_group,
-            'default_entry_title'   => '',
-            'url_title_prefix'      => '',
-        );
+        if (! $data['status_group']) {
+            // trying to find the open/closed status group
+            $query = ee()->db->select('group_id')
+                ->where('(SELECT COUNT(*) FROM exp_statuses WHERE exp_statuses.group_id = exp_status_groups.group_id) = 2', null, false)
+                ->where('site_id', ee()->config->item('site_id'))
+                ->order_by('group_id', 'asc')
+                ->limit(1)
+                ->get('status_groups');
+
+            if ($query->num_rows() > 0) {
+                $data['status_group'] = $query->row('group_id');
+            }
+
+            $query->free_result();
+        }
 
         ee()->channel_model->create_channel($data);
 
-
-        $this->info("New channel $channel_name created");
+        $this->info("New channel {$channel_name} created");
     }
 }
