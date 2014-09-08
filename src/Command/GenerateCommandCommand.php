@@ -40,13 +40,13 @@ class GenerateCommandCommand extends Command implements ExemptFromBootstrapInter
                 'Add a namespace to the class.',
             ),
             array(
-                'has-arguments',
+                'arguments',
                 null,
                 InputOption::VALUE_NONE,
                 'Whether the command has arguments.',
             ),
             array(
-                'has-options',
+                'options',
                 null,
                 InputOption::VALUE_NONE,
                 'Whether the command has options.',
@@ -61,7 +61,7 @@ class GenerateCommandCommand extends Command implements ExemptFromBootstrapInter
     {
         return array(
             array(
-                'commandName',
+                'command_name',
                 InputArgument::REQUIRED,
                 'The name of the command. (ex. show:config)',
             ),
@@ -78,10 +78,10 @@ class GenerateCommandCommand extends Command implements ExemptFromBootstrapInter
      */
     protected function fire()
     {
-        $commandName = $this->argument('commandName');
+        $commandName = $this->argument('command_name');
         $commandDescription = $this->option('description');
-        $hasArguments = $this->option('has-arguments');
-        $hasOptions = $this->option('has-options');
+        $hasArguments = $this->option('arguments');
+        $hasOptions = $this->option('options');
         $namespace = $this->option('namespace');
 
         // where to create the file, default to current directory
