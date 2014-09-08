@@ -5,8 +5,6 @@ namespace eecli;
 use eecli\Command\ExemptFromBootstrapInterface;
 use eecli\CodeIgniter\ConsoleOutput as CodeIgniterConsoleOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
