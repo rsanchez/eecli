@@ -34,13 +34,17 @@ return array(
      * at runtime, like changing DB
      * credentials based on HTTP_HOST
      * in your config.php.
+     *
+     * You can also set these at the command line:
+     *
+     * HTTP_HOST="foo.dev" eecli update:addons
      */
     'server' => array(
-        'HTTP_HOST' => 'localhost',
-        'DOCUMENT_ROOT' => __DIR__,
-        'REQUEST_URI' => '/',
-        'REMOTE_ADDR' => '127.0.0.1',
-        'HTTP_USER_AGENT' => 'eecli',
+        'HTTP_HOST' => getenv('HTTP_HOST') ?: 'localhost',
+        'DOCUMENT_ROOT' => getenv('DOCUMENT_ROOT') ?: __DIR__,
+        'REQUEST_URI' => getenv('REQUEST_URI') ?: '/',
+        'REMOTE_ADDR' => getenv('REMOTE_ADDR') ?: '127.0.0.1',
+        'HTTP_USER_AGENT' => getenv('HTTP_USER_AGENT') ?: 'eecli',
     ),
 
     /**
