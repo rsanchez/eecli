@@ -86,6 +86,7 @@ class Application extends ConsoleApplication
         $this->add(new Command\ReplCommand());
         $this->add(new Command\ShowConfigCommand());
         $this->add(new Command\UpdateAddonsCommand());
+        $this->add(new Command\CreateChannelCommand());
         $this->add(new Command\GenerateCommandCommand());
         $this->add(new Command\GenerateAddonCommand());
         $this->add(new Command\GenerateHtaccessCommand());
