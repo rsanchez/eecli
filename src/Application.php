@@ -93,22 +93,6 @@ class Application extends ConsoleApplication
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function run(InputInterface $input = null, OutputInterface $output = null)
-    {
-        if (null === $output) {
-            $output = new ConsoleOutput();
-        }
-
-        if ($this->canBeBootstrapped()) {
-            ee()->output = new CodeIgniterConsoleOutput($output);
-        }
-
-        return parent::run($input, $output);
-    }
-
-    /**
      * Check whether a command should be exempt from bootstrapping
      * @param  \Symfony\Component\Console\Command\Command $command
      * @return boolean
@@ -137,12 +121,15 @@ class Application extends ConsoleApplication
     {
         $command = $event->getCommand();
 
+        $output = $event->getOutput();
+
         if (! $this->isCommandExemptFromBootstrap($command)) {
             if (! $this->canBeBootstrapped()) {
                 throw new \Exception('Your system path could not be found.');
             }
 
-            // bootstrap_ee();
+            // override output class to print errors to console
+            ee()->output = new CodeIgniterConsoleOutput($output);
         }
     }
 
@@ -337,7 +324,7 @@ class Application extends ConsoleApplication
 
         if (is_array($commands)) {
             foreach ($commands as $command) {
-                if ($command instanceOf SymfonyCommand) {
+                if ($command instanceof SymfonyCommand) {
                     $this->add($command);
                 }
             }
