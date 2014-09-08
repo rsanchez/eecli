@@ -182,6 +182,19 @@ eecli repl
 
 Starts an interactive shell.
 
+### Create Channel
+
+Creates an ExpressionEngine channel. Pass in a channel short name using underscores only and optionally pass in a field group id.
+
+```
+# create a channel with the short name test_channel
+eecli create:channel test_channel
+
+# create a channel and assign to field group 5
+eecli create:channel test_channel 5
+```
+
+
 ### Show Config
 
 Show config items.

@@ -11,7 +11,7 @@ class CreateChannelCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $name = 'create:ee:channel';
+    protected $name = 'create:channel';
 
     /**
      * {@inheritdoc}
