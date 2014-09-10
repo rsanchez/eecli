@@ -32,6 +32,19 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
      */
     protected $handlebars;
 
+    /**
+     * Path to handlebars templates
+     * @var string
+     */
+    protected $templatePath;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->templatePath = __DIR__.'/../../../addon-templates/app/templates';
+    }
+
     protected function setQuestionRequired(Question $question, $errorMessage = 'This field is required.')
     {
         $question->setValidator(function ($answer) use ($errorMessage) {
@@ -181,7 +194,7 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
     protected function fire()
     {
         $this->handlebars = new Handlebars(array(
-            'loader' => new FilesystemLoader(__DIR__.'/../templates/addon/'),
+            'loader' => new FilesystemLoader($this->templatePath),
         ));
 
         $systemPath = defined('PATH_THIRD') ? PATH_THIRD : null;
@@ -360,7 +373,7 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
 
             $this->mkdir($themeFolder);
 
-            copy(__DIR__.'/../templates/addon/index.html', $themeFolder.'/index.html');
+            copy($this->templatePath.'/index.html', $themeFolder.'/index.html');
         }
 
         // Install module files
