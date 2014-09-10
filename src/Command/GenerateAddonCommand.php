@@ -279,9 +279,7 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
 
         $this->vars['hasModuleMod'] = $this->vars['hasModule'] ? $this->confirm('Does the module need a mod file for template tags?') : false;
 
-        $this->vars['hasModuleMcp'] = $this->vars['hasModule'] ? $this->confirm('Does the module need an mcp file for control panel views or actions?') : false;
-
-        $this->vars['hasModuleCp'] = $this->vars['hasModule'] && $this->vars['hasModuleMcp'] ? $this->confirm('Does the module have a control panel backend?') : false;
+        $this->vars['hasModuleCp'] = $this->vars['hasModule'] ? $this->confirm('Does the module have a control panel backend?') : false;
 
         $this->vars['hasModuleTab'] = $this->vars['hasModule'] ? $this->confirm('Does the module have a publish tab?', false) : false;
 
@@ -372,9 +370,8 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
             if ($this->vars['hasModuleMod']) {
               $this->template('mod.php.handlebars', $folder.'/mod.'.$this->vars['addonSlug'].'.php');
             }
-            if (! $this->vars['hasModuleMod'] || $this->vars['hasModuleMcp']) {
-              $this->template('mcp.php.handlebars', $folder.'/mcp.'.$this->vars['addonSlug'].'.php');
-            }
+
+            $this->template('mcp.php.handlebars', $folder.'/mcp.'.$this->vars['addonSlug'].'.php');
         }
 
         if ($this->vars['hasLang']) {
