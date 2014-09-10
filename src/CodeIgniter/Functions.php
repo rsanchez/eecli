@@ -2,8 +2,20 @@
 
 namespace eecli\CodeIgniter;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
 class Functions extends \EE_Functions
 {
+    /**
+     * @var \Symfony\Component\Console\Output\OutputInterface
+     */
+    protected $output;
+
+    public function __construct(OutputInterface $output)
+    {
+        $this->output = $output;
+    }
+
     /**
      * Suppress redirections and print any messages
      * stored in session flashdata
@@ -11,7 +23,7 @@ class Functions extends \EE_Functions
      * @param  string   $location
      * @param  boolean  $method
      * @param  int|null $statusCode
-     * @return [void
+     * @return void
      */
     public function redirect($location, $method = false, $statusCode = null)
     {
@@ -19,12 +31,12 @@ class Functions extends \EE_Functions
         $failure = ee()->session->flashdata(':new:message_failure');
 
         if ($failure) {
-            show_error($failure);
+            $this->output->writeln('<error>'.$failure.'</error>');
             exit;
         }
 
         if ($success) {
-            ee()->output->getOutput()->writeln('<info>'.$success.'</info>');
+            $this->output->writeln('<info>'.$success.'</info>');
             exit;
         }
     }

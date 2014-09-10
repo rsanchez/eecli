@@ -203,6 +203,14 @@ eecli create:channel --status_group=5 test_channel
 eecli create:channel --cat_group="5|6" test_channel
 ```
 
+### Synchronize Templates
+
+Synchronize the template database with your template files.
+
+```
+eecli sync:templates
+```
+
 ### Show Config
 
 Show config items.
@@ -319,7 +327,6 @@ Please send pull requests to the [develop branch](https://github.com/rsanchez/ee
 
 These commands yet to be implemented. Pull requests welcome.
 
-- `create:channel`
 - `create:category`
 - `create:category_group`
 - `create:template`
@@ -332,6 +339,5 @@ These commands yet to be implemented. Pull requests welcome.
 - `create:snippet`
 - `create:low_variable`
 - `sync:fields`
-- `sync:templates`
 - `sync:snippets`
 - `sync:global_variables`

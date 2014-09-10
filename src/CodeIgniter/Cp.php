@@ -9,15 +9,21 @@ class Cp extends \Cp
     /**
      * @var array
      */
-    protected $viewData;
+    protected $variables = array();
+
+    public function __construct($theme = '', $themeUrl = '')
+    {
+        $this->cp_theme = $theme;
+        $this->cp_theme_url = $themeUrl;
+    }
 
     /**
      * Get the stored view variables
      * @return array
      */
-    public function getViewData()
+    public function getVariables()
     {
-        return $this->viewData;
+        return $this->variables;
     }
 
     /**
@@ -32,6 +38,6 @@ class Cp extends \Cp
      */
     public function render($view, $data = array(), $return = false)
     {
-        $this->viewData = $data;
+        $this->variables = array_merge($this->variables, $data);
     }
 }

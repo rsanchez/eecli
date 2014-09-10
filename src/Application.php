@@ -5,7 +5,6 @@ namespace eecli;
 use eecli\Command\ExemptFromBootstrapInterface;
 use eecli\CodeIgniter\ConsoleOutput as CodeIgniterConsoleOutput;
 use eecli\CodeIgniter\BootableInterface;
-use eecli\CodeIgniter\Loader;
 use eecli\CodeIgniter\Cp;
 use eecli\CodeIgniter\Functions;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -94,6 +93,7 @@ class Application extends ConsoleApplication
         $this->add(new Command\GenerateAddonCommand());
         $this->add(new Command\GenerateHtaccessCommand());
         $this->add(new Command\DbDumpCommand());
+        $this->add(new Command\SyncTemplatesCommand());
     }
 
     /**
@@ -119,8 +119,8 @@ class Application extends ConsoleApplication
         ee()->lang->loadfile('cp');
         ee()->load->library('logger');
 
-        Loader::addBaseClass('cp', new Cp());
-        Loader::addBaseClass('functions', new Functions());
+        ee()->load->library('cp');
+        ee()->cp = new Cp(ee()->cp->cp_theme, ee()->cp->cp_theme_url);
 
         ee()->load->helper('quicktab');
         ee()->cp->set_default_view_variables();
@@ -205,8 +205,9 @@ class Application extends ConsoleApplication
                 throw new \Exception('Your system path could not be found.');
             }
 
-            // override output class to print errors to console
+            // override EE classes to print errors/messages to console
             ee()->output = new CodeIgniterConsoleOutput($output);
+            ee()->functions = new Functions($output);
         }
     }
 

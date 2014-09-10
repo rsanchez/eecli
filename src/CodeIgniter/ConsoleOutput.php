@@ -20,15 +20,6 @@ class ConsoleOutput extends \EE_Output
     }
 
     /**
-     * Get the console output interface
-     * @return \Symfony\Component\Console\Output\OutputInterface
-     */
-    public function getOutput()
-    {
-        return $this->output;
-    }
-
-    /**
      * Suppress any header-setting
      * @param string  $header
      * @param boolean $replace
