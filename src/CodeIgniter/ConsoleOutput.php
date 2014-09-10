@@ -20,13 +20,37 @@ class ConsoleOutput extends \EE_Output
     }
 
     /**
+     * Get the console output interface
+     * @return \Symfony\Component\Console\Output\OutputInterface
+     */
+    public function getOutput()
+    {
+        return $this->output;
+    }
+
+    /**
+     * Suppress any header-setting
+     * @param string  $header
+     * @param boolean $replace
+     */
+    public function set_header($header, $replace = true)
+    {
+    }
+
+    /**
      * Throw a fatal runtime exception
      * @param  string $errorMessage
      * @return void
      */
     public function fatal_error($errorMessage)
     {
-        throw new \RuntimeException(strip_tags($errorMessage));
+        $errorMessage = str_replace('&#171; Back', '', $errorMessage);
+
+        $errorMessage = strip_tags($errorMessage);
+
+        $this->output->writeln('<error>'.$errorMessage.'</error>');
+
+        exit;
     }
 
     /**

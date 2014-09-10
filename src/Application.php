@@ -4,12 +4,17 @@ namespace eecli;
 
 use eecli\Command\ExemptFromBootstrapInterface;
 use eecli\CodeIgniter\ConsoleOutput as CodeIgniterConsoleOutput;
+use eecli\CodeIgniter\BootableInterface;
+use eecli\CodeIgniter\Loader;
+use eecli\CodeIgniter\Cp;
+use eecli\CodeIgniter\Functions;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\ConsoleEvents;
+use ReflectionClass;
 
 class Application extends ConsoleApplication
 {
@@ -89,6 +94,79 @@ class Application extends ConsoleApplication
         $this->add(new Command\GenerateAddonCommand());
         $this->add(new Command\GenerateHtaccessCommand());
         $this->add(new Command\DbDumpCommand());
+    }
+
+    /**
+     * Boot items necessary for a CP controller action
+     * @return void
+     */
+    public function bootCp()
+    {
+        // constants
+        define('CSRF_TOKEN', '0');
+        define('PATH_CP_THEME', PATH_THEMES.'cp_themes/');
+        define('BASE', SELF.'?S=0&amp;D=cp');
+
+        // superadmin
+        ee()->session->userdata['group_id'] = '1';
+
+        ee()->benchmark = load_class('Benchmark', 'core');
+        ee()->router = load_class('Router', 'core');
+        ee()->load->helper('form');
+        ee()->load->helper('url');
+        ee()->load->library('view');
+        ee()->view->disable('ee_menu');
+        ee()->lang->loadfile('cp');
+        ee()->load->library('logger');
+
+        Loader::addBaseClass('cp', new Cp());
+        Loader::addBaseClass('functions', new Functions());
+
+        ee()->load->helper('quicktab');
+        ee()->cp->set_default_view_variables();
+        ee()->load->model('super_model');
+    }
+
+    /**
+     * Create a new global CI controller instance
+     * @param  string $className
+     * @return void
+     */
+    public function newInstance($className)
+    {
+        $oldInstance = get_instance();
+
+        // instantiate without calling constructor
+        if (method_exists('ReflectionClass', 'newInstanceWithoutConstructor')) {
+            $reflectedClass = new ReflectionClass($className);
+
+            $newInstance = $reflectedClass->newInstanceWithoutConstructor($className);
+
+            unset($reflectedClass);
+        } else {
+            // php 5.3 unserialize trick
+            $serialized = sprintf('O:%d:"%s":0:{}', strlen($className), $className);
+
+            $newInstance = unserialize($serialized);
+        }
+
+        // copy existing controller props over to new instance
+        $controllerProperties = get_object_vars($oldInstance);
+
+        foreach ($controllerProperties as $key => $value) {
+            $newInstance->$key = $value;
+        }
+
+        // replace the global instance
+        $reflectedClass = new ReflectionClass('CI_Controller');
+        $reflectedProperty = $reflectedClass->getProperty('instance');
+        $reflectedProperty->setAccessible(true);
+        $reflectedProperty = $reflectedProperty->setValue($newInstance);
+
+        // boot the new instance, if necessaory
+        if ($newInstance instanceof BootableInterface) {
+            $newInstance->boot($this);
+        }
     }
 
     /**
