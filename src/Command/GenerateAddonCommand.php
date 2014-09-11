@@ -45,6 +45,11 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
         $this->templatePath = __DIR__.'/../../../addon-templates/app/templates';
     }
 
+    /**
+     * Add a validator that makes a question required
+     * @param Question $question
+     * @param string   $errorMessage
+     */
     protected function setQuestionRequired(Question $question, $errorMessage = 'This field is required.')
     {
         $question->setValidator(function ($answer) use ($errorMessage) {
@@ -108,6 +113,68 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
         $this->setQuestionRequired($question, $errorMessage);
 
         return $helper->ask($this->input, $this->output, $question);
+    }
+
+    /**
+     * Keep ask for a selection from the specified choices
+     * until the user enters DONE.
+     *
+     * @param  string  $question
+     * @param  array   $defaultChoices
+     * @param  boolean $defaultToAll
+     * @param  string  $secondaryQuestion
+     * @return array
+     */
+    protected function askUntilDone($question, array $defaultChoices, $defaultToAll = false, $secondaryQuestion = '')
+    {
+        $userChoices = array();
+
+        $remainingChoices = $defaultChoices;
+
+        $countDefaultChoices = count($defaultChoices);
+
+        do
+        {
+            $countRemainingChoices = count($remainingChoices);
+
+            $questionChoices = $remainingChoices;
+
+            if ($countRemainingChoices < $countDefaultChoices) {
+                array_unshift($questionChoices, 'DONE');
+            }
+
+            if ($countRemainingChoices > 1) {
+                $questionChoices[] = 'All of the above';
+            }
+
+            $default = $defaultToAll ? count($questionChoices) - 1 : 0;
+
+            $choice = $this->choice(
+                sprintf('%s (default: %s)', $question, $questionChoices[$default]),
+                $questionChoices,
+                $default,
+                null
+            );
+
+            if ($choice) {
+                if ($choice === 'All of the above') {
+                    return $defaultChoices;
+                }
+
+                if ($secondaryQuestion) {
+                    $question = $secondaryQuestion;
+                }
+
+                $userChoices[] = $choice;
+
+                unset($remainingChoices[array_search($choice, $remainingChoices)]);
+
+                $countRemainingChoices = count($remainingChoices);
+            }
+
+        } while ($countRemainingChoices > 0 && $choice !== 'DONE');
+
+        return $userChoices;
     }
 
     /**
@@ -208,51 +275,24 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
             $defaultAuthorUrl = 'https://github.com/'.$gitUser;
         }
 
-        $addonTypes = $this->choice(
-            'Which add-on type(s) are you making? (default: plugin)',
+        $this->vars['addonTypes'] = $this->askUntilDone(
+            'Which add-on type do you wish to create?',
             array(
-                'plugin',
-                'extension',
-                'module',
-                'fieldtype',
-                'accessory',
-                'plugin + extension',
-                'plugin + extension + fieldtype',
-                'plugin + extension + fieldtype + accessory',
-                'plugin + fieldtype',
-                'plugin + fieldtype + accessory',
-                'plugin + accessory',
-                'extension + fieldtype',
-                'extension + fieldtype + accessory',
-                'extension + accessory',
-                'module + extension',
-                'module + extension + fieldtype',
-                'module + extension + fieldtype + accessory',
-                'module + fieldtype',
-                'module + fieldtype + accessory',
-                'module + accessory',
+                'Plugin',
+                'Extension',
+                'Module',
+                'Fieldtype',
+                'Accessory',
             ),
-            '0',
-            null,
-            true
+            false,
+            'Do you want to create an additional add-on type?'
         );
 
-        $this->vars['addonTypes'] = array();
-
-        // parse the chosen types into an array
-        foreach ($addonTypes as $type) {
-            foreach (explode(' + ', $type) as $type) {
-                $this->vars['addonTypes'][] = $type;
-            }
-        }
-
-        $this->vars['addonTypes'] = array_unique($this->vars['addonTypes']);
-
-        $this->vars['hasPlugin'] = in_array('plugin', $this->vars['addonTypes']);
-        $this->vars['hasExtension'] = in_array('extension', $this->vars['addonTypes']);
-        $this->vars['hasModule'] = in_array('module', $this->vars['addonTypes']);
-        $this->vars['hasFieldtype'] = in_array('fieldtype', $this->vars['addonTypes']);
-        $this->vars['hasAccessory'] = in_array('accessory', $this->vars['addonTypes']);
+        $this->vars['hasPlugin'] = in_array('Plugin', $this->vars['addonTypes']);
+        $this->vars['hasExtension'] = in_array('Extension', $this->vars['addonTypes']);
+        $this->vars['hasModule'] = in_array('Module', $this->vars['addonTypes']);
+        $this->vars['hasFieldtype'] = in_array('Fieldtype', $this->vars['addonTypes']);
+        $this->vars['hasAccessory'] = in_array('Accessory', $this->vars['addonTypes']);
 
         $this->vars['addonName'] = $this->askRequired('What do you want to name your add-on? ex. Google Maps', null, 'You must choose an add-on name.');
 
@@ -301,54 +341,23 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
         $this->vars['fieldtypeSupport'] = array();
 
         if ($this->vars['hasFieldtype']) {
-            $fieldtypeSupport = $this->choice(
-                'Which field types do you want to support? (default: ALL)',
+            $this->vars['fieldtypeSupport'] = $this->askUntilDone(
+                'Which extra field type do you want to support?',
                 array(
-                    'ALL',
-                    'matrix',
-                    'grid',
-                    'low_variables',
-                    'content_elements',
-                    'matrix + grid',
-                    'matrix + grid + low_variables',
-                    'matrix + grid + low_variables + content_elements',
-                    'matrix + grid + content_elements',
-                    'grid + low_variables',
-                    'grid + low_variables + content_elements',
-                    'grid + content_elements',
-                    'low_variables + content_elements',
+                    'Matrix',
+                    'Grid',
+                    'Low Variables',
+                    'Content Elements',
                 ),
-                '0',
-                null,
-                true
+                true,
+                'Do you want to support an additional extra field type?'
             );
-
-            $this->vars['fieldtypeSupport'] = array();
-
-            foreach ($fieldtypeSupport as $type) {
-                if ($type === 'ALL') {
-                    $this->vars['fieldtypeSupport'] = array(
-                        'matrix',
-                        'grid',
-                        'low_variables',
-                        'content_elements',
-                    );
-
-                    break;
-                }
-
-                foreach (explode(' + ', $type) as $type) {
-                    $this->vars['fieldtypeSupport'][] = $type;
-                }
-            }
-
-            $this->vars['fieldtypeSupport'] = array_unique($this->vars['fieldtypeSupport']);
         }
 
-        $this->vars['fieldtypeMatrixSupport'] = in_array('matrix', $this->vars['fieldtypeSupport']);
-        $this->vars['fieldtypeGridSupport'] = in_array('grid', $this->vars['fieldtypeSupport']);
-        $this->vars['fieldtypeLowVariablesSupport'] = in_array('low_variables', $this->vars['fieldtypeSupport']);
-        $this->vars['fieldtypeContentElementsSupport'] = in_array('content_elements', $this->vars['fieldtypeSupport']);
+        $this->vars['fieldtypeMatrixSupport'] = in_array('Matrix', $this->vars['fieldtypeSupport']);
+        $this->vars['fieldtypeGridSupport'] = in_array('Grid', $this->vars['fieldtypeSupport']);
+        $this->vars['fieldtypeLowVariablesSupport'] = in_array('Low Variables', $this->vars['fieldtypeSupport']);
+        $this->vars['fieldtypeContentElementsSupport'] = in_array('Content Elements', $this->vars['fieldtypeSupport']);
 
         $this->vars['hasFieldtypeGlobalSettings'] = $this->vars['hasFieldtype'] ? $this->confirm('Does the fieldtype have global settings?', false) : false;
 
