@@ -11,8 +11,22 @@ class Functions extends \EE_Functions
      */
     protected $output;
 
+    /**
+     * Success message culled from flashdata
+     * @var string|null
+     */
     protected $successMessage;
+
+    /**
+     * Error message culled from flashdata
+     * @var string|null
+     */
     protected $errorMessage;
+
+    /**
+     * Query string variables from redirect
+     * @var array
+     */
     protected $variables;
 
     public function __construct(OutputInterface $output)
@@ -48,16 +62,38 @@ class Functions extends \EE_Functions
         }
     }
 
+    /**
+     * Reset errorMessage and successMessage to null
+     * @return void
+     */
+    public function resetMessages()
+    {
+        $this->errorMessage = null;
+        $this->successMessage = null;
+    }
+
+    /**
+     * Get the flashdata error message
+     * @return string|null
+     */
     public function getErrorMessage()
     {
         return $this->errorMessage;
     }
 
+    /**
+     * Get the flashdata success message
+     * @return string|null
+     */
     public function getSuccessMessage()
     {
         return $this->successMessage;
     }
 
+    /**
+     * Get the redirect query string variables
+     * @return array
+     */
     public function getVariables()
     {
         return $this->variables;

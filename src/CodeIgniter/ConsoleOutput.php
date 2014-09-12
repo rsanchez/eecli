@@ -11,12 +11,35 @@ class ConsoleOutput extends \EE_Output
      */
     protected $output;
 
+    /**
+     * Success message culled from flashdata
+     * @var string|null
+     */
+    protected $successMessage;
+
+    /**
+     * Error message culled from flashdata
+     * @var string|null
+     */
+    protected $errorMessage;
+
+
     public function __construct(OutputInterface $output)
     {
         $this->output = $output;
 
         // you need to load the template library to override the fatal error
         ee()->load->library('template', null, 'TMPL');
+    }
+
+    /**
+     * Reset errorMessage and successMessage to null
+     * @return void
+     */
+    public function resetMessages()
+    {
+        $this->errorMessage = null;
+        $this->successMessage = null;
     }
 
     /**
@@ -29,51 +52,84 @@ class ConsoleOutput extends \EE_Output
     }
 
     /**
-     * Throw a fatal runtime exception
-     * @param  string $errorMessage
-     * @return void
+     * {@inheritdoc}
      */
     public function fatal_error($errorMessage)
     {
-        $errorMessage = str_replace('&#171; Back', '', $errorMessage);
+        $this->resetMessages();
 
-        $errorMessage = strip_tags($errorMessage);
+        $this->errorMessage = str_replace('&#171; Back', '', $errorMessage);
 
-        $this->output->writeln('<error>'.$errorMessage.'</error>');
-
-        exit;
+        $this->errorMessage = strip_tags($errorMessage);
     }
 
     /**
-     * Write a message to the console output
-     * @param  array $data
-     * @return void
+     * Get a success message
+     * @return string|null
+     */
+    public function getSuccessMessage()
+    {
+        return $this->successMessage;
+    }
+
+    /**
+     * Get an error message
+     * @return string|null
+     */
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function send_ajax_response($data)
+    {
+        $this->resetMessages();
+
+        if (is_scalar($data)) {
+            $this->successMessage = $data;
+        } elseif (! empty($data['error'])) {
+            $this->errorMessage = $data['error'];
+        } elseif (! empty($data['message_failure'])) {
+            $this->errorMessage = $data['message_failure'];
+        } elseif (! empty($data['success'])) {
+            $this->successMessage = $data['success'];
+        } elseif (! empty($data['message_success'])) {
+            $this->successMessage = $data['message_success'];
+        } elseif (is_array($data) && is_string(current($data))) {
+            $this->successMessage = implode(PHP_EOL, $data);
+        } else {
+            $this->successMessage = print_r($data, TRUE);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function show_message($data)
     {
-        if (isset($data['content'])) {
-            $this->output->writeln('<comment>'.strip_tags($data['content']).'</comment>');
-        }
+        $this->resetMessages();
 
-        exit;
+        if (isset($data['content'])) {
+            $this->successMessage = strip_tags($data['content']);
+        } else {
+            $this->successMessage = '';
+        }
     }
 
     /**
-     * Write error message(s) to the console output
-     * @param  null         $type
-     * @param  string|array $errors
-     * @return void
+     * {@inheritdoc}
      */
     public function show_user_error($type = null, $errors)
     {
+        $this->resetMessages();
+
         if (! is_array($errors)) {
             $errors = array($errors);
         }
 
-        foreach ($errors as $errorMessage) {
-            $this->output->writeln('<error>'.strip_tags($errorMessage).'</error>');
-        }
-
-        exit;
+        $this->errorMessage = implode(PHP_EOL, $errors);
     }
 }
