@@ -13,6 +13,7 @@ use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\ConsoleEvents;
+use Doctrine\Instantiator\Instantiator;
 use ReflectionClass;
 
 class Application extends ConsoleApplication
@@ -136,19 +137,9 @@ class Application extends ConsoleApplication
     {
         $oldInstance = get_instance();
 
-        // instantiate without calling constructor
-        if (method_exists('ReflectionClass', 'newInstanceWithoutConstructor')) {
-            $reflectedClass = new ReflectionClass($className);
+        $instantiator = new Instantiator();
 
-            $newInstance = $reflectedClass->newInstanceWithoutConstructor($className);
-
-            unset($reflectedClass);
-        } else {
-            // php 5.3 unserialize trick
-            $serialized = sprintf('O:%d:"%s":0:{}', strlen($className), $className);
-
-            $newInstance = unserialize($serialized);
-        }
+        $newInstance = $instantiator->instantiate($className);
 
         // copy existing controller props over to new instance
         $controllerProperties = get_object_vars($oldInstance);
