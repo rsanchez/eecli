@@ -133,8 +133,7 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
 
         $countDefaultChoices = count($defaultChoices);
 
-        do
-        {
+        do {
             $countRemainingChoices = count($remainingChoices);
 
             $questionChoices = $remainingChoices;

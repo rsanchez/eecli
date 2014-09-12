@@ -23,7 +23,6 @@ class ConsoleOutput extends \EE_Output
      */
     protected $errorMessage;
 
-
     public function __construct(OutputInterface $output)
     {
         $this->output = $output;
@@ -101,7 +100,7 @@ class ConsoleOutput extends \EE_Output
         } elseif (is_array($data) && is_string(current($data))) {
             $this->successMessage = implode(PHP_EOL, $data);
         } else {
-            $this->successMessage = print_r($data, TRUE);
+            $this->successMessage = print_r($data, true);
         }
     }
 

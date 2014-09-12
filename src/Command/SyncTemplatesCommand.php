@@ -46,6 +46,7 @@ class SyncTemplatesCommand extends Command
 
         if (ee()->functions->getErrorMessage()) {
             $this->error(ee()->functions->getErrorMessage());
+
             return;
         }
 
