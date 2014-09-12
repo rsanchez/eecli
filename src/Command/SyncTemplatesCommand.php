@@ -43,5 +43,14 @@ class SyncTemplatesCommand extends Command
         );
 
         ee()->sync_run();
+
+        if (ee()->functions->getErrorMessage()) {
+            $this->error(ee()->functions->getErrorMessage());
+            return;
+        }
+
+        if (ee()->functions->getSuccessMessage()) {
+            $this->info(ee()->functions->getSuccessMessage());
+        }
     }
 }

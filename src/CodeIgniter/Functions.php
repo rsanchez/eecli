@@ -11,6 +11,10 @@ class Functions extends \EE_Functions
      */
     protected $output;
 
+    protected $successMessage;
+    protected $errorMessage;
+    protected $variables;
+
     public function __construct(OutputInterface $output)
     {
         $this->output = $output;
@@ -27,17 +31,35 @@ class Functions extends \EE_Functions
      */
     public function redirect($location, $method = false, $statusCode = null)
     {
+        $this->successMessage = null;
+        $this->errorMessage = null;
+
+        parse_str(parse_url($location, PHP_URL_QUERY), $this->variables);
+
         $success = ee()->session->flashdata(':new:message_success');
         $failure = ee()->session->flashdata(':new:message_failure');
 
         if ($failure) {
-            $this->output->writeln('<error>'.$failure.'</error>');
-            exit;
+            $this->errorMessage = $failure;
         }
 
         if ($success) {
-            $this->output->writeln('<info>'.$success.'</info>');
-            exit;
+            $this->successMessage = $success;
         }
+    }
+
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    public function getSuccessMessage()
+    {
+        return $this->successMessage;
+    }
+
+    public function getVariables()
+    {
+        return $this->variables;
     }
 }
