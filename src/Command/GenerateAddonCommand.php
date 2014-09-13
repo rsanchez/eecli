@@ -243,9 +243,15 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrapInterfa
      */
     protected function template($template, $destination)
     {
-        $handle = fopen($destination, 'w');
-
         $output = $this->handlebars->render($template, $this->vars);
+
+        if (file_exists($destination) && ! $this->confirm($destination.' already exists. Do you want to overwrite? ', false)) {
+            $this->error(basename($destination).' not created.');
+
+            return;
+        }
+
+        $handle = fopen($destination, 'w');
 
         fwrite($handle, $output);
 
