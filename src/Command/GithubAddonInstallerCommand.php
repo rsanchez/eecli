@@ -4,6 +4,10 @@ namespace eecli\Command;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use eecli\GithubAddonInstaller\Application as InstallerApplication;
+use eecli\GithubAddonInstaller\Api;
+use eecli\GithubAddonInstaller\Repo;
+use eecli\GithubAddonInstaller\Installer\Installer;
 
 class GithubAddonInstallerCommand extends Command
 {
@@ -15,7 +19,7 @@ class GithubAddonInstallerCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Install an addon (requires Github Addon Installer module).';
+    protected $description = 'Install an addon.';
 
     /**
      * {@inheritdoc}
@@ -41,95 +45,38 @@ class GithubAddonInstallerCommand extends Command
      */
     protected function fire()
     {
-        $manifestFile = PATH_THIRD.'github_addon_installer/config/manifest.js';
+        $tempPath = APPPATH.'cache/github_addon_installer/';
 
-        if (! file_exists($manifestFile)) {
-            $this->error('Could not find the Github Addon Installer manifest.');
-
-            return;
+        if (! is_dir($tempPath)) {
+            mkdir($tempPath);
         }
 
-        $manifestContents = file_get_contents($manifestFile);
+        $installerApp = new InstallerApplication(PATH_THIRD, PATH_THIRD_THEMES, $tempPath);
 
-        if ($manifestContents === false) {
-            $this->error('Could not load the Github Addon Installer manifest.');
+        $installerApp->getApi()->setOutput($this->output);
+        $installerApp->getApi()->setProgressHelper($this->getHelperSet()->get('progress'));
 
-            return;
-        }
-
-        $manifest = json_decode($manifestContents, true);
-
-        if (! $manifest) {
-            $this->error('Could not load the Github Addon Installer manifest.');
-
-            return;
-        }
-
-        ksort($manifest);
+        $manifest = $installerApp->getManifest();
 
         $addon = $this->argument('addon');
-        $branch = $this->argument('branch') ?: 'master';
 
-        $askForBranch = false;
-
-        $validation = function ($addon) use ($manifest) {
-            if (! isset($manifest[$addon])) {
-                throw new \InvalidArgumentException(sprintf('Addon "%s" is invalid.', $addon));
-            }
-
-            return $addon;
-        };
-
-        if ($addon) {
-            try {
-                call_user_func($validation, $addon);
-            } catch (\Exception $e) {
-
-                $this->error($e->getMessage());
-
-                return;
-            }
-        } else {
+        if (! $addon) {
             $dialog = $this->getHelper('dialog');
 
+            $validation = function ($addon) use ($manifest) {
+                if (! isset($manifest[$addon])) {
+                    throw new \InvalidArgumentException(sprintf('Addon "%s" is invalid.', $addon));
+                }
+
+                return $addon;
+            };
+
             $addon = $dialog->askAndValidate($this->output, 'Which addon do you want to install? ', $validation, false, null, array_keys($manifest));
-
-            $askForBranch = true;
         }
 
-        $params = $manifest[$addon];
+        $branch = $this->argument('branch') ?: isset($manifest[$addon]['branch']) ? $manifest[$addon]['branch'] : 'master';
 
-        $params['name'] = $addon;
-
-        if ($askForBranch) {
-            $branch = isset($params['branch']) ? $params['branch'] : 'master';
-
-            $params['branch'] = $dialog->ask(
-                $this->output,
-                sprintf('Which branch would you like to install? (Defaults to %s) ', $branch),
-                $branch
-            );
-        }
-
-        ee()->load->add_package_path(PATH_THIRD.'github_addon_installer/');
-        ee()->load->library('github_addon_installer');
-        ee()->load->remove_package_path(PATH_THIRD.'github_addon_installer/');
-
-        try {
-            $repo = ee()->github_addon_installer->repo($params);
-
-            try {
-                $repo->install();
-            } catch (\Exception $e) {
-                $this->error($e->getMessage());
-
-                return;
-            }
-        } catch (\Exception $e) {
-            $this->error($e->getMessage());
-
-            return;
-        }
+        $installerApp->installAddon($addon, $branch);
 
         $this->info($addon.' installed.');
     }
