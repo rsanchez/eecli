@@ -17,7 +17,7 @@ class GenerateHtaccessCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Generate the default ExpressionEngine .htaccess file';
+    protected $description = 'Generate the default ExpressionEngine .htaccess file.';
 
     /**
      * {@inheritdoc}
