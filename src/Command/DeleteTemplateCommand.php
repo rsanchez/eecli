@@ -15,7 +15,7 @@ class DeleteTemplateCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $description = '';
+    protected $description = 'Delete one or more templates.';
 
     /**
      * {@inheritdoc}

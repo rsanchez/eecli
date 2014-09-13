@@ -14,7 +14,7 @@ class ShowTemplatesCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $description = '';
+    protected $description = 'Show a list of templates.';
 
     /**
      * {@inheritdoc}
