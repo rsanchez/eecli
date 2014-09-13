@@ -90,11 +90,16 @@ class Application extends ConsoleApplication
         $this->add(new Command\ShowConfigCommand());
         $this->add(new Command\UpdateAddonsCommand());
         $this->add(new Command\CreateChannelCommand());
+        $this->add(new Command\CreateTemplateCommand());
+        $this->add(new Command\CreateTemplateGroupCommand());
         $this->add(new Command\GenerateCommandCommand());
         $this->add(new Command\GenerateAddonCommand());
         $this->add(new Command\GenerateHtaccessCommand());
         $this->add(new Command\DbDumpCommand());
+        $this->add(new Command\DeleteTemplateCommand());
+        $this->add(new Command\DeleteTemplateGroupCommand());
         $this->add(new Command\SyncTemplatesCommand());
+        $this->add(new Command\ShowTemplatesCommand());
     }
 
     /**

@@ -203,6 +203,60 @@ eecli create:channel --status_group=5 test_channel
 eecli create:channel --cat_group="5|6" test_channel
 ```
 
+### Create Template
+
+```
+eecli create:template site/index
+
+# multiple templates
+eecli create:template site/index site/foo
+
+# with php enabled
+eecli create:template --php site/index
+
+# with php enabled on input
+eecli create:template --php --input site/index
+
+# with caching on (for 300 seconds)
+eecli create:template --cache=300 site/index
+
+# protect javascript
+eecli create:template --protect_js site/index
+
+# set a type: webpage, feed, css, js, static, xml
+eecli create:template --type=xml site/index
+```
+
+### Create Template Group
+
+```
+eecli create:template_group site
+
+# multiple groups
+eecli create:template_group site news blog
+
+# create the default group
+eecli create:template_group --default site
+```
+
+### Delete Template
+
+```
+eecli delete:template site/index
+
+# multiple templates
+eecli delete:template site/index site/foo
+```
+
+### Delete Template Group
+
+```
+eecli delete:template_group site
+
+# multiple groups
+eecli delete:template_group site news blog
+```
+
 ### Synchronize Templates
 
 Synchronize the template database with your template files.
