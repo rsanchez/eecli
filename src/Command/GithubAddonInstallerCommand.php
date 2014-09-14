@@ -19,7 +19,7 @@ class GithubAddonInstallerCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Install an addon.';
+    protected $description = 'Install a Github-hosted addon.';
 
     /**
      * {@inheritdoc}
