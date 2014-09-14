@@ -55,11 +55,13 @@ class ConsoleOutput extends \EE_Output
      */
     public function fatal_error($errorMessage)
     {
-        $this->resetMessages();
+        $errorMessage = str_replace('&#171; Back', '', $errorMessage);
 
-        $this->errorMessage = str_replace('&#171; Back', '', $errorMessage);
+        $errorMessage = strip_tags($errorMessage);
 
-        $this->errorMessage = strip_tags($errorMessage);
+        $this->output->writeln("<error>{$errorMessage}</error>");
+
+        exit;
     }
 
     /**
