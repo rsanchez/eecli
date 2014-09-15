@@ -203,6 +203,39 @@ eecli create:channel --status_group=5 test_channel
 eecli create:channel --cat_group="5|6" test_channel
 ```
 
+### Create Snippet
+
+```
+# create a blank snippet
+eecli create:snippet your_snippet_name
+
+# create a snippet with content
+eecli create:snippet your_snippet_name "your snippet content"
+
+# pipe in content
+echo "your snippet content" | eecli create:snippet --stdin your_snippet_name
+
+# create a snippet accessible to all sites
+eecli create:snippet --global your_snippet_name
+```
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a snippet file as well.
+
+### Create Global Variable
+
+```
+# create a blank global variable
+eecli create:global_variable your_global_variable_name
+
+# create a global variable with content
+eecli create:global_variable your_global_variable_name "your global variable content"
+
+# pipe in content
+echo "your global variable content" | eecli create:global_variable --stdin your_global_variable_name
+```
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a global variable file as well.
+
 ### Create Template
 
 ```
@@ -238,6 +271,31 @@ eecli create:template_group site news blog
 # create the default group
 eecli create:template_group --default site
 ```
+
+### Delete Snippet
+
+```
+eecli delete:snippet your_snippet_name
+
+# delete a snippet accessible to all sites
+eecli delete:snippet --global your_snippet_name
+
+# delete multiple snippets
+eecli delete:snippet your_snippet_name your_other_snippet_name
+```
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the snippet file as well.
+
+### Delete Global Variable
+
+```
+eecli delete:global_variable your_global_variable_name
+
+# delete multiple global variables
+eecli delete:global_variable your_global_variable_name your_other_global_variable_name
+```
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the global variable file as well.
 
 ### Delete Template
 
