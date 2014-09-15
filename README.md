@@ -323,6 +323,30 @@ Synchronize the template database with your template files.
 eecli sync:templates
 ```
 
+### Synchronize Snippets
+
+Synchronize the snippets database with your snippet files. Requires [Sync Snippets](https://github.com/rsanchez/sync_snippets).
+
+```
+eecli sync:snippets
+```
+
+### Synchronize Global Variables
+
+Synchronize the global variables database with your global variable files. Requires [Sync Snippets](https://github.com/rsanchez/sync_snippets).
+
+```
+eecli sync:global_variables
+```
+
+### Synchronize Specialty Templates
+
+Synchronize the specialty templates database with your specialty template files. Requires [Sync Snippets](https://github.com/rsanchez/sync_snippets).
+
+```
+eecli sync:specialty_templates
+```
+
 ### Show Config
 
 Show config items.
@@ -333,6 +357,14 @@ eecli show:config
 
 # Show the specified config item
 eecil show:config <key>
+```
+
+### Show Templates
+
+List all templates found in the database
+
+```
+eecli show:templates
 ```
 
 ### Github Addon Installer
