@@ -69,7 +69,7 @@ eecli generate:command your:custom_comand ./commands/
 eecli generate:command --namespace="YourSite\Command" your:custom_comand ./src/YourSite/Command/
 
 # generates with arguments and options
-eecli generate:command --has-options --has-arguments your_command
+eecli generate:command --options --arguments your_command
 
 # generates with a description
 eecli generate:command --description="Clear custom cache" cache:clear:custom
@@ -441,15 +441,12 @@ These commands yet to be implemented. Pull requests welcome.
 
 - `create:category`
 - `create:category_group`
-- `create:template`
-- `create:template_group`
 - `create:member`
 - `create:member_group`
-- `create:field`
+- ~~`create:field`~~*
 - `create:field_group`
-- `create:global_variable`
-- `create:snippet`
-- `create:low_variable`
-- `sync:fields`
-- `sync:snippets`
-- `sync:global_variables`
+- ~~`create:low_variable`~~*
+- ~~`sync:fields`~~*
+
+\* *Probably not possible.*
+
