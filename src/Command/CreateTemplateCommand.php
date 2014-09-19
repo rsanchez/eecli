@@ -39,6 +39,13 @@ class CreateTemplateCommand extends Command
     {
         return array(
             array(
+                'stdin', // name
+                null, // shortcut
+                InputOption::VALUE_NONE, // mode
+                'Use stdin as template contents.', // description
+                null, // default value
+            ),
+            array(
                 'php', // name
                 'p', // shortcut
                 InputOption::VALUE_NONE, // mode
@@ -86,6 +93,16 @@ class CreateTemplateCommand extends Command
         $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         ee()->load->model('template_model');
+
+        $templateData = '';
+
+        if ($this->option('stdin')) {
+            $handle = fopen('php://stdin', 'r');
+
+            while (($buffer = fgets($handle, 4096)) !== false) {
+                $templateData .= $buffer;
+            }
+        }
 
         foreach ($templates as $template) {
 
@@ -183,7 +200,7 @@ class CreateTemplateCommand extends Command
 
             $_POST = array(
                 'template_id' => $templateId,
-                'template_data' => '',
+                'template_data' => $templateData,
                 'template_notes' => '',
                 'save_template_file' => ee()->config->item('save_tmpl_files'),
                 'save_template_revision' => ee()->config->item('save_tmpl_revisions'),
