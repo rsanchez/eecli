@@ -38,12 +38,49 @@ You will receive a warning message if your system folder cannot be found.
 
 ## Commands
 
+- [`help`](#help)
+- [`init`](#init)
+- [`list`](#list)
+- [`repl`](#repl)
+- [`cache:clear:ce_cache`](#clear-ce-cache)
+- [`cache:clear:ee`](#clear-ee-cache)
+- [`cache:clear:stash`](#clear-stash-cache)
+- [`create:channel`](#create-channel)
+- [`create:global_variable`](#create-global-variable)
+- [`create:snippet`](#create-snippet)
+- [`create:template`](#create-templates)
+- [`create:template_group`](#create-template-groups)
+- [`db:dump`](#db-dump)
+- [`delete:global_variable`](#delete-global-variable)
+- [`delete:snippet`](#delete-snippet)
+- [`delete:template`](#delete-templates)
+- [`delete:template_group`](#delete-template-groups)
+- [`generate:addon`](#generate-addon)
+- [`generate:command`](#generate-command)
+- [`generate:htaccess`](#generate-htaccess)
+- [`install:addon`](#install-addon)
+- [`show:config`](#show-config)
+- [`show:templates`](#show-templates)
+- [`sync:global_variables`](#synchronize-global-variables)
+- [`sync:snippets`](#synchronize-snippets)
+- [`sync:specialty_templates`](#synchronize-specialty-templates)
+- [`sync:templates`](#synchronize-templates)
+- [`update:addons`](#run-addon-updates)
+
 ### Help
 
 Display information about a command and its arguments/options.
 
 ```
 eecli help <command>
+```
+
+### Init
+
+Create an `.eecli.php` config file in the current directory.
+
+```
+eecli init
 ```
 
 ### List
@@ -53,6 +90,223 @@ List the available commands.
 ```
 eecli list
 ```
+
+### REPL
+
+```
+eecli repl
+```
+
+Starts an interactive shell.
+
+### Clear CE Cache
+
+Clears CE Cache.
+
+```
+# clear all CE Cache drivers
+eecli cache:clear:ce_cache
+
+# clear specific CE Cache items
+eecli cache:clear:ce_cache local/blog/detail/foo local/blog/detail/bar
+
+# clear specific CE Cache tags
+eecli cache:clear:ce_cache --tags foo bar
+```
+
+### Clear EE Cache
+
+Clears the native EE cache(s).
+
+```
+# clear all EE caches
+eecli cache:clear:ee
+
+# clear EE page caches
+eecli cache:clear:ee page
+
+# clear EE db caches
+eecli cache:clear:ee db
+
+# clear EE tag caches
+eecli cache:clear:ee tag
+```
+
+### Clear Stash Cache
+
+Clears the entire Stash cache by truncating the `exp_stash` table.
+
+```
+eecli cache:clear:stash
+```
+
+### Create Channel
+
+Creates an ExpressionEngine channel. Pass in a channel short name using underscores only and optionally pass in a channel title. If you exclude the channel title, one will be auto-generated from your channel short name.
+
+```
+# create a channel with the short name test_channel
+eecli create:channel test_channel
+
+# create a channel with the title Test Channel
+eecli create:channel test_channel "Test Channel"
+
+# create a channel with field group 5
+eecli create:channel --field_group=5 test_channel
+
+# create a channel with status group 5
+eecli create:channel --status_group=5 test_channel
+
+# create a channel with cat group 5 and 6
+eecli create:channel --cat_group="5|6" test_channel
+
+# create a channel with new field group with same title as channel
+eecli create:channel --new_field_group test_channel
+```
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a snippet file as well.
+
+### Create Global Variable
+
+```
+# create a blank global variable
+eecli create:global_variable your_global_variable_name
+
+# create a global variable with content
+eecli create:global_variable your_global_variable_name "your global variable content"
+
+# pipe in content
+echo "your global variable content" | eecli create:global_variable --stdin your_global_variable_name
+```
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a global variable file as well.
+
+### Create Snippet
+
+```
+# create a blank snippet
+eecli create:snippet your_snippet_name
+
+# create a snippet with content
+eecli create:snippet your_snippet_name "your snippet content"
+
+# pipe in content
+echo "your snippet content" | eecli create:snippet --stdin your_snippet_name
+
+# create a snippet accessible to all sites
+eecli create:snippet --global your_snippet_name
+```
+
+### Create Template(s)
+
+Create a new template. If the template group does not already exist, it will be created.
+
+```
+eecli create:template site/index
+
+# multiple templates
+eecli create:template site/index site/foo
+
+# with php enabled
+eecli create:template --php site/index
+
+# with php enabled on input
+eecli create:template --php --input site/index
+
+# with caching on (for 300 seconds)
+eecli create:template --cache=300 site/index
+
+# protect javascript
+eecli create:template --protect_js site/index
+
+# set a type: webpage, feed, css, js, static, xml
+eecli create:template --type=xml site/index
+```
+
+### Create Template Group(s)
+
+Create a new template group. This will also create an index template in the new group(s).
+
+```
+eecli create:template_group site
+
+# multiple groups
+eecli create:template_group site news blog
+
+# create the default group
+eecli create:template_group --default site
+```
+
+### DB Dump
+
+Dump your database using `mysqldump`. NOTE: your PHP installation must be able to call `mysqldump` via the PHP `system` function. If you have an `ENV` or `ENVIRONMENT` constant defined in your config.php, that name will be used in the sql dump file name.
+
+```
+# create a sql dump file in the current folder
+eecli db:dump
+
+# create a sql dump file in the specified folder
+eecli db:dump backups/
+
+# create a sql dump file, gzipped
+eecli db:dump --gzip
+
+# create a sql dump file, keep the last X backups and delete the rest
+eecli db:dump --backups=10 --gzip backups/
+```
+
+### Delete Global Variable
+
+```
+eecli delete:global_variable your_global_variable_name
+
+# delete multiple global variables
+eecli delete:global_variable your_global_variable_name your_other_global_variable_name
+```
+
+### Delete Snippet
+
+```
+eecli delete:snippet your_snippet_name
+
+# delete a snippet accessible to all sites
+eecli delete:snippet --global your_snippet_name
+
+# delete multiple snippets
+eecli delete:snippet your_snippet_name your_other_snippet_name
+```
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the snippet file as well.
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the global variable file as well.
+
+### Delete Template(s)
+
+```
+eecli delete:template site/index
+
+# multiple templates
+eecli delete:template site/index site/foo
+```
+
+### Delete Template Group(s)
+
+```
+eecli delete:template_group site
+
+# multiple groups
+eecli delete:template_group site news blog
+```
+
+### Generate Addon
+
+Generate an addon using a wizard interface.
+
+```
+eecli generate:addon
+```
+
+![Screencast of addon generation](https://rsanchez.github.io/eecli/images/eecli-generate-addon.gif)
 
 ### Generate Command
 
@@ -84,235 +338,41 @@ Generate the official EE .htaccess file (as found in the [EE documentation](http
 eecli generate:htaccess
 ```
 
-### Generate Addon(s)
+### Install Addon
 
-Generate an addon using a wizard interface.
-
-```
-eecli generate:addon
-```
-
-![Screencast of addon generation](https://rsanchez.github.io/eecli/images/eecli-generate-addon.gif)
-
-### Clear EE Cache
-
-Clears the native EE cache(s).
+Install Github-hosted addons using the `install:addon` wizard.
 
 ```
-# clear all EE caches
-eecli cache:clear:ee
-
-# clear EE page caches
-eecli cache:clear:ee page
-
-# clear EE db caches
-eecli cache:clear:ee db
-
-# clear EE tag caches
-eecli cache:clear:ee tag
+eecli install:addon
 ```
 
-### Clear Stash Cache
+This will prompt you to enter an addon name. Start typing to trigger autocomplete.
 
-Clears the entire Stash cache by truncating the `exp_stash` table.
-
-```
-eecli cache:clear:stash
-```
-
-### Clear CE Cache
-
-Clears CE Cache.
+You may also simply specify the addon name in the command. You can specify a branch as the second argument.
 
 ```
-# clear all CE Cache drivers
-eecli cache:clear:ce_cache
-
-# clear specific CE Cache items
-eecli cache:clear:ce_cache local/blog/detail/foo local/blog/detail/bar
-
-# clear specific CE Cache tags
-eecli cache:clear:ce_cache --tags foo bar
+eecli install low_replace
+eecli install stash dev
 ```
 
-### Run Addon Updates
+### Show Config
 
-This checks if any of your addons (modules, extensions, and fieldtypes) are out of date by comparing version numbers in your database with version numbers in your addon files. If so, it will run the addon's update method. This is exactly how addon updates work inside the control panel.
-
-```
-# run all addon updates
-eecli update:addons
-
-# run module updates
-eecli update:addons modules
-
-# run extension updates
-eecli update:addons extensions
-
-# run fieldtype updates
-eecli update:addons fieldtypes
-
-# run accessory updates
-eecli update:addons accessories
-```
-
-### DB Dump
-
-Dump your database using `mysqldump`. NOTE: your PHP installation must be able to call `mysqldump` via the PHP `system` function. If you have an `ENV` or `ENVIRONMENT` constant defined in your config.php, that name will be used in the sql dump file name.
+Show config items.
 
 ```
-# create a sql dump file in the current folder
-eecli db:dump
+# Show all config items in a table
+eecli show:config
 
-# create a sql dump file in the specified folder
-eecli db:dump backups/
-
-# create a sql dump file, gzipped
-eecli db:dump --gzip
-
-# create a sql dump file, keep the last X backups and delete the rest
-eecli db:dump --backups=10 --gzip backups/
+# Show the specified config item
+eecil show:config <key>
 ```
 
-### REPL
+### Show Templates
+
+List all templates found in the database
 
 ```
-eecli repl
-```
-
-Starts an interactive shell.
-
-### Create Channel
-
-Creates an ExpressionEngine channel. Pass in a channel short name using underscores only and optionally pass in a channel title. If you exclude the channel title, one will be auto-generated from your channel short name.
-
-```
-# create a channel with the short name test_channel
-eecli create:channel test_channel
-
-# create a channel with the title Test Channel
-eecli create:channel test_channel "Test Channel"
-
-# create a channel with field group 5
-eecli create:channel --field_group=5 test_channel
-
-# create a channel with status group 5
-eecli create:channel --status_group=5 test_channel
-
-# create a channel with cat group 5 and 6
-eecli create:channel --cat_group="5|6" test_channel
-```
-
-### Create Snippet
-
-```
-# create a blank snippet
-eecli create:snippet your_snippet_name
-
-# create a snippet with content
-eecli create:snippet your_snippet_name "your snippet content"
-
-# pipe in content
-echo "your snippet content" | eecli create:snippet --stdin your_snippet_name
-
-# create a snippet accessible to all sites
-eecli create:snippet --global your_snippet_name
-```
-
-When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a snippet file as well.
-
-### Create Global Variable
-
-```
-# create a blank global variable
-eecli create:global_variable your_global_variable_name
-
-# create a global variable with content
-eecli create:global_variable your_global_variable_name "your global variable content"
-
-# pipe in content
-echo "your global variable content" | eecli create:global_variable --stdin your_global_variable_name
-```
-
-When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a global variable file as well.
-
-### Create Template
-
-```
-eecli create:template site/index
-
-# multiple templates
-eecli create:template site/index site/foo
-
-# with php enabled
-eecli create:template --php site/index
-
-# with php enabled on input
-eecli create:template --php --input site/index
-
-# with caching on (for 300 seconds)
-eecli create:template --cache=300 site/index
-
-# protect javascript
-eecli create:template --protect_js site/index
-
-# set a type: webpage, feed, css, js, static, xml
-eecli create:template --type=xml site/index
-```
-
-### Create Template Group
-
-```
-eecli create:template_group site
-
-# multiple groups
-eecli create:template_group site news blog
-
-# create the default group
-eecli create:template_group --default site
-```
-
-### Delete Snippet
-
-```
-eecli delete:snippet your_snippet_name
-
-# delete a snippet accessible to all sites
-eecli delete:snippet --global your_snippet_name
-
-# delete multiple snippets
-eecli delete:snippet your_snippet_name your_other_snippet_name
-```
-
-When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the snippet file as well.
-
-### Delete Global Variable
-
-```
-eecli delete:global_variable your_global_variable_name
-
-# delete multiple global variables
-eecli delete:global_variable your_global_variable_name your_other_global_variable_name
-```
-
-When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the global variable file as well.
-
-### Delete Template
-
-```
-eecli delete:template site/index
-
-# multiple templates
-eecli delete:template site/index site/foo
-```
-
-### Delete Template Group
-
-```
-eecli delete:template_group site
-
-# multiple groups
-eecli delete:template_group site news blog
+eecli show:templates
 ```
 
 ### Synchronize Templates
@@ -347,41 +407,25 @@ Synchronize the specialty templates database with your specialty template files.
 eecli sync:specialty_templates
 ```
 
-### Show Config
+### Run Addon Updates
 
-Show config items.
-
-```
-# Show all config items in a table
-eecli show:config
-
-# Show the specified config item
-eecil show:config <key>
-```
-
-### Show Templates
-
-List all templates found in the database
+This checks if any of your addons (modules, extensions, and fieldtypes) are out of date by comparing version numbers in your database with version numbers in your addon files. If so, it will run the addon's update method. This is exactly how addon updates work inside the control panel.
 
 ```
-eecli show:templates
-```
+# run all addon updates
+eecli update:addons
 
-### Github Addon Installer
+# run module updates
+eecli update:addons modules
 
-If you have [Github Addon Installer](https://github.com/rsanchez/github_addon_installer) installed, you can use the `install:addon` command.
+# run extension updates
+eecli update:addons extensions
 
-```
-eecli install:addon
-```
+# run fieldtype updates
+eecli update:addons fieldtypes
 
-This will prompt you to enter an addon name. Start typing to trigger autocomplete.
-
-You may also simply specify the addon name in the command. You can specify a branch as the second argument.
-
-```
-eecli install low_replace
-eecli install stash dev
+# run accessory updates
+eecli update:addons accessories
 ```
 
 ## Third Party Commands
@@ -475,10 +519,11 @@ These commands yet to be implemented. Pull requests welcome.
 - `create:category_group`
 - `create:member`
 - `create:member_group`
+- `create:status`
+- `create:status_group`
 - ~~`create:field`~~*
 - `create:field_group`
 - ~~`create:low_variable`~~*
-- ~~`sync:fields`~~*
 
-\* *Probably not possible.*
+\* *Probably not possible to support all field types.*
 
