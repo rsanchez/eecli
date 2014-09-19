@@ -99,6 +99,12 @@ class CreateChannelCommand extends Command
                 InputOption::VALUE_OPTIONAL,
                 'What is the default category ID for this channel?',
             ),
+            array(
+                'new_field_group',
+                null,
+                InputOption::VALUE_NONE,
+                'Do you wish to also create a new field group with the same name as the channel?',
+            ),
         );
     }
 
@@ -116,14 +122,18 @@ class CreateChannelCommand extends Command
             ->get('channels');
 
         if ($query->num_rows() > 0) {
-            throw new \RuntimeException("The channel \"{$channel_name}\" already exists.");
+            $this->error("The channel \"{$channel_name}\" already exists.");
+
+            return;
         }
 
         $query->free_result();
 
+        $channel_title = $this->argument('channel_title') ?: ucwords(str_replace('_', ' ', $channel_name));
+
         $data = array(
             'channel_name' => $channel_name,
-            'channel_title' => $this->argument('channel_title') ?: ucwords(str_replace('_', ' ', $channel_name)),
+            'channel_title' => $channel_title,
             'channel_url' => $this->option('channel_url'),
             'channel_description' => $this->option('channel_description'),
             'default_entry_title' => $this->option('default_entry_title'),
@@ -138,16 +148,31 @@ class CreateChannelCommand extends Command
         );
 
         if (! $data['field_group']) {
-            //if there is only one field group assign it, otherwise for now leave unassigned
-            $query = ee()->db->select('group_id')
-                ->where('site_id', ee()->config->item('site_id'))
-                ->get('field_groups');
+            if ($this->option('new_field_group')) {
 
-            if ($query->num_rows() === 1) {
-                $data['field_group'] = $query->row('group_id');
+                ee()->load->model('field_model');
+
+                if (ee()->field_model->is_duplicate_field_group_name($channel_title)) {
+                    $this->error("The field group \"{$channel_title}\" already exists. Channel not created.");
+
+                    return;
+                }
+
+                ee()->field_model->insert_field_group($channel_title);
+
+                $data['field_group'] = ee()->db->insert_id();
+            } else {
+                //if there is only one field group assign it, otherwise for now leave unassigned
+                $query = ee()->db->select('group_id')
+                    ->where('site_id', ee()->config->item('site_id'))
+                    ->get('field_groups');
+
+                if ($query->num_rows() === 1) {
+                    $data['field_group'] = $query->row('group_id');
+                }
+
+                $query->free_result();
             }
-
-            $query->free_result();
         }
 
         if (! $data['status_group']) {
