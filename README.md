@@ -51,8 +51,8 @@ You will receive a warning message if your system folder cannot be found.
 - [`create:template`](#create-templates)
 - [`create:template_group`](#create-template-groups)
 - [`db:dump`](#db-dump)
-- [`delete:global_variable`](#delete-global-variable)
-- [`delete:snippet`](#delete-snippet)
+- [`delete:global_variable`](#delete-global-variables)
+- [`delete:snippet`](#delete-snippets)
 - [`delete:template`](#delete-templates)
 - [`delete:template_group`](#delete-template-groups)
 - [`generate:addon`](#generate-addon)
@@ -255,7 +255,7 @@ eecli db:dump --gzip
 eecli db:dump --backups=10 --gzip backups/
 ```
 
-### Delete Global Variable
+### Delete Global Variable(s)
 
 ```
 eecli delete:global_variable your_global_variable_name
@@ -264,7 +264,9 @@ eecli delete:global_variable your_global_variable_name
 eecli delete:global_variable your_global_variable_name your_other_global_variable_name
 ```
 
-### Delete Snippet
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the global variable file as well.
+
+### Delete Snippet(s)
 
 ```
 eecli delete:snippet your_snippet_name
@@ -277,8 +279,6 @@ eecli delete:snippet your_snippet_name your_other_snippet_name
 ```
 
 When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the snippet file as well.
-
-When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the global variable file as well.
 
 ### Delete Template(s)
 
