@@ -47,6 +47,7 @@ You will receive a warning message if your system folder cannot be found.
 - [`cache:clear:stash`](#clear-stash-cache)
 - [`create:channel`](#create-channel)
 - [`create:global_variable`](#create-global-variable)
+- [`create:member`](#create-member)
 - [`create:snippet`](#create-snippet)
 - [`create:template`](#create-templates)
 - [`create:template_group`](#create-template-groups)
@@ -164,8 +165,6 @@ eecli create:channel --cat_group="5|6" test_channel
 eecli create:channel --new_field_group test_channel
 ```
 
-When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a snippet file as well.
-
 ### Create Global Variable
 
 ```
@@ -180,6 +179,27 @@ echo "your global variable content" | eecli create:global_variable --stdin your_
 ```
 
 When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a global variable file as well.
+
+### Create Member
+
+Create a new member. If you omit a password, one will be generated for you.
+
+```
+# create a member with same username & email
+eecli create:member your.email@site.com
+
+# create a member with different username & email
+eecli create:member --email="your.email@site.com" your_username
+
+# create a member with the specified screen name
+eecli create:member --screen_name="Your Name" your.email@site.com
+
+# create a member with the specified password
+eecli create:member --password="so48jf48jss4sk" your.email@site.com
+
+# create a superadmin
+eecli create:member --member_group=1 your.email@site.com
+```
 
 ### Create Snippet
 
@@ -196,6 +216,8 @@ echo "your snippet content" | eecli create:snippet --stdin your_snippet_name
 # create a snippet accessible to all sites
 eecli create:snippet --global your_snippet_name
 ```
+
+When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a snippet file as well.
 
 ### Create Template(s)
 
@@ -541,7 +563,6 @@ These commands yet to be implemented. Pull requests welcome.
 
 - `create:category`
 - `create:category_group`
-- `create:member`
 - `create:member_group`
 - `create:status`
 - `create:status_group`
