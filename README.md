@@ -448,6 +448,30 @@ public function eecli_add_commands($commands, $app)
 }
 ```
 
+Composer libraries can add custom commands to eecli by using the `file` autoload feature of composer. In your composer.json:
+
+```js
+"autoload": {
+    "psr-4": { "YourNamespace\\": "src/" },
+    "files": { "src/register.php" }
+}
+```
+
+And then in your `register.php`:
+
+```php
+<?php
+
+if (php_sapi_name() !== 'cli') {
+    exit;
+}
+
+use eecli\Application;
+
+Application::registerGlobalCommand('\\YourNamespace\\FooCommand');
+Application::registerGlobalCommand('\\YourNamespace\\BarCommand');
+```
+
 ## Autocompletion
 
 If you use [Oh My ZSH](https://github.com/robbyrussell/oh-my-zsh), you can install the [eecli ZSH autocompletion plugin](https://github.com/rsanchez/eecli/tree/zsh-plugin).

@@ -69,6 +69,12 @@ class Application extends ConsoleApplication
      */
     protected $addonAuthorUrl = '';
 
+    /**
+     * List of command classes that should be added to this application
+     * @var array
+     */
+    protected static $globalCommands = [];
+
     public function __construct()
     {
         parent::__construct(self::NAME, self::VERSION);
@@ -416,13 +422,45 @@ class Application extends ConsoleApplication
      */
     public function addUserDefinedCommands()
     {
-        foreach ($this->userDefinedCommands as $classname) {
-            // is it a callback or a string?
-            if (is_callable($classname)) {
-                $this->add(call_user_func($classname, $this));
-            } else {
-                $this->add(new $classname());
-            }
+        foreach ($this->userDefinedCommands as $class) {
+            $this->registerCommand($class);
+        }
+    }
+
+    /**
+     * Find any globally registered Commands
+     * and add them to the Application
+     */
+    public function addGlobalCommands()
+    {
+        foreach (self::$globalCommands as $class) {
+            $this->registerCommand($class);
+        }
+    }
+
+    /**
+     * Register a Command class globally
+     * @param  string $class
+     * @return void
+     */
+    public static function registerGlobalCommand($class)
+    {
+        array_push(self::$globalCommands, $class);
+    }
+
+    /**
+     * Add a command to the Application by class name
+     * or callback that return a Command class
+     * @param  string|callable $class class name or callback that returns a command
+     * @return void
+     */
+    public function registerCommand($class)
+    {
+        // is it a callback or a string?
+        if (is_callable($class)) {
+            $this->add(call_user_func($class, $this));
+        } else {
+            $this->add(new $class());
         }
     }
 
