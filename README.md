@@ -48,6 +48,7 @@ You will receive a warning message if your system folder cannot be found.
 - [`create:channel`](#create-channel)
 - [`create:global_variable`](#create-global-variable)
 - [`create:member`](#create-member)
+- [`create:member`](#create-member-group)
 - [`create:snippet`](#create-snippet)
 - [`create:template`](#create-templates)
 - [`create:template_group`](#create-template-groups)
@@ -182,7 +183,7 @@ When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) install
 
 ### Create Member
 
-Create a new member. If you omit a password, one will be generated for you.
+Create a new member. If you omit a password, one will be generated for you. If you omit an email, the username will be used as the email address. If you omit a member group, the default member group for your system will be used.
 
 ```
 # create a member with same username & email
@@ -199,6 +200,22 @@ eecli create:member --password="so48jf48jss4sk" your.email@site.com
 
 # create a superadmin
 eecli create:member --member_group=1 your.email@site.com
+```
+
+### Create Member Group
+
+```
+# create a member group with default preferences
+eecli create:member_group your_group_name
+
+# create a member group using another group's preferences
+eecli create:member_group --clone=1 your_group_name
+
+# create a member group and with the specified preferences
+eecli create:member_group --can_access_cp=y --can_access_content=y your_group_name
+
+# show all possible preference options
+eecli help create:member_group
 ```
 
 ### Create Snippet

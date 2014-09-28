@@ -97,6 +97,7 @@ class Application extends ConsoleApplication
         $this->add(new Command\UpdateAddonsCommand());
         $this->add(new Command\CreateChannelCommand());
         $this->add(new Command\CreateMemberCommand());
+        $this->add(new Command\CreateMemberGroupCommand());
         $this->add(new Command\CreateTemplateCommand());
         $this->add(new Command\CreateTemplateGroupCommand());
         $this->add(new Command\CreateSnippetCommand());
