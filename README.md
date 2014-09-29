@@ -48,7 +48,7 @@ You will receive a warning message if your system folder cannot be found.
 - [`create:channel`](#create-channel)
 - [`create:global_variable`](#create-global-variable)
 - [`create:member`](#create-member)
-- [`create:member`](#create-member-group)
+- [`create:member_group`](#create-member-group)
 - [`create:snippet`](#create-snippet)
 - [`create:template`](#create-templates)
 - [`create:template_group`](#create-template-groups)
@@ -580,7 +580,6 @@ These commands yet to be implemented. Pull requests welcome.
 
 - `create:category`
 - `create:category_group`
-- `create:member_group`
 - `create:status`
 - `create:status_group`
 - ~~`create:field`~~*
