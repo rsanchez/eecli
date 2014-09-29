@@ -2,14 +2,14 @@
 
 namespace eecli\Command;
 
-use eecli\Command\ExemptFromBootstrapInterface;
+use eecli\Command\Contracts\ExemptFromBootstrap;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
-class GenerateCommandCommand extends Command implements ExemptFromBootstrapInterface
+class GenerateCommandCommand extends Command implements ExemptFromBootstrap
 {
     /**
      * {@inheritdoc}

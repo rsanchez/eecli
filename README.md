@@ -521,7 +521,7 @@ eecli custom commands are [Laravel Console](http://laravel.com/docs/commands#bui
 
 You can generate a custom command file using the `eecli generate:command` command.
 
-If your command does not require that EE be bootstrapped to run, you should simply implement the `eecli\Command\ExemptFromBootstrapInterface`, which has no additional methods.
+If your command does not require that EE be bootstrapped to run, you should simply implement the `eecli\Command\Contracts\ExemptFromBootstrap` interface, which has no additional methods.
 
 Here is a simple example custom command (it is assumed your custom command classes are in your autoloader):
 

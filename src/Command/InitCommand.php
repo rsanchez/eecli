@@ -2,10 +2,10 @@
 
 namespace eecli\Command;
 
-use eecli\Command\ExemptFromBootstrapInterface;
+use eecli\Command\Contracts\ExemptFromBootstrap;
 use Illuminate\Console\Command;
 
-class InitCommand extends Command implements ExemptFromBootstrapInterface
+class InitCommand extends Command implements ExemptFromBootstrap
 {
     /**
      * {@inheritdoc}
