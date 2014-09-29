@@ -383,8 +383,6 @@ class Application extends ConsoleApplication
         foreach ($finder as $file) {
             $class = '\\eecli\\Command\\'.$file->getBasename('.php');
 
-            echo $class.PHP_EOL;
-
             $this->add(new $class());
         }
     }
