@@ -531,8 +531,13 @@ if (php_sapi_name() !== 'cli') {
 
 use eecli\Application;
 
+# the name of a Command class
 Application::registerGlobalCommand('\\YourNamespace\\FooCommand');
-Application::registerGlobalCommand('\\YourNamespace\\BarCommand');
+
+# or a callback which returns a Command object
+Application::registerGlobalCommand(function () {
+    return new \YourNamespace\BarCommand();
+});
 ```
 
 ## Autocompletion
