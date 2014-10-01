@@ -50,6 +50,8 @@ You will receive a warning message if your system folder cannot be found.
 - [`create:member`](#create-member)
 - [`create:member_group`](#create-member-group)
 - [`create:snippet`](#create-snippet)
+- [`create:status`](#create-status)
+- [`create:status_group`](#create-status-group)
 - [`create:template`](#create-templates)
 - [`create:template_group`](#create-template-groups)
 - [`db:dump`](#db-dump)
@@ -216,6 +218,28 @@ eecli create:member_group --can_access_cp=y --can_access_content=y your_group_na
 
 # show all possible preference options
 eecli help create:member_group
+```
+
+### Create Status
+
+Creates a new status. The first argument is a status name. The second argument is a status group name or ID.
+
+```
+# create a status in the specfied group (by ID)
+eecli create:status featured 1
+
+# create a status in the specified group (by name)
+eecli create:status draft your_group_name
+
+# create a status with a red color
+eecli create:status --color="FF0000" featured 1
+```
+
+### Create Status Group
+
+```
+# create a status group
+eecli create:status_group your_group_name
 ```
 
 ### Create Snippet
@@ -580,8 +604,6 @@ These commands yet to be implemented. Pull requests welcome.
 
 - `create:category`
 - `create:category_group`
-- `create:status`
-- `create:status_group`
 - ~~`create:field`~~*
 - `create:field_group`
 - ~~`create:low_variable`~~*
