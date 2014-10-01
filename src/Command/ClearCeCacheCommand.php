@@ -30,6 +30,12 @@ class ClearCeCacheCommand extends Command
                 InputOption::VALUE_NONE,
                 'Whether to delete by tag.',
             ),
+            array(
+                'driver',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Which driver to clear',
+            ),
         );
     }
 
@@ -56,13 +62,28 @@ class ClearCeCacheCommand extends Command
 
         $items = $this->argument('items');
         $tags = $this->option('tags');
+        $drivers = $this->option('driver');
+
+        $defaultDrivers = array('file', 'db', 'static', 'apc', 'memcache', 'memcached', 'redis', 'dummy');
+
+        if ($drivers) {
+            $invalidDrivers = array_diff($drivers, $defaultDrivers);
+
+            if ($invalidDrivers) {
+                throw new \RuntimeException('Invalid driver(s) specified: '.implode(', ', $invalidDrivers));
+            }
+
+            $drivers = array_intersect($drivers, $defaultDrivers);
+        } else {
+            $drivers = $defaultDrivers;
+        }
 
         // if there are no arguments, clear all caches
         if (! $items) {
 
             require_once PATH_THIRD.'ce_cache/libraries/Ce_cache_factory.php';
 
-            $drivers = \Ce_cache_factory::factory(array('file', 'db', 'static', 'apc', 'memcache', 'memcached', 'redis', 'dummy'));
+            $drivers = \Ce_cache_factory::factory($drivers);
 
             foreach ($drivers as $driver) {
                 $driverName = lang('ce_cache_driver_'. $driver->name());
