@@ -3,6 +3,8 @@
 namespace eecli;
 
 use eecli\Command\Contracts\ExemptFromBootstrap;
+use eecli\Command\Contracts\HasRuntimeOptions;
+use eecli\Console\NonStrictArgvInput;
 use eecli\CodeIgniter\ConsoleOutput as CodeIgniterConsoleOutput;
 use eecli\CodeIgniter\BootableInterface;
 use eecli\CodeIgniter\Cp;
@@ -171,6 +173,22 @@ class Application extends ConsoleApplication
     }
 
     /**
+     * Check whether a command has runtime options that need to be loaded
+     * @param  \Symfony\Component\Console\Command\Command $command
+     * @return boolean
+     */
+    protected function doesCommandHaveRuntimeOptions(SymfonyCommand $command)
+    {
+        $commandName = $command->getName();
+
+        if ($commandName === 'help' || $commandName === 'list') {
+            return false;
+        }
+
+        return $command instanceof HasRuntimeOptions;
+    }
+
+    /**
      * On Command Event Handler
      *
      * Check if the current command requires EE bootstrapping
@@ -193,6 +211,16 @@ class Application extends ConsoleApplication
             // override EE classes to print errors/messages to console
             ee()->output = new CodeIgniterConsoleOutput($output);
             ee()->functions = new Functions($output);
+        }
+
+        if ($this->doesCommandHaveRuntimeOptions($command)) {
+            // we use this to allow the command to access cli arguments
+            // during the getRuntimeOptions call
+            $input = new NonStrictArgvInput(null, $event->getCommand()->getDefinition());
+
+            foreach ($command->getRuntimeOptions($this, $input) as $option) {
+                $this->getDefinition()->addOption($option);
+            }
         }
     }
 
