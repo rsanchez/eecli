@@ -26,7 +26,7 @@ class DeleteEntryCommand extends Command
             array(
                 'entry', // name
                 InputArgument::REQUIRED, // mode
-                'The entry_id or url_title of an entry', // description
+                'The entry_id, url_title, or title of an entry', // description
             ),
         );
     }
@@ -43,14 +43,21 @@ class DeleteEntryCommand extends Command
 
         $type = is_numeric($name) ? 'entry_id' : 'url_title';
 
-        $query = ee()->db->select('entry_id,title')
+        ee()->db->select('entry_id,title')
             ->from('channel_titles')
             ->where('site_id', $siteId)
-            ->where($type, $name)
-            ->get();
+            ->where($type, $name);
+        if ($type == "url_title"){
+            ee()->db->or_where('title', $name);
+        }
+        $query = ee()->db->get();
 
         if ($query->num_rows() === 0){
             throw new \RuntimeException("This entry $name was not found");
+        }
+
+        if ($query->num_rows() > 1){
+            throw new \RuntimeException("There were multiple entries with $name found");
         }
 
         ee()->load->library('api');
@@ -59,7 +66,6 @@ class DeleteEntryCommand extends Command
         $title = $query->row('title');
 
         //set group id to be a super admin
-        //Github issue: https://github.com/rsanchez/eecli/issues/3
         ee()->session->userdata['group_id'] = '1';
         ee()->session->userdata['can_delete_all_entries'] = 'y';
 
