@@ -53,6 +53,7 @@ You will receive a warning message if your system folder cannot be found.
 - [`create:template`](#create-templates)
 - [`create:template_group`](#create-template-groups)
 - [`db:dump`](#db-dump)
+- [`delete:entry`](#delete-entry)
 - [`delete:global_variable`](#delete-global-variables)
 - [`delete:snippet`](#delete-snippets)
 - [`delete:template`](#delete-templates)
@@ -292,6 +293,17 @@ eecli db:dump --gzip
 
 # create a sql dump file, keep the last X backups and delete the rest
 eecli db:dump --backups=10 --gzip backups/
+```
+
+### Delete Entry
+Delete an entry by entering in an entry_id, url_title or title. If entering in a title with spaces you must wrap the title in quotes.
+
+```
+# delete an entry by the title
+eecli delete:entry “Entry be gone”
+
+# delete an entry by the url_title
+eecli delete:entry entry_be_gone
 ```
 
 ### Delete Global Variable(s)
