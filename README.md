@@ -296,11 +296,11 @@ eecli db:dump --backups=10 --gzip backups/
 ```
 
 ### Delete Entry
-Delete an entry by entering in an entry_id, url_title or title. If entering in a title with spaces you must wrap the title in quotes.
+Delete an entry by entering in an entry_id or url_title.
 
 ```
-# delete an entry by the title
-eecli delete:entry “Entry be gone”
+# delete an entry by the entry_id
+eecli delete:entry 123
 
 # delete an entry by the url_title
 eecli delete:entry entry_be_gone

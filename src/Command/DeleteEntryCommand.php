@@ -26,7 +26,7 @@ class DeleteEntryCommand extends Command
             array(
                 'entry', // name
                 InputArgument::REQUIRED, // mode
-                'The entry_id, url_title, or title of an entry', // description
+                'The entry_id or url_title of an entry', // description
             ),
         );
     }
@@ -43,14 +43,11 @@ class DeleteEntryCommand extends Command
 
         $type = is_numeric($name) ? 'entry_id' : 'url_title';
 
-        ee()->db->select('entry_id,title')
+        $query = ee()->db->select('entry_id,title')
             ->from('channel_titles')
             ->where('site_id', $siteId)
-            ->where($type, $name);
-        if ($type == "url_title"){
-            ee()->db->or_where('title', $name);
-        }
-        $query = ee()->db->get();
+            ->where($type, $name)
+            ->get();
 
         if ($query->num_rows() === 0){
             throw new \RuntimeException("This entry $name was not found");
