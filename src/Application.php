@@ -335,11 +335,6 @@ class Application extends ConsoleApplication
             }
         }
 
-        // Session class needs this
-        if (! isset($_SERVER['REMOTE_ADDR'])) {
-            $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-        }
-
         // Add user-defined commands from config
         if (isset($config['commands']) && is_array($config['commands'])) {
             $this->userDefinedCommands = $config['commands'];
