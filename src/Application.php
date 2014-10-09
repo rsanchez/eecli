@@ -112,6 +112,7 @@ class Application extends ConsoleApplication
         $this->add(new Command\DeleteGlobalVariableCommand());
         $this->add(new Command\SyncTemplatesCommand());
         $this->add(new Command\ShowTemplatesCommand());
+        $this->add(new Command\DeleteEntryCommand());
     }
 
     /**
