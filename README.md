@@ -45,11 +45,14 @@ You will receive a warning message if your system folder cannot be found.
 - [`cache:clear:ce_cache`](#clear-ce-cache)
 - [`cache:clear:ee`](#clear-ee-cache)
 - [`cache:clear:stash`](#clear-stash-cache)
+- [`create:category`](#create-category)
 - [`create:channel`](#create-channel)
 - [`create:global_variable`](#create-global-variable)
 - [`create:member`](#create-member)
-- [`create:member`](#create-member-group)
+- [`create:member_group`](#create-member-group)
 - [`create:snippet`](#create-snippet)
+- [`create:status`](#create-status)
+- [`create:status_group`](#create-status-group)
 - [`create:template`](#create-templates)
 - [`create:template_group`](#create-template-groups)
 - [`db:dump`](#db-dump)
@@ -115,6 +118,9 @@ eecli cache:clear:ce_cache local/blog/detail/foo local/blog/detail/bar
 
 # clear specific CE Cache tags
 eecli cache:clear:ce_cache --tags foo bar
+
+# clear specific CE Cache drivers
+eecli cache:clear:ce_cache --driver=file --driver=redis foo bar
 ```
 
 ### Clear EE Cache
@@ -141,6 +147,30 @@ Clears the entire Stash cache by truncating the `exp_stash` table.
 
 ```
 eecli cache:clear:stash
+```
+
+### Create Category
+
+Creates a category. The first argument is a category name. The second argument is a category group name or ID.
+
+```
+# create a category in the specfied group (by ID)
+eecli create:category "16th Century" 1
+
+# create a category in the specified group (by name)
+eecli create:category Prehistoric "Time Periods"
+
+# create a category with a custom url title
+eecli create:category --url_title="16th" "16th Century" 1
+
+# create a category with the specified parent_id
+eecli create:category --parent_id=12 "1920s" 1
+
+# create a category with the specified description
+eecli create:category --description="The Roaring 20s" "1920s" 1
+
+# create a category with one (or more) custom category fields
+eecli create:category --your_category_field="The Roaring 20s" "1920s" 1
 ```
 
 ### Create Channel
@@ -217,6 +247,28 @@ eecli create:member_group --can_access_cp=y --can_access_content=y your_group_na
 
 # show all possible preference options
 eecli help create:member_group
+```
+
+### Create Status
+
+Creates a new status. The first argument is a status name. The second argument is a status group name or ID.
+
+```
+# create a status in the specfied group (by ID)
+eecli create:status featured 1
+
+# create a status in the specified group (by name)
+eecli create:status draft your_group_name
+
+# create a status with a red color
+eecli create:status --color="FF0000" featured 1
+```
+
+### Create Status Group
+
+```
+# create a status group
+eecli create:status_group your_group_name
 ```
 
 ### Create Snippet
@@ -519,8 +571,13 @@ if (php_sapi_name() !== 'cli') {
 
 use eecli\Application;
 
+# the name of a Command class
 Application::registerGlobalCommand('\\YourNamespace\\FooCommand');
-Application::registerGlobalCommand('\\YourNamespace\\BarCommand');
+
+# or a callback which returns a Command object
+Application::registerGlobalCommand(function () {
+    return new \YourNamespace\BarCommand();
+});
 ```
 
 ## Autocompletion
@@ -533,7 +590,7 @@ eecli custom commands are [Laravel Console](http://laravel.com/docs/commands#bui
 
 You can generate a custom command file using the `eecli generate:command` command.
 
-If your command does not require that EE be bootstrapped to run, you should simply implement the `eecli\Command\ExemptFromBootstrapInterface`, which has no additional methods.
+If your command does not require that EE be bootstrapped to run, you should simply implement the `eecli\Command\Contracts\ExemptFromBootstrap` interface, which has no additional methods.
 
 Here is a simple example custom command (it is assumed your custom command classes are in your autoloader):
 
@@ -590,11 +647,7 @@ Please send pull requests to the [develop branch](https://github.com/rsanchez/ee
 
 These commands yet to be implemented. Pull requests welcome.
 
-- `create:category`
 - `create:category_group`
-- `create:member_group`
-- `create:status`
-- `create:status_group`
 - ~~`create:field`~~*
 - `create:field_group`
 - ~~`create:low_variable`~~*

@@ -2,7 +2,9 @@
 
 namespace eecli;
 
-use eecli\Command\ExemptFromBootstrapInterface;
+use eecli\Command\Contracts\ExemptFromBootstrap;
+use eecli\Command\Contracts\HasRuntimeOptions;
+use eecli\Console\NonStrictArgvInput;
 use eecli\CodeIgniter\ConsoleOutput as CodeIgniterConsoleOutput;
 use eecli\CodeIgniter\BootableInterface;
 use eecli\CodeIgniter\Cp;
@@ -13,6 +15,7 @@ use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Finder\Finder;
 use Doctrine\Instantiator\Instantiator;
 use ReflectionClass;
 
@@ -87,32 +90,7 @@ class Application extends ConsoleApplication
 
         $this->loadConfig();
 
-        $this->add(new Command\InitCommand());
-        $this->add(new Command\ClearStashCacheCommand());
-        $this->add(new Command\ClearCeCacheCommand());
-        $this->add(new Command\ClearEECacheCommand());
-        $this->add(new Command\GithubAddonInstallerCommand());
-        $this->add(new Command\ReplCommand());
-        $this->add(new Command\ShowConfigCommand());
-        $this->add(new Command\UpdateAddonsCommand());
-        $this->add(new Command\CreateChannelCommand());
-        $this->add(new Command\CreateMemberCommand());
-        $this->add(new Command\CreateMemberGroupCommand());
-        $this->add(new Command\CreateTemplateCommand());
-        $this->add(new Command\CreateTemplateGroupCommand());
-        $this->add(new Command\CreateSnippetCommand());
-        $this->add(new Command\CreateGlobalVariableCommand());
-        $this->add(new Command\GenerateCommandCommand());
-        $this->add(new Command\GenerateAddonCommand());
-        $this->add(new Command\GenerateHtaccessCommand());
-        $this->add(new Command\DbDumpCommand());
-        $this->add(new Command\DeleteTemplateCommand());
-        $this->add(new Command\DeleteTemplateGroupCommand());
-        $this->add(new Command\DeleteSnippetCommand());
-        $this->add(new Command\DeleteGlobalVariableCommand());
-        $this->add(new Command\SyncTemplatesCommand());
-        $this->add(new Command\ShowTemplatesCommand());
-        $this->add(new Command\DeleteEntryCommand());
+        $this->addCoreCommands();
     }
 
     /**
@@ -191,7 +169,23 @@ class Application extends ConsoleApplication
             return true;
         }
 
-        return $command instanceof ExemptFromBootstrapInterface;
+        return $command instanceof ExemptFromBootstrap;
+    }
+
+    /**
+     * Check whether a command has runtime options that need to be loaded
+     * @param  \Symfony\Component\Console\Command\Command $command
+     * @return boolean
+     */
+    protected function doesCommandHaveRuntimeOptions(SymfonyCommand $command)
+    {
+        $commandName = $command->getName();
+
+        if ($commandName === 'help' || $commandName === 'list') {
+            return false;
+        }
+
+        return $command instanceof HasRuntimeOptions;
     }
 
     /**
@@ -217,6 +211,16 @@ class Application extends ConsoleApplication
             // override EE classes to print errors/messages to console
             ee()->output = new CodeIgniterConsoleOutput($output);
             ee()->functions = new Functions($output);
+        }
+
+        if ($this->doesCommandHaveRuntimeOptions($command)) {
+            // we use this to allow the command to access cli arguments
+            // during the getRuntimeOptions call
+            $input = new NonStrictArgvInput(null, $event->getCommand()->getDefinition());
+
+            foreach ($command->getRuntimeOptions($this, $input) as $option) {
+                $this->getDefinition()->addOption($option);
+            }
         }
     }
 
@@ -389,6 +393,26 @@ class Application extends ConsoleApplication
     public function getAddonAuthorUrl()
     {
         return $this->addonAuthorUrl;
+    }
+
+    /**
+     * Add all the core commands to the application
+     * @return void
+     */
+    public function addCoreCommands()
+    {
+        $finder = new Finder();
+
+        $finder->files()
+            ->in(__DIR__.'/Command')
+            ->depth('== 0')
+            ->name('*.php');
+
+        foreach ($finder as $file) {
+            $class = '\\eecli\\Command\\'.$file->getBasename('.php');
+
+            $this->add(new $class());
+        }
     }
 
     /**
