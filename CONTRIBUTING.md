@@ -1,3 +1,3 @@
 # Contributing
 
-Please send pull requests to the [develop branch](https://github.com/rsanchez/eecli/tree/develop). Please be sure to follow the [PSR-1](http://www.php-fig.org/psr/psr-1/) coding standard and the [PSR-2](http://www.php-fig.org/psr/psr-2/) style guide.
+Please send pull requests to the [develop branch](https://github.com/rsanchez/eecli/tree/develop). Please be sure to follow the [PSR-1](http://www.php-fig.org/psr/psr-1/) coding standard and the [PSR-2](http://www.php-fig.org/psr/psr-2/) style guide. If your pull request requires a change in documentation, please add a comment to your pull request with the updated and/or new wiki page document.
