@@ -30,4 +30,4 @@ Here are a few example commands:
 > eecli your_custom_command
 ```
 
-To learn more, please see the [Wiki](https://github.com/rsanchez/eecli).
+To learn more, please see the [Wiki](https://github.com/rsanchez/eecli/wiki).
