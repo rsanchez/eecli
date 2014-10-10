@@ -280,6 +280,41 @@ class Application extends ConsoleApplication
     }
 
     /**
+     * Recursively search for an EE system path in the
+     * current working directory.
+     *
+     * @return string|null
+     */
+    public function findSystemPath()
+    {
+        $finder = new Finder();
+
+        $finder->files()
+            ->in(getcwd())
+            ->name('CodeIgniter.php');
+
+        $systemPath = null;
+
+        foreach ($finder as $file) {
+            $path = $file->getRealPath();
+
+            $parentDir = dirname($path);
+
+            $grandparentDir = dirname($parentDir);
+
+            $greatgrandparentDir = dirname($grandparentDir);
+
+            if (basename($parentDir) === 'core' && basename($grandparentDir) === 'system' && basename($greatgrandparentDir) === 'codeigniter') {
+                $systemPath = dirname($greatgrandparentDir);
+
+                break;
+            }
+        }
+
+        return $systemPath;
+    }
+
+    /**
      * Looks for ~/.eecli.php and ./.eecli.php
      * and combines them into an array
      *
@@ -312,6 +347,9 @@ class Application extends ConsoleApplication
             }
 
             unset($temp);
+        } else {
+            // try to find the system path
+            $config['system_path'] = $this->findSystemPath();
         }
 
         // Spoof $_SERVER variables
