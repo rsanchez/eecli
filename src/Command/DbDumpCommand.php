@@ -74,6 +74,18 @@ class DbDumpCommand extends Command
 
         $gzip = $this->option('gzip');
 
+        if (! function_exists('system')) {
+            throw new \RuntimeException('The system function is disabled php.');
+        }
+
+        if ($gzip && ! system('which gzip')) {
+            throw new \RuntimeException('gzip could not be found in your $PATH.');
+        }
+
+        if ($gzip && ! system('which mysqldump')) {
+            throw new \RuntimeException('mysqldump could not be found in your $PATH.');
+        }
+
         $extension = $gzip ? '.sql.gz' : '.sql';
 
         $name = $this->option('name');
