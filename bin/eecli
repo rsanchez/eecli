@@ -19,5 +19,6 @@ $app->fire('bootstrap.after');
 
 $app->addThirdPartyCommands();
 $app->addUserDefinedCommands();
+$app->addGlobalCommands();
 
 $app->run();
