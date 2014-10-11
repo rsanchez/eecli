@@ -4,6 +4,7 @@ namespace eecli\Command;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class DeleteEntryCommand extends Command
 {
@@ -34,6 +35,21 @@ class DeleteEntryCommand extends Command
     /**
      * {@inheritdoc}
      */
+    protected function getOptions()
+    {
+        return array(
+            array(
+                'force', // name
+                'f', // shortcut
+                InputOption::VALUE_NONE, // mode
+                'Do not ask for confirmation before deleting', // description
+            ),
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function fire()
     {
         $name = $this->argument('entry');
@@ -43,7 +59,7 @@ class DeleteEntryCommand extends Command
 
         $type = is_numeric($name) ? 'entry_id' : 'url_title';
 
-        $query = ee()->db->select('entry_id,title')
+        $query = ee()->db->select('entry_id, title')
             ->from('channel_titles')
             ->where('site_id', $siteId)
             ->where($type, $name)
@@ -68,6 +84,12 @@ class DeleteEntryCommand extends Command
         //set group id to be a super admin
         ee()->session->userdata['group_id'] = '1';
         ee()->session->userdata['can_delete_all_entries'] = 'y';
+
+        if (! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
+            $this->error('Did not delete entry '.$title);
+
+            return;
+        }
 
         $delete = ee()->api_channel_entries->delete_entry((int) $entry_id);
 
