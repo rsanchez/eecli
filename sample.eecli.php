@@ -40,11 +40,11 @@ return array(
      * HTTP_HOST="foo.dev" eecli update:addons
      */
     'server' => array(
-        'HTTP_HOST' => getenv('HTTP_HOST') ?: 'localhost',
-        'DOCUMENT_ROOT' => getenv('DOCUMENT_ROOT') ?: __DIR__,
-        'REQUEST_URI' => getenv('REQUEST_URI') ?: '/',
-        'REMOTE_ADDR' => getenv('REMOTE_ADDR') ?: '127.0.0.1',
-        'HTTP_USER_AGENT' => getenv('HTTP_USER_AGENT') ?: 'eecli',
+        'HTTP_HOST' => 'localhost',
+        'DOCUMENT_ROOT' => __DIR__,
+        'REQUEST_URI' => '/',
+        'REMOTE_ADDR' => '127.0.0.1',
+        'HTTP_USER_AGENT' => 'eecli',
     ),
 
     /**

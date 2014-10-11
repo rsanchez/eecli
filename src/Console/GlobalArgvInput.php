@@ -28,10 +28,28 @@ use Symfony\Component\Console\Input\InputDefinition;
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
  */
-class NonStrictArgvInput extends Input
+class GlobalArgvInput extends Input
 {
     private $tokens;
     private $parsed;
+
+    /**
+     * Whether to remove options from argv
+     * @var bool
+     */
+    protected $removeOptions = false;
+
+    /**
+     * Whether to throw errors for unspecified options or too many arguments
+     * @var boolean
+     */
+    protected $strict = false;
+
+    /**
+     * The current position relative to $_SERVER['argv']
+     * @var integer
+     */
+    protected $currentArg = 2;
 
     /**
      * Constructor.
@@ -41,11 +59,9 @@ class NonStrictArgvInput extends Input
      *
      * @api
      */
-    public function __construct(array $argv = null, InputDefinition $definition = null)
+    public function __construct(InputDefinition $definition = null, $removeOptions = false, $strict = false)
     {
-        if (null === $argv) {
-            $argv = $_SERVER['argv'];
-        }
+        $argv = $_SERVER['argv'];
 
         // strip the application name
         array_shift($argv);
@@ -55,12 +71,11 @@ class NonStrictArgvInput extends Input
 
         $this->tokens = $argv;
 
-        parent::__construct($definition);
-    }
+        $this->removeOptions = (bool) $removeOptions;
 
-    protected function setTokens(array $tokens)
-    {
-        $this->tokens = $tokens;
+        $this->strict = (bool) $strict;
+
+        parent::__construct($definition);
     }
 
     /**
@@ -70,6 +85,8 @@ class NonStrictArgvInput extends Input
     {
         $parseOptions = true;
         $this->parsed = $this->tokens;
+        $this->currentArg = 2;
+
         while (null !== $token = array_shift($this->parsed)) {
             if ($parseOptions && '' == $token) {
                 $this->parseArgument($token);
@@ -82,6 +99,7 @@ class NonStrictArgvInput extends Input
             } else {
                 $this->parseArgument($token);
             }
+            $this->currentArg++;
         }
     }
 
@@ -110,13 +128,19 @@ class NonStrictArgvInput extends Input
      * Parses a short option set.
      *
      * @param string $name The current token
+     *
+     * @throws \RuntimeException When option given doesn't exist
      */
     private function parseShortOptionSet($name)
     {
         $len = strlen($name);
         for ($i = 0; $i < $len; $i++) {
             if (!$this->definition->hasShortcut($name[$i])) {
-                continue;
+                if (!$this->strict) {
+                    continue;
+                }
+
+                throw new \RuntimeException(sprintf('The "-%s" option does not exist.', $name[$i]));
             }
 
             $option = $this->definition->getOptionForShortcut($name[$i]);
@@ -150,6 +174,8 @@ class NonStrictArgvInput extends Input
      * Parses an argument.
      *
      * @param string $token The current token
+     *
+     * @throws \RuntimeException When too many arguments are given
      */
     private function parseArgument($token)
     {
@@ -164,6 +190,10 @@ class NonStrictArgvInput extends Input
         } elseif ($this->definition->hasArgument($c - 1) && $this->definition->getArgument($c - 1)->isArray()) {
             $arg = $this->definition->getArgument($c - 1);
             $this->arguments[$arg->getName()][] = $token;
+
+        // unexpected argument
+        } elseif ($this->strict) {
+            throw new \RuntimeException('Too many arguments.');
         }
     }
 
@@ -172,11 +202,17 @@ class NonStrictArgvInput extends Input
      *
      * @param string $shortcut The short option key
      * @param mixed  $value    The value for the option
+     *
+     * @throws \RuntimeException When option given doesn't exist
      */
     private function addShortOption($shortcut, $value)
     {
         if (!$this->definition->hasShortcut($shortcut)) {
-            return;
+            if (!$this->strict) {
+                return;
+            }
+
+            throw new \RuntimeException(sprintf('The "-%s" option does not exist.', $shortcut));
         }
 
         $this->addLongOption($this->definition->getOptionForShortcut($shortcut)->getName(), $value);
@@ -187,11 +223,21 @@ class NonStrictArgvInput extends Input
      *
      * @param string $name  The long option key
      * @param mixed  $value The value for the option
+     *
+     * @throws \RuntimeException When option given doesn't exist
      */
     private function addLongOption($name, $value)
     {
         if (!$this->definition->hasOption($name)) {
-            return;
+            if (!$this->strict) {
+                return;
+            }
+
+            throw new \RuntimeException(sprintf('The "--%s" option does not exist.', $name));
+        }
+
+        if ($this->removeOptions) {
+            unset($_SERVER['argv'][$this->currentArg]);
         }
 
         $option = $this->definition->getOption($name);

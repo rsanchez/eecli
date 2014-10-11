@@ -4,7 +4,7 @@ namespace eecli;
 
 use eecli\Command\Contracts\ExemptFromBootstrap;
 use eecli\Command\Contracts\HasRuntimeOptions;
-use eecli\Console\NonStrictArgvInput;
+use eecli\Console\GlobalArgvInput;
 use eecli\CodeIgniter\ConsoleOutput as CodeIgniterConsoleOutput;
 use eecli\CodeIgniter\BootableInterface;
 use eecli\CodeIgniter\Cp;
@@ -16,6 +16,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
 use Doctrine\Instantiator\Instantiator;
 use ReflectionClass;
 
@@ -78,8 +80,15 @@ class Application extends ConsoleApplication
      */
     protected static $globalCommands = [];
 
+    /**
+     * @var \eecli\Console\GlobalArgvInput
+     */
+    protected $globalInput;
+
     public function __construct()
     {
+        $this->setGlobalInput();
+
         parent::__construct(self::NAME, self::VERSION);
 
         $dispatcher = new EventDispatcher();
@@ -91,6 +100,60 @@ class Application extends ConsoleApplication
         $this->loadConfig();
 
         $this->addCoreCommands();
+    }
+
+    protected function setGlobalInput()
+    {
+        $inputDefinition = new InputDefinition();
+
+        $inputDefinition->addOptions(array(
+            new InputOption(
+                'system_path', // name
+                null, // shortcut
+                InputOption::VALUE_OPTIONAL, // mode
+                'The path to your system folder', // description
+                null // default value
+            ),
+            new InputOption(
+                'http_host', // name
+                null, // shortcut
+                InputOption::VALUE_OPTIONAL, // mode
+                'The HTTP_HOST to spoof in $_SERVER', // description
+                null // default value
+            ),
+            new InputOption(
+                'document_root', // name
+                null, // shortcut
+                InputOption::VALUE_OPTIONAL, // mode
+                'The DOCUMENT_ROOT to spoof in $_SERVER', // description
+                null // default value
+            ),
+            new InputOption(
+                'request_uri', // name
+                null, // shortcut
+                InputOption::VALUE_OPTIONAL, // mode
+                'The REQUEST_URI to spoof in $_SERVER', // description
+                null // default value
+            ),
+            new InputOption(
+                'remote_addr', // name
+                null, // shortcut
+                InputOption::VALUE_OPTIONAL, // mode
+                'The REMOTE_ADDR to spoof in $_SERVER', // description
+                null // default value
+            ),
+            new InputOption(
+                'user_agent', // name
+                null, // shortcut
+                InputOption::VALUE_OPTIONAL, // mode
+                'The HTTP_USER_AGENT to spoof in $_SERVER', // description
+                null // default value
+            ),
+        ));
+
+        $this->globalInput = new GlobalArgvInput(null, true);
+
+        $this->globalInput->bind($inputDefinition);
     }
 
     /**
@@ -216,7 +279,7 @@ class Application extends ConsoleApplication
         if ($this->doesCommandHaveRuntimeOptions($command)) {
             // we use this to allow the command to access cli arguments
             // during the getRuntimeOptions call
-            $input = new NonStrictArgvInput(null, $event->getCommand()->getDefinition());
+            $input = new GlobalArgvInput($event->getCommand()->getDefinition());
 
             foreach ($command->getRuntimeOptions($this, $input) as $option) {
                 $this->getDefinition()->addOption($option);
@@ -347,7 +410,13 @@ class Application extends ConsoleApplication
             }
 
             unset($temp);
-        } else {
+        }
+
+        if ($this->globalInput->getOption('system_path')) {
+            $config['system_path'] = $this->globalInput->getOption('system_path');
+        }
+
+        if (empty($config['system_path'])) {
             // try to find the system path
             $config['system_path'] = $this->findSystemPath();
         }
@@ -355,6 +424,26 @@ class Application extends ConsoleApplication
         // Spoof $_SERVER variables
         if (isset($config['server']) && is_array($config['server'])) {
             $_SERVER = array_merge($_SERVER, $config['server']);
+        }
+
+        if ($this->globalInput->getOption('http_host')) {
+            $_SERVER['HTTP_HOST'] = $this->globalInput->getOption('http_host');
+        }
+
+        if ($this->globalInput->getOption('document_root')) {
+            $_SERVER['DOCUMENT_ROOT'] = $this->globalInput->getOption('document_root');
+        }
+
+        if ($this->globalInput->getOption('request_uri')) {
+            $_SERVER['REQUEST_URI'] = $this->globalInput->getOption('request_uri');
+        }
+
+        if ($this->globalInput->getOption('remote_addr')) {
+            $_SERVER['REMOTE_ADDR'] = $this->globalInput->getOption('remote_addr');
+        }
+
+        if ($this->globalInput->getOption('user_agent')) {
+            $_SERVER['HTTP_USER_AGENT'] = $this->globalInput->getOption('user_agent');
         }
 
         // Assign variables to EE config
