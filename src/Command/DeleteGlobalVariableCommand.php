@@ -4,6 +4,7 @@ namespace eecli\Command;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class DeleteGlobalVariableCommand extends Command
 {
@@ -34,12 +35,33 @@ class DeleteGlobalVariableCommand extends Command
     /**
      * {@inheritdoc}
      */
+    protected function getOptions()
+    {
+        return array(
+            array(
+                'force', // name
+                'f', // shortcut
+                InputOption::VALUE_NONE, // mode
+                'Do not ask for confirmation before deleting', // description
+            ),
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function fire()
     {
         $names = $this->argument('name');
 
         $siteId = ee()->config->item('site_id');
         $siteName = ee()->config->item('site_short_name');
+
+        if (! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
+            $this->error('Did not delete global variable(s): '.implode(' ', $names));
+
+            return;
+        }
 
         $query = ee()->db->select('variable_id, variable_name, variable_data')
             ->where('site_id', $siteId)

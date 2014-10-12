@@ -45,6 +45,12 @@ class DeleteSnippetCommand extends Command
                 'Delete a global snippet.', // description
                 null, // default value
             ),
+            array(
+                'force', // name
+                'f', // shortcut
+                InputOption::VALUE_NONE, // mode
+                'Do not ask for confirmation before deleting', // description
+            ),
         );
     }
 
@@ -57,6 +63,12 @@ class DeleteSnippetCommand extends Command
 
         $siteId = $this->option('global') ? 0 : ee()->config->item('site_id');
         $siteName = $this->option('global') ? 'global_snippets' : ee()->config->item('site_short_name');
+
+        if (! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
+            $this->error('Did not delete snippet(s): '.implode(' ', $names));
+
+            return;
+        }
 
         $query = ee()->db->select('snippet_id, snippet_name, snippet_contents')
             ->where('site_id', $siteId)

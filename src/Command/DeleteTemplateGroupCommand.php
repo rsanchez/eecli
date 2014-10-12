@@ -4,6 +4,7 @@ namespace eecli\Command;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class DeleteTemplateGroupCommand extends Command
 {
@@ -34,11 +35,32 @@ class DeleteTemplateGroupCommand extends Command
     /**
      * {@inheritdoc}
      */
+    protected function getOptions()
+    {
+        return array(
+            array(
+                'force', // name
+                'f', // shortcut
+                InputOption::VALUE_NONE, // mode
+                'Do not ask for confirmation before deleting', // description
+            ),
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function fire()
     {
         $templateGroups = $this->argument('template_group');
 
         $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+
+        if (! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
+            $this->error('Did not delete template group(s): '.implode(' ', $templateGroups));
+
+            return;
+        }
 
         foreach ($templateGroups as $groupName) {
 
