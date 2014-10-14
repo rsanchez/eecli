@@ -148,7 +148,9 @@ class UpdateAddonsCommand extends Command
 
             ee()->load->add_package_path($data['path']);
 
-            $extension = new $data['class']();
+            $class = $data['class'];
+
+            $extension = new $class();
 
             if (version_compare($data['version'], $extension->version, '<')) {
                 $extension->update_extension($data['version']);
@@ -241,7 +243,9 @@ class UpdateAddonsCommand extends Command
                 ee()->load->add_package_path($data['path']);
             }
 
-            $accessory = new $data['class']();
+            $class = $data['class'];
+
+            $accessory = new $class();
 
             if (version_compare($data['accessory_version'], $accessory->version, '<')) {
                 $updated = $accessory->update();

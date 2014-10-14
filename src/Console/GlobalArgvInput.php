@@ -184,7 +184,7 @@ class GlobalArgvInput extends Input
         // if input is expecting another argument, add it
         if ($this->definition->hasArgument($c)) {
             $arg = $this->definition->getArgument($c);
-            $this->arguments[$arg->getName()] = $arg->isArray()? array($token) : $token;
+            $this->arguments[$arg->getName()] = $arg->isArray() ? array($token) : $token;
 
         // if last argument isArray(), append token to last argument
         } elseif ($this->definition->hasArgument($c - 1) && $this->definition->getArgument($c - 1)->isArray()) {
@@ -305,7 +305,7 @@ class GlobalArgvInput extends Input
      *
      * @param string|array $values The value(s) to look for in the raw parameters (can be an array)
      *
-     * @return bool    true if the value is contained in the raw parameters
+     * @return bool true if the value is contained in the raw parameters
      */
     public function hasParameterOption($values)
     {

@@ -299,6 +299,7 @@ class CreateMemberGroupCommand extends Command
 
         if ($query->num_rows() === 0) {
             $this->error('Did not create member group.');
+
             return;
         }
 

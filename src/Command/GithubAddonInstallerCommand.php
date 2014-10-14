@@ -5,9 +5,6 @@ namespace eecli\Command;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use eecli\GithubAddonInstaller\Application as InstallerApplication;
-use eecli\GithubAddonInstaller\Api;
-use eecli\GithubAddonInstaller\Repo;
-use eecli\GithubAddonInstaller\Installer\Installer;
 
 class GithubAddonInstallerCommand extends Command
 {

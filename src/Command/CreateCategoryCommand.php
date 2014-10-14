@@ -72,8 +72,8 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions
 
     /**
      * Get the category group ID from a name or number
-     * @param  string $group the name of a group or the ID of the group
-     * @return string the group ID
+     * @param  string            $group the name of a group or the ID of the group
+     * @return string            the group ID
      * @throws \RuntimeException if the category group is not found
      */
     protected function getCategoryGroupId($group)
