@@ -127,6 +127,8 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions
 
         $fields = $this->getCategoryGroupFields($groupId);
 
+        $options = array();
+
         foreach ($fields as $field) {
             $options[] = new InputOption(
                 $field->field_name,
