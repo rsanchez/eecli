@@ -100,6 +100,38 @@ class Application extends ConsoleApplication
         $this->loadConfig();
 
         $this->addCoreCommands();
+
+        // start output buffering to intercept show_error calls
+        ob_start();
+
+        register_shutdown_function(array($this, 'shutdown'));
+    }
+
+    /**
+     * Intercept show_error calls
+     * @return void
+     */
+    public function shutdown()
+    {
+        $output = ob_get_contents();
+
+        ob_end_clean();
+
+        if (preg_match('/<div id="error_content">.*?<p>(.*?)<\/p>.*?<\/div>/s', $output, $match)) {
+            $error = trim($match[1]);
+
+            if ($error === 'Site Error:  Unable to Load Site Preferences; No Preferences Found') {
+                $error = 'eecli could not connect to your database. Please see the doc on troubleshooting: https://github.com/rsanchez/eecli/wiki/Troubleshooting';
+            }
+
+            $consoleOutput = new ConsoleOutput();
+
+            $consoleOutput->writeln('<error>' . $error . '</error>');
+
+            return;
+        }
+
+        echo $output;
     }
 
     protected function setGlobalInput()
