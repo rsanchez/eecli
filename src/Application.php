@@ -560,7 +560,8 @@ class Application extends ConsoleApplication
         $finder->files()
             ->in(__DIR__.'/Command')
             ->depth('== 0')
-            ->name('*.php');
+            ->name('*Command.php')
+            ->notName('Abstract*');
 
         foreach ($finder as $file) {
             $class = '\\eecli\\Command\\'.$file->getBasename('.php');
