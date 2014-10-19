@@ -1,0 +1,137 @@
+<?php
+
+namespace eecli\Command;
+
+use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputOption;
+
+class CreateFieldPlayaCommand extends AbstractCreateFieldCommand
+{
+    /**
+     * {@inheritdoc}
+     */
+    protected $description = 'Create a Playa field.';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFieldtype()
+    {
+        return 'playa';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFieldtypeOptions()
+    {
+        return array(
+            array(
+                'site',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'ID of site(s) to relate (Leave blank to allow all)',
+            ),
+            array(
+                'channel',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'ID of channel(s) to relate (Leave blank to allow all)',
+            ),
+            array(
+                'expired',
+                null,
+                InputOption::VALUE_NONE,
+                'Show expired entries',
+            ),
+            array(
+                'future',
+                null,
+                InputOption::VALUE_NONE,
+                'Show future entries',
+            ),
+            array(
+                'editable',
+                null,
+                InputOption::VALUE_NONE,
+                'Show entries that are editable by the current user',
+            ),
+            array(
+                'category',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'ID of category(s) to show (Leave blank to allow all)',
+            ),
+            array(
+                'author',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'ID of author(s) to show (Leave blank to allow all)',
+            ),
+            array(
+                'member_group',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'ID of authored by member group(s) to show (Leave blank to allow all)',
+            ),
+            array(
+                'status',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Stasus(es) to show (Leave blank to allow all)',
+            ),
+            array(
+                'limit',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Limit',
+                100
+            ),
+            array(
+                'order_by',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'title or entry_date',
+                'title',
+            ),
+            array(
+                'sort',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'asc or desc',
+                'asc',
+            ),
+            array(
+                'multiple',
+                null,
+                InputOption::VALUE_NONE,
+                'Allow multiple relationships?',
+            ),
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFieldtypeSettings()
+    {
+        return array(
+            'playa' => array(
+                'sites' => $this->option('site') ?: array('any'),
+                'channels' => $this->option('channel') ?: array('any'),
+                'expired' => $this->option('expired') ? 'y' : 'n',
+                'future' => $this->option('future') ? 'y' : 'n',
+                'editable' => $this->option('editable') ? 'y' : 'n',
+                'cats' => $this->option('category') ?: array('any'),
+                'authors' => $this->option('author') ?: array('any'),
+                'member_groups' => $this->option('member_group') ?: array('any'),
+                'statuses' => $this->option('status') ?: array('any'),
+                'limit' => $this->option('limit'),
+                'limitby' => 'newest',
+                'orderby' => $this->option('order_by'),
+                'sort' => strtoupper($this->option('sort')),
+                'multi' => $this->option('multiple') ? 'y' : 'n',
+            ),
+        );
+    }
+}
