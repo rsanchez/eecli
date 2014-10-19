@@ -2,6 +2,7 @@
 
 namespace eecli;
 
+use eecli\Command\Contracts\Conditional;
 use eecli\Command\Contracts\ExemptFromBootstrap;
 use eecli\Command\Contracts\HasRuntimeOptions;
 use eecli\Console\GlobalArgvInput;
@@ -78,7 +79,13 @@ class Application extends ConsoleApplication
      * List of command classes that should be added to this application
      * @var array
      */
-    protected static $globalCommands = [];
+    protected static $globalCommands = array();
+
+    /**
+     * List of commands that need to be checked if applicable before loading
+     * @var array
+     */
+    protected $conditionalCommands = array();
 
     /**
      * @var \eecli\Console\GlobalArgvInput
@@ -566,13 +573,33 @@ class Application extends ConsoleApplication
         foreach ($finder as $file) {
             $class = '\\eecli\\Command\\'.$file->getBasename('.php');
 
-            $this->add(new $class());
+            $command = new $class();
+
+            if ($command instanceof Conditional) {
+                $this->conditionalCommands[] = $command;
+            } else {
+                $this->add($command);
+            }
+        }
+    }
+
+    /**
+     * Add core commands that verify as applicable
+     * @return void
+     */
+    public function addConditionalCommands()
+    {
+        foreach ($this->conditionalCommands as $command) {
+            if ($command->isApplicable()) {
+                $this->add($command);
+            }
         }
     }
 
     /**
      * Find any commands defined in addons
      * and add them to the Application
+     * @return void
      */
     public function addThirdPartyCommands()
     {
@@ -612,6 +639,7 @@ class Application extends ConsoleApplication
     /**
      * Find any globally registered Commands
      * and add them to the Application
+     * @return void
      */
     public function addGlobalCommands()
     {

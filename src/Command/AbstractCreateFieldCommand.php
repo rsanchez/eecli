@@ -2,17 +2,28 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\Conditional;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-abstract class AbstractCreateFieldCommand extends Command
+abstract class AbstractCreateFieldCommand extends Command implements Conditional
 {
     /**
      * The name of the fieldtype, e.g. 'text'
      * @return string
      */
     abstract protected function getFieldtype();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable()
+    {
+        ee()->load->model('addons_model');
+
+        return ee()->addons_model->fieldtype_installed($this->getFieldtype());
+    }
 
     /**
      * Array of InputOption objects for this fieldtype
