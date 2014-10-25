@@ -124,10 +124,18 @@ class Application extends ConsoleApplication
 
         ob_end_clean();
 
-        if (preg_match('/<div id="error_content">.*?<p>(.*?)<\/p>.*?<\/div>/s', $output, $match)) {
-            $error = trim($match[1]);
+        $error = null;
 
-            if ($error === 'Site Error:  Unable to Load Site Preferences; No Preferences Found') {
+        $defaultMessage = 'Site Error:  Unable to Load Site Preferences; No Preferences Found';
+
+        if (preg_match('/'.preg_quote($defaultMessage).'/', $output)) {
+            $error = $defaultMessage;
+        } elseif (preg_match('/<div id="error_content">.*?<p>(.*?)<\/p>.*?<\/div>/s', $output, $match)) {
+            $error = trim($match[1]);
+        }
+
+        if ($error) {
+            if ($error === $defaultMessage) {
                 $error = 'eecli could not connect to your database. Please see the doc on troubleshooting: https://github.com/rsanchez/eecli/wiki/Troubleshooting';
             }
 
@@ -389,6 +397,12 @@ class Application extends ConsoleApplication
      */
     public function findSystemPath()
     {
+        $consoleOutput = new ConsoleOutput();
+
+        $consoleOutput->writeln('<comment>Searching for your system folder...</comment>');
+
+        $startTime = microtime(true);
+
         $finder = new Finder();
 
         $finder->files()
@@ -398,6 +412,15 @@ class Application extends ConsoleApplication
         $systemPath = null;
 
         foreach ($finder as $file) {
+            $currentTime = microtime(true);
+
+            if (($currentTime - $startTime) > 5) {
+
+                $consoleOutput->writeln('<error>Could not automatically find your system folder within 5 seconds. Please create a config file using eecli init and set your system folder manually.</error>');
+
+                exit;
+            }
+
             $path = $file->getRealPath();
 
             $parentDir = dirname($path);
@@ -412,6 +435,8 @@ class Application extends ConsoleApplication
                 break;
             }
         }
+
+        $consoleOutput->writeln('<info>System folder \''.str_replace(getcwd().DIRECTORY_SEPARATOR, '', $systemPath).'\' found.</info>');
 
         return $systemPath;
     }
