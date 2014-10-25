@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand
+class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -130,6 +131,27 @@ class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand
             'relationship_order_field' => $this->option('order_by'),
             'relationship_order_dir' => $this->option('sort'),
             'relationship_allow_multiple' => $this->option('multiple'),
+        );
+    }
+
+    protected function getFieldtypeOptionExamples()
+    {
+        return array(
+            'channel' => '1',
+            'category' => '1',
+            'author' => '1',
+            'member_group' => '1',
+            'status' => 'open',
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a Relationships field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create a Relationships field with multiple channels' => '--channel=1 --channel=2 "Your Field Name" your_field_name 1',
+            'Create a Relationships field with multiple statuses' => '--status=closed --status=open "Your Field Name" your_field_name 1',
+            'Create a Relationships field with multiple selection' => '--multiple "Your Field Name" your_field_name 1',
         );
     }
 }

@@ -2,11 +2,14 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateChannelCommand extends Command
+class CreateChannelCommand extends Command implements HasExamples, HasOptionExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -46,57 +49,57 @@ class CreateChannelCommand extends Command
             array(
                 'field_group',
                 'f',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Which field group do you want to assign this channel to?',
             ),
             array(
                 'status_group',
                 's',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Which status group do you want to assign this channel to?',
             ),
             array(
                 'cat_group',
                 'c',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Which cat group(s) do you want to assign this channel to? Separate multiple with | char.',
             ),
             array(
                 'channel_url',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'What is the url for this channel?',
                 '',
             ),
             array(
                 'channel_description',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'What is the description for this channel?',
             ),
             array(
                 'default_entry_title',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'What is the default entry title for this channel?',
             ),
             array(
                 'url_title_prefix',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'What is the URL Title prefix for this channel?',
             ),
             array(
                 'deft_status',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'What is the default status for this channel?',
                 'open',
             ),
             array(
                 'deft_category',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'What is the default category ID for this channel?',
             ),
             array(
@@ -194,5 +197,36 @@ class CreateChannelCommand extends Command
         ee()->channel_model->create_channel($data);
 
         $this->info("New channel {$channel_name} created");
+    }
+
+    public function getLongDescription()
+    {
+        return 'Creates a channel. Pass in a channel short name using underscores only and optionally pass in a channel title. If you exclude the channel title, one will be auto-generated from your channel short name.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a channel with the short name test_channel' => 'test_channel',
+            'Create a channel with the title Test Channel' => 'test_channel "Test Channel"',
+            'Create a channel with field group 5' => '--field_group=5 test_channel',
+            'Create a channel with status group 5' => '--status_group=5 test_channel',
+            'Create a channel with cat group 5 and 6' => '--cat_group="5|6" test_channel',
+            'Create a channel with new field group with same title as channel' => '--new_field_group test_channel',
+        );
+    }
+
+    public function getOptionExamples()
+    {
+        return array(
+            'field_group' => '1',
+            'status_group' => '1',
+            'cat_group' => '1',
+            'channel_url' => '/blog',
+            'channel_description' => 'Your description here.',
+            'default_entry_title' => 'Default Title',
+            'url_title_prefix' => 'blog_',
+            'deft_category' => '1',
+        );
     }
 }

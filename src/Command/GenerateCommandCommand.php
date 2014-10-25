@@ -3,13 +3,15 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\ExemptFromBootstrap;
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
-class GenerateCommandCommand extends Command implements ExemptFromBootstrap
+class GenerateCommandCommand extends Command implements ExemptFromBootstrap, HasExamples, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -30,13 +32,13 @@ class GenerateCommandCommand extends Command implements ExemptFromBootstrap
             array(
                 'description',
                 '',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'The command description.',
             ),
             array(
                 'namespace',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Add a namespace to the class.',
             ),
             array(
@@ -122,5 +124,24 @@ class GenerateCommandCommand extends Command implements ExemptFromBootstrap
         fclose($handle);
 
         $this->info($destination.' created.');
+    }
+
+    public function getOptionExamples()
+    {
+        return array(
+            'namespace' => 'eecli\Command',
+            'description' => 'Your description here.',
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Generate a file called YourCustomCommand in the current directory' => 'your:custom_comand',
+            'Generate in the specified directory' => 'your:custom_comand ./commands/',
+            'Generate with a namespace' => '--namespace="YourSite\Command" your:custom_comand ./src/YourSite/Command/',
+            'Generate with arguments and options' => '--options --arguments your_command',
+            'Generate with a description' => '--description="Clear custom cache" cache:clear:custom',
+        );
     }
 }

@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ShowConfigCommand extends Command
+class ShowConfigCommand extends Command implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -78,5 +79,13 @@ class ShowConfigCommand extends Command
         }
 
         $this->table($headers, $rows);
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Show all config items' => '',
+            'Show the specified config item' => 'site_label',
+        );
     }
 }

@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class ClearCeCacheCommand extends Command
+class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -120,5 +122,26 @@ class ClearCeCacheCommand extends Command
         }
 
         $this->info('CE Cache cleared.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExamples()
+    {
+        return array(
+            'Clear all caches' => '',
+            'Clear a specific item' => 'local/foo/item',
+            'Clear specific items' => 'local/foo/item local/bar/item',
+            'Clear specific tags' => '--tags foo bar',
+            'Clear specific driver' => '--driver="file"',
+        );
+    }
+
+    public function getOptionExamples()
+    {
+        return array(
+            'driver' => 'file',
+        );
     }
 }

@@ -2,11 +2,14 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateTemplateCommand extends Command
+class CreateTemplateCommand extends Command implements HasExamples, HasLongDescription, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -76,7 +79,7 @@ class CreateTemplateCommand extends Command
             array(
                 'type', // name
                 't', // shortcut
-                InputOption::VALUE_OPTIONAL, // mode
+                InputOption::VALUE_REQUIRED, // mode
                 'Type', // description
                 'webpage', // default value
             ),
@@ -236,5 +239,31 @@ class CreateTemplateCommand extends Command
 
             $this->info('Template '.$template.' created.');
         }
+    }
+
+    public function getOptionExamples()
+    {
+        return array(
+            'cache' => '300',
+            'type' => 'webpage',
+        );
+    }
+
+    public function getLongDescription()
+    {
+        return 'Create a new template. If the template group does not already exist, it will be created.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a template' => 'site/index',
+            'Multiple templates' => 'site/index site/foo',
+            'With php enabled' => '--php site/index',
+            'With php enabled on input' => '--php --input site/index',
+            'With caching on (for 300 seconds)' => '--cache=300 site/index',
+            'Protect javascript' => '--protect_js site/index',
+            'Set a type: webpage, feed, css, js, static, xml' => '--type=xml site/index',
+        );
     }
 }

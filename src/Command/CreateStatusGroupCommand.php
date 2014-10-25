@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class CreateStatusGroupCommand extends Command
+class CreateStatusGroupCommand extends Command implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -60,5 +61,12 @@ class CreateStatusGroupCommand extends Command
         $this->info(sprintf('Status group %s (%s) created.', $name, $query->row('group_id')));
 
         $query->free_result();
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a status group' => 'your_group_name',
+        );
     }
 }

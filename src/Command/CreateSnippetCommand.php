@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateSnippetCommand extends Command
+class CreateSnippetCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -113,5 +115,20 @@ class CreateSnippetCommand extends Command
         $query->free_result();
 
         $this->info('Snippet '.$name.' created.');
+    }
+
+    public function getLongDescription()
+    {
+        return 'Create a new snippet. When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a snippet file as well.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a blank snippet' => 'your_snippet_name',
+            'Create a snippet with content' => 'your_snippet_name "your snippet content"',
+            'Pipe in content' => '--stdin your_snippet_name',
+            'Create a snippet accessible to all sites' => '--global your_snippet_name',
+        );
     }
 }

@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateGlobalVariableCommand extends Command
+class CreateGlobalVariableCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -100,5 +102,19 @@ class CreateGlobalVariableCommand extends Command
         $query->free_result();
 
         $this->info('Global variable '.$name.' created.');
+    }
+
+    public function getLongDescription()
+    {
+        return 'Create a global variable. When you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will write a global variable file as well.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a blank global variable' => 'your_global_variable_name',
+            'Create a global variable with content' => 'your_global_variable_name "your global variable content"',
+            'Pipe in content' => '--stdin your_global_variable_name',
+        );
     }
 }

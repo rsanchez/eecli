@@ -2,11 +2,14 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateMemberCommand extends Command
+class CreateMemberCommand extends Command implements HasExamples, HasOptionExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -41,30 +44,26 @@ class CreateMemberCommand extends Command
             array(
                 'password', // name
                 'p', // shortcut
-                InputOption::VALUE_OPTIONAL, // mode
+                InputOption::VALUE_REQUIRED, // mode
                 'The password', // description
-                null, // default value
             ),
             array(
                 'email', // name
                 'e', // shortcut
-                InputOption::VALUE_OPTIONAL, // mode
+                InputOption::VALUE_REQUIRED, // mode
                 'Email address', // description
-                null, // default value
             ),
             array(
                 'member_group', // name
                 'g', // shortcut
-                InputOption::VALUE_OPTIONAL, // mode
+                InputOption::VALUE_REQUIRED, // mode
                 'Member group ID', // description
-                null, // default value
             ),
             array(
                 'screen_name', // name
                 's', // shortcut
-                InputOption::VALUE_OPTIONAL, // mode
+                InputOption::VALUE_REQUIRED, // mode
                 'Screen Name', // description
-                null, // default value
             ),
             array(
                 'hide_password', // name
@@ -142,5 +141,31 @@ class CreateMemberCommand extends Command
         $message = sprintf('Member %s (%s) created%s.', $username, $memberId, $withPassword);
 
         $this->info($message);
+    }
+
+    public function getOptionExamples()
+    {
+        return array(
+            'password' => '997fa90c393a',
+            'email' => 'you@yoursite.com',
+            'member_group' => '1',
+            'screen_name' => 'Your Name',
+        );
+    }
+
+    public function getLongDescription()
+    {
+        return 'Create a new member. If you omit a password, one will be generated for you. If you omit an email, the username will be used as the email address. If you omit a member group, the default member group for your system will be used.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a member with same username & email' => 'your.email@site.com',
+            'Create a member with different username & email' => '--email="your.email@site.com" your_username',
+            'Create a member with the specified screen name' => '--screen_name="Your Name" your.email@site.com',
+            'Create a member with the specified password' => '--password="so48jf48jss4sk" your.email@site.com',
+            'Create a superadmin' => '--member_group=1 your.email@site.com',
+        );
     }
 }

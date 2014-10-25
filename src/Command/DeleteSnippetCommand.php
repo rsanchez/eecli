@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class DeleteSnippetCommand extends Command
+class DeleteSnippetCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -98,5 +100,20 @@ class DeleteSnippetCommand extends Command
 
             $this->info('Snippet '.$name.' deleted.');
         }
+    }
+
+    public function getLongDescription()
+    {
+        return "Delete one or more snippets. You will be asked to confirm that you want to delete the specified snippet(s), unless you use the `--force` option.\n\nWhen you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the snippet file as well.";
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Delete a snippet' => 'your_snippet_name',
+            'Delete a snippet accessible to all sites' => '--global your_snippet_name',
+            'Delete multiple snippets' => 'your_snippet_name your_other_snippet_name',
+            'Delete a snippet without confirmation' => '--force your_snippet_name',
+        );
     }
 }

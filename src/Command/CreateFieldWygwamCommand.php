@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldWygwamCommand extends AbstractCreateFieldCommand
+class CreateFieldWygwamCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -68,6 +69,22 @@ class CreateFieldWygwamCommand extends AbstractCreateFieldCommand
                 'config' => $config,
                 'defer' => $this->option('defer') ? 'y' : 'n',
             ),
+        );
+    }
+
+    protected function getFieldtypeOptionExamples()
+    {
+        return array(
+            'config' => '1',
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a Wygwam field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create a Wygwam field with Wygwam configuration 1' => '--config=1 "Name" name 1',
+            'Create a Wygwam field with deferred initialization' => '--defer "Name" name 1',
         );
     }
 }

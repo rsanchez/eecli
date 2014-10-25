@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateMemberGroupCommand extends Command
+class CreateMemberGroupCommand extends Command implements HasExamples, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -112,14 +114,14 @@ class CreateMemberGroupCommand extends Command
             array(
                 'clone', // name
                 'c', // shortcut
-                InputOption::VALUE_OPTIONAL, // mode
+                InputOption::VALUE_REQUIRED, // mode
                 'Clone the specified member group id', // description
                 null, // default value
             ),
             array(
                 'description', // name
                 'd', // shortcut
-                InputOption::VALUE_OPTIONAL, // mode
+                InputOption::VALUE_REQUIRED, // mode
                 'The member group description', // description
                 '', // default value
             ),
@@ -315,5 +317,29 @@ class CreateMemberGroupCommand extends Command
     protected function isOptionBool($value)
     {
         return $value === 'y' || $value === 'n';
+    }
+
+    public function getOptionExamples()
+    {
+        $optionExamples = array(
+            'clone' => '1',
+            'description' => 'Your description here.',
+        );
+
+        foreach ($this->defaults as $key => $value) {
+            $optionExamples[$key] = $value;
+        }
+
+        return $optionExamples;
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a member group with default preferences' => 'your_group_name',
+            'Create a member group using another group\'s preferences' => '--clone=1 your_group_name',
+            'Create a member group and with the specified preferences' => '--can_access_cp=y --can_access_content=y your_group_name',
+            'Show all possible preference options' => 'create:member_group',
+        );
     }
 }

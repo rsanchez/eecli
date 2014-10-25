@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class DeleteGlobalVariableCommand extends Command
+class DeleteGlobalVariableCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -57,8 +59,8 @@ class DeleteGlobalVariableCommand extends Command
         $siteId = ee()->config->item('site_id');
         $siteName = ee()->config->item('site_short_name');
 
-        if (! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
-            $this->error('Did not delete global variable(s): '.implode(' ', $names));
+        if ( ! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
+            $this->error('Did not delete global variable(s): ' . implode(' ', $names));
 
             return;
         }
@@ -79,8 +81,8 @@ class DeleteGlobalVariableCommand extends Command
         $hasLowVariables = array_key_exists('Low_variables_ext', ee()->extensions->version_numbers);
 
         foreach ($names as $name) {
-            if (! isset($globalVariables[$name])) {
-                $this->error('Global variable '.$name.' not found.');
+            if ( ! isset($globalVariables[$name])) {
+                $this->error('Global variable ' . $name . ' not found.');
 
                 continue;
             }
@@ -88,7 +90,7 @@ class DeleteGlobalVariableCommand extends Command
             $globalVariable = $globalVariables[$name];
 
             if ($hasLowVariables && ee()->db->where('variable_id', $globalVariable->variable_id)->count_all_results('low_variables') > 0) {
-                $this->error('Could not delete Low Variable '.$name.'.');
+                $this->error('Could not delete Low Variable ' . $name . '.');
 
                 continue;
             }
@@ -97,7 +99,21 @@ class DeleteGlobalVariableCommand extends Command
 
             ee()->extensions->call('eecli_delete_global_variable', $globalVariable->variable_id, $globalVariable->variable_name, $globalVariable->variable_data, $siteId, $siteName);
 
-            $this->info('Global variable '.$name.' deleted.');
+            $this->info('Global variable ' . $name . ' deleted.');
         }
+    }
+
+    public function getLongDescription()
+    {
+        return "Delete one or more global variables. You will be asked to confirm that you want to delete the specified global variable(s), unless you use the `--force` option.\n\nWhen you have [Sync Snippets](https://github.com/rsanchez/sync_snippets) installed and configured, this command will delete the global variable file as well.";
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Delete a global variable' => 'your_global_variable_name',
+            'Delete multiple global variables' => 'your_global_variable_name your_other_global_variable_name',
+            'Delete a global variable without confirmation' => '--force your_global_variable_name',
+        );
     }
 }

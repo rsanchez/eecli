@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class CreateCategoryGroupCommand extends Command
+class CreateCategoryGroupCommand extends Command implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -62,5 +63,12 @@ class CreateCategoryGroupCommand extends Command
         $this->info(sprintf('Category group %s (%s) created.', $name, $query->row('group_id')));
 
         $query->free_result();
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a category group' => '"Art and Science"',
+        );
     }
 }

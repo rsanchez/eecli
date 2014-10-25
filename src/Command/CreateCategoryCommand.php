@@ -3,13 +3,15 @@
 namespace eecli\Command;
 
 use eecli\Application;
+use eecli\Command\Contracts\HasOptionExamples;
 use eecli\Command\Contracts\HasRuntimeOptions;
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 
-class CreateCategoryCommand extends Command implements HasRuntimeOptions
+class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExamples, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -208,5 +210,29 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions
         $this->info(sprintf('Category %s (%s) created.', $name, $query->row('cat_id')));
 
         $query->free_result();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExamples()
+    {
+        return array(
+            'Create a category in the specfied group (by ID)' => '"16th Century" 1',
+            'Create a category in the specified group (by name)' => 'Prehistoric "Time Periods"',
+            'Create a category with a custom url title' => '--url_title="16th" "16th Century" 1',
+            'Create a category with the specified parent_id' => '--parent_id=12 "1920s" 1',
+            'Create a category with the specified description' => '--description="The Roaring 20s" "1920s" 1',
+            'Create a category with one (or more) custom category fields' => '--your_category_field="The Roaring 20s" "1920s" 1',
+        );
+    }
+
+    public function getOptionExamples()
+    {
+        return array(
+            'url_title' => 'your_category',
+            'description' => 'Your description here.',
+            'parent_id' => '1',
+        );
     }
 }

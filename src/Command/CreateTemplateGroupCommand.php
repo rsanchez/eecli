@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateTemplateGroupCommand extends Command
+class CreateTemplateGroupCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -90,5 +92,19 @@ class CreateTemplateGroupCommand extends Command
 
             $this->comment('Template group '.$groupName.' created.');
         }
+    }
+
+    public function getLongDescription()
+    {
+        return 'Create a new template group. This will also create an index template in the new group(s).';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a template' => 'site',
+            'Multiple groups' => 'site news blog',
+            'Create the default group' => '--default site',
+        );
     }
 }

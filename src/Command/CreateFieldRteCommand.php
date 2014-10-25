@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldRteCommand extends AbstractCreateFieldCommand
+class CreateFieldRteCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -51,6 +52,13 @@ class CreateFieldRteCommand extends AbstractCreateFieldCommand
         return array(
             'rte_ta_rows' => $this->option('rows'),
             'rte_field_text_direction' => $this->option('text_direction'),
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create an RTE field in field group 1' => '"Your Field Name" your_field_name 1',
         );
     }
 }

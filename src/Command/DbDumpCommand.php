@@ -2,12 +2,15 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 
-class DbDumpCommand extends Command
+class DbDumpCommand extends Command implements HasExamples, HasLongDescription, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -28,7 +31,7 @@ class DbDumpCommand extends Command
             array(
                 'name',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Change the name of the file from the default.',
             ),
             array(
@@ -40,7 +43,7 @@ class DbDumpCommand extends Command
             array(
                 'backups',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Keep only the specified number database dump files, delete the rest.',
             ),
         );
@@ -147,5 +150,27 @@ class DbDumpCommand extends Command
         } else {
             $this->error('Could not execute mysqldump.');
         }
+    }
+
+    public function getOptionExamples()
+    {
+        return array(
+            'name' => 'db_backup',
+            'backups' => '10',
+        );
+    }
+
+    public function getLongDescription()
+    {
+        return 'Dump your database using `mysqldump`. NOTE: your PHP installation must be able to call `mysqldump` via the PHP `system` function. If you have an `ENV` or `ENVIRONMENT` constant defined in your config.php, that name will be used in the sql dump file name.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a sql dump file in the current folder' => '','create a sql dump file in the specified folder' => 'backups/',
+            'Create a sql dump file, gzipped' => '--gzip',
+            'Create a sql dump file, keep the last X backups and delete the rest' => '--backups=10 --gzip backups/',
+        );
     }
 }

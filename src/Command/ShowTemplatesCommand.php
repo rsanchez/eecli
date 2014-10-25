@@ -2,9 +2,10 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 
-class ShowTemplatesCommand extends Command
+class ShowTemplatesCommand extends Command implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -34,5 +35,12 @@ class ShowTemplatesCommand extends Command
         $query->free_result();
 
         $this->table(array('ID', 'Template'), $templates);
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'List all of the templates found in the database' => '',
+        );
     }
 }

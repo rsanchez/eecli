@@ -3,12 +3,13 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\ExemptFromBootstrap;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Question\Question;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
-class GenerateAddonCommand extends Command implements ExemptFromBootstrap
+class GenerateAddonCommand extends Command implements ExemptFromBootstrap, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -18,7 +19,7 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrap
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Generate an addon.';
+    protected $description = 'Generate an addon using a wizard interface.';
 
     /**
      * Template variables
@@ -425,5 +426,10 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrap
         }
 
         $this->info($this->vars['addonName'].' created.');
+    }
+
+    public function getLongDescription()
+    {
+        return "Generate an addon using a wizard interface.\n\n![Screencast of addon generation](https://rsanchez.github.io/eecli/images/eecli-generate-addon.gif)";
     }
 }

@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldMatrixCommand extends AbstractCreateFieldCommand
+class CreateFieldMatrixCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -31,7 +32,7 @@ class CreateFieldMatrixCommand extends AbstractCreateFieldCommand
                 null,
                 InputOption::VALUE_REQUIRED,
                 'What is the minimum number of rows?',
-                0,
+                '0',
             ),
             array(
                 'max_rows',
@@ -55,6 +56,21 @@ class CreateFieldMatrixCommand extends AbstractCreateFieldCommand
                 'col_order' => array(),
                 'cols' => array(),
             ),
+        );
+    }
+
+    protected function getFieldtypeOptionExamples()
+    {
+        return array(
+            'max_rows' => '3',
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a Matrix field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create a Matrix field with max and min rows' => '--min_rows="1" --max_rows="3" "Name" name 1',
         );
     }
 }

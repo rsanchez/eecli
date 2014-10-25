@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ClearEECacheCommand extends Command
+class ClearEECacheCommand extends Command implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -51,5 +52,18 @@ class ClearEECacheCommand extends Command
         $suffix = $type === 'all' ? '' : ' '.$type;
 
         $this->info('EE'.$suffix.' cache cleared.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExamples()
+    {
+        return array(
+            'Clear all EE caches' => '',
+            'Clear EE page caches' => 'page',
+            'Clear EE db caches' => 'db',
+            'Clear EE tag caches' => 'tag',
+        );
     }
 }

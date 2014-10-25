@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldTextCommand extends AbstractCreateFieldCommand
+class CreateFieldTextCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -101,6 +102,22 @@ class CreateFieldTextCommand extends AbstractCreateFieldCommand
             'text_field_show_glossary' => $this->option('show_glossary') ? 'y' : 'n',
             'text_field_show_spellcheck' => $this->option('show_spellcheck') ? 'y' : 'n',
             'text_field_show_file_selector' => $this->option('show_file_selector') ? 'y' : 'n',
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a Text field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create a Text field of maxlength 255' => '--max_length=255 "Name" name 1',
+            'Create a Text field with format xhtml (none, br, or xhtml)' => '--format=xhtml "Name" name 1',
+            'Create a Text field with format selectable on the publish page' => '--show_format "Name" name 1',
+            'Create a Text field with RTL text direction' => '--text_direction=rtl "Name" name 1',
+            'Create a Text field with a content type (all, numeric, integer, or decimal)' => '--content_type=decimal "Name" name 1',
+            'Create a Text field with the smileys button' => '--show_smileys "Name" name 1',
+            'Create a Text field with the glossary button' => '--show_glossary "Name" name 1',
+            'Create a Text field with the spellcheck button' => '--show_spellcheck "Name" name 1',
+            'Create a Text field with the file selector button' => '--show_file_selector "Name" name 1',
         );
     }
 }

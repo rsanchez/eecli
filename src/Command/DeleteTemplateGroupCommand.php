@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class DeleteTemplateGroupCommand extends Command
+class DeleteTemplateGroupCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -82,5 +84,19 @@ class DeleteTemplateGroupCommand extends Command
 
             $query->free_result();
         }
+    }
+
+    public function getLongDescription()
+    {
+        return 'Delete one or more template groups. You will be asked to confirm that you want to delete the specified templates(s), unless you use the `--force` option.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Delete a template group' => 'site',
+            'Delete multiple groups' => 'site news blog',
+            'Delete a template group without confirmation' => '--force site',
+        );
     }
 }

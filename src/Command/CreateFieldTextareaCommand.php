@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldTextareaCommand extends AbstractCreateFieldCommand
+class CreateFieldTextareaCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -94,6 +95,21 @@ class CreateFieldTextareaCommand extends AbstractCreateFieldCommand
             'textarea_field_show_glossary' => $this->option('show_glossary') ? 'y' : 'n',
             'textarea_field_show_spellcheck' => $this->option('show_spellcheck') ? 'y' : 'n',
             'textarea_field_show_file_selector' => $this->option('show_file_selector') ? 'y' : 'n',
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a Textarea field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create a Textarea field with 10 rows' => '--rows=10 "Name" name 1',
+            'Create a Textarea field with format xhtml (none, br, or xhtml)' => '--format=xhtml "Name" name 1',
+            'Create a Textarea field with format selectable on the publish page' => '--show_format "Name" name 1',
+            'Create a Textarea field with RTL text direction' => '--text_direction=rtl "Name" name 1',
+            'Create a Textarea field with the smileys button' => '--show_smileys "Name" name 1',
+            'Create a Textarea field with the glossary button' => '--show_glossary "Name" name 1',
+            'Create a Textarea field with the spellcheck button' => '--show_spellcheck "Name" name 1',
+            'Create a Textarea field with the file selector button' => '--show_file_selector "Name" name 1',
         );
     }
 }

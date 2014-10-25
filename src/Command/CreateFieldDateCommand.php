@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldDateCommand extends AbstractCreateFieldCommand
+class CreateFieldDateCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -18,5 +19,12 @@ class CreateFieldDateCommand extends AbstractCreateFieldCommand
     protected function getFieldtype()
     {
         return 'date';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a Date field in field group 1' => '"Your Field Name" your_field_name 1',
+        );
     }
 }

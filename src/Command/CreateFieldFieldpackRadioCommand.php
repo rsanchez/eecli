@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldFieldpackRadioCommand extends AbstractCreateFieldFieldpackOptionsCommand
+class CreateFieldFieldpackRadioCommand extends AbstractCreateFieldFieldpackOptionsCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -18,5 +19,13 @@ class CreateFieldFieldpackRadioCommand extends AbstractCreateFieldFieldpackOptio
     protected function getFieldtype()
     {
         return 'fieldpack_radio_buttons';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a Fieldpack Radio Buttons field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create a Fieldpack Radio Buttons field with multiple options' => '--option="foo : Foo" --option="bar : Bar" "Name" name 1',
+        );
     }
 }

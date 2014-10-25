@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldFieldpackSwitchCommand extends AbstractCreateFieldCommand
+class CreateFieldFieldpackSwitchCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -76,6 +77,14 @@ class CreateFieldFieldpackSwitchCommand extends AbstractCreateFieldCommand
                 'on_val' => $this->option('on_value'),
                 'default' => $this->option('default'),
             ),
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a Fieldpack Switch field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create a Fieldpack Switch field with options' => '--off_label="Nope" --on_label="Yep" "Name" name 1',
         );
     }
 }

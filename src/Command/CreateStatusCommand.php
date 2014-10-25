@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateStatusCommand extends Command
+class CreateStatusCommand extends Command implements HasExamples, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -138,5 +140,21 @@ class CreateStatusCommand extends Command
         $this->info(sprintf('Status %s (%s) created.', $status, $query->row('status_id')));
 
         $query->free_result();
+    }
+
+    public function getOptionExamples()
+    {
+        return array(
+            'color' => '990000',
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a status in the specfied group (by ID)' => 'featured 1',
+            'Create a status in the specified group (by name)' => 'draft your_group_name',
+            'Create a status with a red color' => '--color="FF0000" featured 1',
+        );
     }
 }

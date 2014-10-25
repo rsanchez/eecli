@@ -2,7 +2,6 @@
 
 namespace eecli\Command;
 
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
 abstract class AbstractCreateFieldNativeOptionsCommand extends AbstractCreateFieldCommand
@@ -52,6 +51,14 @@ abstract class AbstractCreateFieldNativeOptionsCommand extends AbstractCreateFie
             $this->getFieldtype().'_field_list_items' => implode("\n", $this->option('option')),
             $this->getFieldtype().'_field_pre_populate' => $this->option('pre_populate') ? 'y' : 'n',
             $this->getFieldtype().'_field_pre_populate_id' => $this->option('pre_populate'),
+        );
+    }
+
+    public function getFieldtypeOptionExamples()
+    {
+        return array(
+            'option' => 'Foo',
+            'pre_populate' => '1',
         );
     }
 }

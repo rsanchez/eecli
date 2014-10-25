@@ -2,11 +2,12 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use eecli\GithubAddonInstaller\Application as InstallerApplication;
 
-class GithubAddonInstallerCommand extends Command
+class GithubAddonInstallerCommand extends Command implements HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -76,5 +77,26 @@ class GithubAddonInstallerCommand extends Command
         $installerApp->installAddon($addon, $branch);
 
         $this->info($addon.' installed.');
+    }
+
+    public function getLongDescription()
+    {
+        return <<<EOT
+Install Github-hosted addons using the `install:addon` wizard.
+
+```
+eecli install:addon
+```
+
+This will prompt you to enter an addon name. Start typing to trigger autocomplete.
+
+If you already know a particular addon exists in the [Github Addon Installer repository](https://github.com/rsanchez/github_addon_installer/blob/master/system/expressionengine/third_party/github_addon_installer/config/manifest.js), you may simply specify the addon name as the first argument in the command. You can specify a branch as the second argument.
+
+```
+eecli install low_replace
+eecli install stash dev
+```
+EOT;
+
     }
 }

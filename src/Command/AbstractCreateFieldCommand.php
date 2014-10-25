@@ -3,11 +3,12 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\Conditional;
+use eecli\Command\Contracts\HasOptionExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-abstract class AbstractCreateFieldCommand extends Command implements Conditional
+abstract class AbstractCreateFieldCommand extends Command implements Conditional, HasOptionExamples
 {
     /**
      * The name of the fieldtype, e.g. 'text'
@@ -39,6 +40,11 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
      * @return array
      */
     protected function getFieldtypeSettings()
+    {
+        return array();
+    }
+
+    protected function getFieldtypeOptionExamples()
     {
         return array();
     }
@@ -186,5 +192,16 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
         $this->info(sprintf('Field %s (%s) created.', $name, $query->row('field_id')));
 
         $query->free_result();
+    }
+
+    public function getOptionExamples()
+    {
+        $optionExamples = array(
+            'instructions' => 'Your instructions here.',
+            'order' => '1',
+            'content_type' => 'all',
+        );
+
+        return array_merge($optionExamples, $this->getFieldtypeOptionExamples());
     }
 }

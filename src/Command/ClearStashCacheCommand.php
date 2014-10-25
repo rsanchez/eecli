@@ -2,9 +2,10 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 
-class ClearStashCacheCommand extends Command
+class ClearStashCacheCommand extends Command implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -24,5 +25,15 @@ class ClearStashCacheCommand extends Command
         ee()->db->truncate('stash');
 
         $this->info('Stash cache cleared.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExamples()
+    {
+        return array(
+            'Clear all caches' => '',
+        );
     }
 }

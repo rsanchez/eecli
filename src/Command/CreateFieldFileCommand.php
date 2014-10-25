@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldFileCommand extends AbstractCreateFieldCommand
+class CreateFieldFileCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -66,6 +67,22 @@ class CreateFieldFileCommand extends AbstractCreateFieldCommand
             'file_allowed_directories' => $this->option('upload_dir'),
             'file_show_existing' => $this->option('hide_existing') ? 'n' : 'y',
             'file_num_existing' => $this->option('limit'),
+        );
+    }
+
+    protected function getFieldtypeOptionExamples()
+    {
+        return array(
+            'upload_dir' => '1',
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create a File field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create a File field that uploads to directory 1' => '--upload_dir=1 "Your Field Name" your_field_name 1',
+            'Create a File field that only allows images' => '--content_type=image "Your Field Name" your_field_name 1',
         );
     }
 }

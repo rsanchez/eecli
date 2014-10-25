@@ -2,11 +2,13 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class DeleteEntryCommand extends Command
+class DeleteEntryCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -100,5 +102,19 @@ class DeleteEntryCommand extends Command
                 $this->error($error);
             }
         }
+    }
+
+    public function getLongDescription()
+    {
+        return 'Delete an entry by entering in an entry_id or url_title. You will be asked to confirm that you want to delete the specified entry, unless you use the `--force` option.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Delete an entry by the entry_id' => '123',
+            'Delete an entry by the url_title' => 'entry_be_gone',
+            'Delete an entry by the entry_id without confirmation' => '--force 123',
+        );
     }
 }

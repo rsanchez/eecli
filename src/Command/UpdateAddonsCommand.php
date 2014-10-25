@@ -2,10 +2,12 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class UpdateAddonsCommand extends Command
+class UpdateAddonsCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -269,5 +271,21 @@ class UpdateAddonsCommand extends Command
         } else {
             $this->info('Accessories already up-to-date.');
         }
+    }
+
+    public function getLongDescription()
+    {
+        return 'This checks if any of your addons (modules, extensions, and fieldtypes) are out of date by comparing version numbers in your database with version numbers in your addon files. If so, it will run the addon\'s update method. This is exactly how addon updates work inside the control panel.';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'run all addon updates' => '',
+            'run module updates' => 'modules',
+            'run extension updates' => 'extensions',
+            'run fieldtype updates' => 'fieldtypes',
+            'run accessory updates' => 'accessories',
+        );
     }
 }

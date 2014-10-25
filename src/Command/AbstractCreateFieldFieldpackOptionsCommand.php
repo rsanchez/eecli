@@ -36,4 +36,11 @@ abstract class AbstractCreateFieldFieldpackOptionsCommand extends AbstractCreate
     {
         return $this->getFieldtype();
     }
+
+    protected function getFieldtypeOptionExamples()
+    {
+        return array(
+            'option' => 'option_value : Option Label',
+        );
+    }
 }

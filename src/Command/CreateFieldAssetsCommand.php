@@ -2,10 +2,11 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateFieldAssetsCommand extends AbstractCreateFieldCommand
+class CreateFieldAssetsCommand extends AbstractCreateFieldCommand implements HasExamples
 {
     /**
      * {@inheritdoc}
@@ -86,6 +87,23 @@ class CreateFieldAssetsCommand extends AbstractCreateFieldCommand
                 'show_filenames' => $this->option('show_filenames') ? 'y' : 'n',
                 'multi' => $this->option('multiple') ? 'y' : 'n',
             ),
+        );
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Create an Assets field in field group 1' => '"Your Field Name" your_field_name 1',
+            'Create an Assets field that uploads to EE directory 1' => '--upload_dir="ee:1" "Your Field Name" your_field_name 1',
+            'Create an Assets field that uploads to S3 directory 2' => '--upload_dir="s3:2" "Your Field Name" your_field_name 1',
+            'Create an Assets field that allows multiple selections' => '--multiple "Your Field Name" your_field_name 1',
+        );
+    }
+
+    protected function getFieldtypeOptionExamples()
+    {
+        return array(
+            'upload_dir' => '1',
         );
     }
 }

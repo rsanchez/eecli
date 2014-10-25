@@ -2,12 +2,14 @@
 
 namespace eecli\Command;
 
+use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
-class GenerateHtaccessCommand extends Command
+class GenerateHtaccessCommand extends Command implements HasLongDescription, HasExamples
 {
     /**
      * {@inheritdoc}
@@ -73,5 +75,17 @@ class GenerateHtaccessCommand extends Command
         fclose($handle);
 
         $this->info($destination.' created.');
+    }
+
+    public function getLongDescription()
+    {
+        return 'Generate the official EE .htaccess file (as found in the [EE documentation](https://ellislab.com/expressionengine/user-guide/urls/remove_index.php.html)).';
+    }
+
+    public function getExamples()
+    {
+        return array(
+            'Generate .htaccess in the current directory' => '',
+        );
     }
 }
