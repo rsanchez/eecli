@@ -42,7 +42,7 @@ class InitCommand extends Command implements ExemptFromBootstrap
             return;
         }
 
-        $systemPath = $this->getApplication()->findSystemPath();
+        $systemPath = $this->getApplication()->getSystemPath();
 
         if ($systemPath) {
 
