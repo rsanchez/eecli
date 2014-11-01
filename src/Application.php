@@ -442,7 +442,11 @@ class Application extends ConsoleApplication
             }
         }
 
-        $consoleOutput->writeln('<info>System folder \''.str_replace(getcwd().DIRECTORY_SEPARATOR, '', $systemPath).'\' found.</info>');
+        if ($systemPath) {
+            $consoleOutput->writeln('<info>System folder ./' . str_replace(getcwd() . DIRECTORY_SEPARATOR, '', $systemPath) . ' found.</info>');
+        } else {
+            $consoleOutput->writeln('<error>Could not automatically find your system folder. Please create a config file using eecli init and set your system folder manually.</error>');
+        }
 
         return $systemPath;
     }
