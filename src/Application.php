@@ -132,6 +132,8 @@ class Application extends ConsoleApplication
             $error = $defaultMessage;
         } elseif (preg_match('/<div id="error_content">.*?<p>(.*?)<\/p>.*?<\/div>/s', $output, $match)) {
             $error = trim($match[1]);
+        } elseif (preg_match('/<h1>error<\/h1>\s*<p>(.*?)<\/p>/s', $output, $match)) {
+            $error = trim(strip_tags($match[1]));
         }
 
         if ($error) {
