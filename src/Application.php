@@ -620,6 +620,10 @@ class Application extends ConsoleApplication
      */
     public function addConditionalCommands()
     {
+        if (! $this->canBeBootstrapped()) {
+            return;
+        }
+
         foreach ($this->conditionalCommands as $command) {
             if ($command->isApplicable()) {
                 $this->add($command);
