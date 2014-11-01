@@ -52,6 +52,12 @@ class GlobalArgvInput extends Input
     protected $currentArg = 2;
 
     /**
+     * The name of the command being called
+     * @var string
+     */
+    protected $commandName;
+
+    /**
      * Constructor.
      *
      * @param array           $argv       An array of parameters from the CLI (in the argv format)
@@ -67,7 +73,7 @@ class GlobalArgvInput extends Input
         array_shift($argv);
 
         // strip the command name
-        array_shift($argv);
+        $this->commandName = array_shift($argv);
 
         $this->tokens = $argv;
 
@@ -76,6 +82,15 @@ class GlobalArgvInput extends Input
         $this->strict = (bool) $strict;
 
         parent::__construct($definition);
+    }
+
+    /**
+     * Get the command name being called
+     * @return string
+     */
+    public function getCommandName()
+    {
+        return $this->commandName;
     }
 
     /**

@@ -340,6 +340,10 @@ class Application extends ConsoleApplication
      */
     public function canBeBootstrapped()
     {
+        if ($this->globalInput->getCommandName() === 'init') {
+            return false;
+        }
+
         return is_dir(rtrim($this->systemPath, '/').'/codeigniter');
     }
 
