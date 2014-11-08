@@ -1,0 +1,43 @@
+{
+    "chmod": "0755",
+    "directories": ["src"],
+    "extract": false,
+    "compression": "GZ",
+    "files": [
+        "vendor/autoload.php"
+    ],
+    "finder": [
+        {
+            "name": "*.php",
+            "in": "vendor/composer"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/d11wtq/boris/lib"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/doctrine/instantiator/src"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/eecli"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/illuminate"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/symfony"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/xamin/handlebars.php/src"
+        }
+    ],
+    "main": "bin/eecli",
+    "output": "eecli.phar",
+    "stub": "src/stub.php",
+    "web": false
+}
