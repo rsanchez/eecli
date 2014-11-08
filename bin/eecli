@@ -1,25 +1,4 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__.'/../../../autoload.php';
-
-// these must be initialized in the global context
-$system_path = null;
-$assign_to_config = array();
-
-$app = new eecli\Application();
-
-$app->fire('bootstrap.before');
-
-if ($app->canBeBootstrapped()) {
-    require __DIR__.'/../../../eecli/bootstrap/bootstrap-ee2.php';
-}
-
-$app->fire('bootstrap.after');
-
-$app->addConditionalCommands();
-$app->addThirdPartyCommands();
-$app->addUserDefinedCommands();
-$app->addGlobalCommands();
-
-$app->run();
+require __DIR__.'/../src/bootstrap.php';
