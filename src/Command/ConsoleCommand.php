@@ -5,12 +5,12 @@ namespace eecli\Command;
 use Illuminate\Console\Command;
 use Boris\Boris;
 
-class ReplCommand extends Command
+class ConsoleCommand extends Command
 {
     /**
      * {@inheritdoc}
      */
-    protected $name = 'repl';
+    protected $name = 'console';
 
     /**
      * {@inheritdoc}
