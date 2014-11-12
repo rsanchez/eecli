@@ -29,9 +29,18 @@ class Functions extends \EE_Functions
      */
     protected $variables;
 
+    /**
+     * Controller instance
+     * @var \CI_Controller
+     */
+    protected $EE;
+
     public function __construct(OutputInterface $output)
     {
         $this->output = $output;
+
+        // for EE 2.5
+        $this->EE = get_instance();
     }
 
     /**
