@@ -32,7 +32,7 @@ $ eecli your_custom_command
 
 ## Installation
 
-Installation is done with [Composer](https://getcomposer.org/). Refer the official composer documentation for more information on [installing Composer globally](https://getcomposer.org/doc/00-intro.md#globally)
+The preferred installation method is to install globally with [Composer](https://getcomposer.org/). Refer the official composer documentation for more information on [installing Composer globally](https://getcomposer.org/doc/00-intro.md#globally)
 
 ```
 composer global require eecli/eecli dev-master
@@ -43,6 +43,8 @@ Make sure your global Composer installation's bin folder is added to your PATH i
 ```
 export PATH=~/.composer/vendor/bin:$PATH
 ```
+
+For more installation methods, please see the [full Installation guide](https://github.com/rsanchez/eecli/wiki/Installation) in the Wiki.
 
 ## Usage
 
