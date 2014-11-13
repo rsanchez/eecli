@@ -4,8 +4,9 @@ namespace eecli\Command;
 
 use Illuminate\Console\Command;
 use Boris\Boris;
+use eecli\Command\Contracts\HasLongDescription;
 
-class ConsoleCommand extends Command
+class ConsoleCommand extends Command implements HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -15,7 +16,7 @@ class ConsoleCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Start an interactive shell.';
+    protected $description = 'Start an interactive console.';
 
     /**
      * {@inheritdoc}
@@ -33,5 +34,17 @@ class ConsoleCommand extends Command
         $boris = new Boris('> ');
 
         $boris->start();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLongDescription()
+    {
+        return <<<EOT
+Start a interactive console.
+
+![Screencast of interactive console](https://github.com/rsanchez/eecli/wiki/images/console.gif)
+EOT;
     }
 }
