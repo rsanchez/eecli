@@ -92,6 +92,12 @@ class Application extends ConsoleApplication
      */
     protected $globalInput;
 
+    /**
+     * List of errors
+     * @var array
+     */
+    protected $errors = array();
+
     public function __construct()
     {
         $this->setGlobalInput();
@@ -112,6 +118,56 @@ class Application extends ConsoleApplication
         ob_start();
 
         register_shutdown_function(array($this, 'shutdown'));
+    }
+
+    /**
+     * Register an error
+     * @param string $error
+     */
+    public function addError($error)
+    {
+        $this->errors[] = $error;
+    }
+
+    /**
+     * Look for any errors that EE might have registered
+     * and print them.
+     *
+     * @param  boolean $quit exit if errors are found
+     * @return boolean
+     */
+    public function checkForErrors($quit = false)
+    {
+        $errors = $this->errors;
+
+        if (isset(ee()->form_validation) && ee()->form_validation->_error_array) {
+            foreach (ee()->form_validation->_error_array as $error) {
+                $errors[] = $error;
+            }
+        }
+
+        if ($errors) {
+
+            $consoleOutput = new ConsoleOutput();
+
+            foreach ($errors as $error) {
+                $consoleOutput->writeln('<error>' . $error . '</error>');
+            }
+
+            $this->errors = array();
+
+            if (isset(ee()->form_validation)) {
+                ee()->form_validation->_error_array = array();
+            }
+
+            if ($quit) {
+                exit;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -239,7 +295,7 @@ class Application extends ConsoleApplication
     /**
      * Create a new global CI controller instance
      * @param  string $className
-     * @return void
+     * @return \CI_Controller
      */
     public function newInstance($className)
     {
@@ -266,6 +322,8 @@ class Application extends ConsoleApplication
         if ($newInstance instanceof BootableInterface) {
             $newInstance->boot($this);
         }
+
+        return $newInstance;
     }
 
     /**
@@ -321,8 +379,8 @@ class Application extends ConsoleApplication
             }
 
             // override EE classes to print errors/messages to console
-            ee()->output = new CodeIgniterConsoleOutput($output);
-            ee()->functions = new Functions($output);
+            ee()->output = new CodeIgniterConsoleOutput($this, $output);
+            ee()->functions = new Functions($this, $output);
         }
 
         if ($this->doesCommandHaveRuntimeOptions($command)) {

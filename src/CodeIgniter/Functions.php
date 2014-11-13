@@ -2,6 +2,7 @@
 
 namespace eecli\CodeIgniter;
 
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Functions extends \EE_Functions
@@ -35,7 +36,12 @@ class Functions extends \EE_Functions
      */
     protected $EE;
 
-    public function __construct(OutputInterface $output)
+    /**
+     * @var \Symfony\Component\Console\Application
+     */
+    protected $app;
+
+    public function __construct(Application $app, OutputInterface $output)
     {
         $this->output = $output;
 
@@ -63,6 +69,8 @@ class Functions extends \EE_Functions
         $failure = ee()->session->flashdata(':new:message_failure');
 
         if ($failure) {
+            $this->app->addError($failure);
+
             $this->errorMessage = $failure;
         }
 

@@ -128,7 +128,7 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
      */
     protected function fire()
     {
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
+        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
         $groupId = $this->argument('group_id');
 
@@ -138,7 +138,7 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
         $order = $this->option('order');
 
         if (! $order && $order !== '0') {
-            $query = ee()->db->select('field_order')
+            $query = $instance->db->select('field_order')
                 ->where('group_id', $groupId)
                 ->order_by('field_order', 'desc')
                 ->limit(1)
@@ -152,7 +152,7 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
         }
 
         $_POST = array(
-            'site_id' => ee()->config->item('site_id'),
+            'site_id' => $instance->config->item('site_id'),
             'group_id' => $groupId,
             'field_label' => $this->argument('label'),
             'field_name' => $name,
@@ -168,21 +168,9 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
 
         $_POST = array_merge($_POST, $this->getFieldtypeSettings());
 
-        ee()->field_edit();
+        $instance->field_edit();
 
-        if (ee()->output->getErrorMessage()) {
-            $this->error(ee()->output->getErrorMessage());
-
-            return;
-        }
-
-        if (ee()->form_validation->_error_messages) {
-            foreach (ee()->form_validation->_error_messages as $error) {
-                $this->error($error);
-            }
-
-            return;
-        }
+        $this->getApplication()->getIfErrors();
 
         $query = ee()->db->select('field_id')
             ->where('field_name', $name)

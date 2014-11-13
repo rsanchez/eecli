@@ -93,9 +93,9 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
     {
         $templates = $this->argument('template');
 
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
-        ee()->load->model('template_model');
+        $instance->load->model('template_model');
 
         $templateData = '';
 
@@ -117,7 +117,7 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
 
             list($groupName, $templateName) = explode('/', $template);
 
-            $query = ee()->db->select('group_id')
+            $query = $instance->db->select('group_id')
                 ->where('group_name', $groupName)
                 ->get('template_groups');
 
@@ -129,26 +129,22 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                     'duplicate_group' => false,
                 );
 
-                ee()->new_template_group();
+                $instance->new_template_group();
 
-                if (ee()->form_validation->_error_messages) {
-                    foreach (ee()->form_validation->_error_messages as $error) {
-                        $this->error($error);
-                    }
-
+                if ($this->getApplication()->checkForErrors()) {
                     continue;
                 }
 
                 $this->comment('Template group '.$groupName.' created.');
 
-                $variables = ee()->functions->getVariables();
+                $variables = $instance->functions->getVariables();
 
                 $groupId = $variables['tgpref'];
 
                 // it made an index template, update it if it needs
 
-                if (ee()->config->item('save_tmpl_files') === 'y') {
-                    $query = ee()->db->select('template_id')
+                if ($instance->config->item('save_tmpl_files') === 'y') {
+                    $query = $instance->db->select('template_id')
                         ->where('group_id', $groupId)
                         ->where('template_name', 'index')
                         ->get('templates');
@@ -159,10 +155,10 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                             'template_data' => '',
                             'template_notes' => '',
                             'save_template_file' => 'y',
-                            'save_template_revision' => ee()->config->item('save_tmpl_revisions'),
+                            'save_template_revision' => $instance->config->item('save_tmpl_revisions'),
                         );
 
-                        ee()->update_template();
+                        $instance->update_template();
                     }
 
                     $query->free_result();
@@ -174,9 +170,9 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
 
             $query->free_result();
 
-            $templateExists = ee()->db->where('group_id', $groupId)
+            $templateExists = $instance->db->where('group_id', $groupId)
                 ->where('template_name', $templateName)
-                ->where('site_id', ee()->config->item('site_id'))
+                ->where('site_id', $instance->config->item('site_id'))
                 ->count_all_results('templates') > 0;
 
             if ($templateExists) {
@@ -193,11 +189,11 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                 'template_type' => $templateType,
             );
 
-            ee()->template = ee()->TMPL;
+            $instance->template = $instance->TMPL;
 
-            ee()->create_new_template();
+            $instance->create_new_template();
 
-            $variables = ee()->cp->getVariables();
+            $variables = $instance->cp->getVariables();
 
             $templateId = $variables['template_id'];
 
@@ -205,15 +201,13 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                 'template_id' => $templateId,
                 'template_data' => $templateData,
                 'template_notes' => '',
-                'save_template_file' => ee()->config->item('save_tmpl_files'),
-                'save_template_revision' => ee()->config->item('save_tmpl_revisions'),
+                'save_template_file' => $instance->config->item('save_tmpl_files'),
+                'save_template_revision' => $instance->config->item('save_tmpl_revisions'),
             );
 
-            ee()->update_template();
+            $instance->update_template();
 
-            if (ee()->output->getErrorMessage()) {
-                $this->error(ee()->output->getErrorMessage());
-
+            if ($this->getApplication()->checkForErrors()) {
                 continue;
             }
 
@@ -229,11 +223,9 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                 'hits' => 0,
             );
 
-            ee()->template_edit_ajax();
+            $instance->template_edit_ajax();
 
-            if (ee()->output->getErrorMessage()) {
-                $this->error(ee()->output->getErrorMessage());
-
+            if ($this->getApplication()->checkForErrors()) {
                 continue;
             }
 

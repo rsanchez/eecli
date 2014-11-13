@@ -155,17 +155,17 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
      */
     protected function fire()
     {
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\MembersController');
+        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\MembersController');
 
-        ee()->load->helper(array('string', 'security'));
-        ee()->load->library('stats');
+        $instance->load->helper(array('string', 'security'));
+        $instance->load->library('stats');
 
         $name = $this->argument('name');
 
         $_POST = array(
             'clone_id' => '',
             'group_id' => '0',
-            'site_id' => ee()->config->item('site_id'),
+            'site_id' => $instance->config->item('site_id'),
             'group_title' => $name,
             'group_description' => $this->option('description'),
         );
@@ -173,7 +173,7 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
         $clone = $this->option('clone');
 
         if ($clone) {
-            $query = ee()->db->where('group_id', $clone)
+            $query = $instance->db->where('group_id', $clone)
                 ->get('member_groups');
 
             if ($query->num_rows() === 0) {
@@ -196,8 +196,8 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
 
             $query->free_result();
 
-            $query = ee()->db->select('template_groups.site_id, template_groups.group_id, template_member_groups.group_id AS member_group')
-                ->join('template_member_groups', 'template_groups.group_id = template_member_groups.template_group_id AND '.ee()->db->dbprefix('template_member_groups').'.`group_id` = '.ee()->db->escape($clone), 'left')
+            $query = $instance->db->select('template_groups.site_id, template_groups.group_id, template_member_groups.group_id AS member_group')
+                ->join('template_member_groups', 'template_groups.group_id = template_member_groups.template_group_id AND '.$instance->db->dbprefix('template_member_groups').'.`group_id` = '.$instance->db->escape($clone), 'left')
                 ->get('template_groups');
 
             foreach ($query->result() as $row) {
@@ -206,8 +206,8 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
 
             $query->free_result();
 
-            $query = ee()->db->select('modules.module_id, module_member_groups.group_id')
-                ->join('module_member_groups', 'module_member_groups.module_id = modules.module_id AND '.ee()->db->dbprefix('module_member_groups').'.`group_id` = '.ee()->db->escape($clone), 'left')
+            $query = $instance->db->select('modules.module_id, module_member_groups.group_id')
+                ->join('module_member_groups', 'module_member_groups.module_id = modules.module_id AND '.$instance->db->dbprefix('module_member_groups').'.`group_id` = '.$instance->db->escape($clone), 'left')
                 ->get('modules');
 
             foreach ($query->result() as $row) {
@@ -216,8 +216,8 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
 
             $query->free_result();
 
-            $query = ee()->db->select('channels.channel_id, channel_member_groups.group_id, channels.site_id')
-                ->join('channel_member_groups', 'channel_member_groups.channel_id = channels.channel_id AND '.ee()->db->dbprefix('channel_member_groups').'.`group_id` = '.ee()->db->escape($clone), 'left')
+            $query = $instance->db->select('channels.channel_id, channel_member_groups.group_id, channels.site_id')
+                ->join('channel_member_groups', 'channel_member_groups.channel_id = channels.channel_id AND '.$instance->db->dbprefix('channel_member_groups').'.`group_id` = '.$instance->db->escape($clone), 'left')
                 ->get('channels');
 
             foreach ($query->result() as $row) {
@@ -228,7 +228,7 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
 
         } else {
 
-            $query = ee()->db->get('sites');
+            $query = $instance->db->get('sites');
 
             $sites = $query->result();
 
@@ -249,7 +249,7 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
                     }
                 }
 
-                $query = ee()->db->where('site_id', $site->site_id)
+                $query = $instance->db->where('site_id', $site->site_id)
                     ->get('channels');
 
                 foreach ($query->result() as $row) {
@@ -258,7 +258,7 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
 
                 $query->free_result();
 
-                $query = ee()->db->where('site_id', $site->site_id)
+                $query = $instance->db->where('site_id', $site->site_id)
                     ->get('template_groups');
 
                 foreach ($query->result() as $row) {
@@ -268,7 +268,7 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
                 $query->free_result();
             }
 
-            $query = ee()->db->get('modules');
+            $query = $instance->db->get('modules');
 
             foreach ($query->result() as $row) {
                 $_POST['module_id_'.$row->module_id] = 'n';
@@ -277,25 +277,13 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
             $query->free_result();
         }
 
-        ee()->load->library('form_validation');
+        $instance->load->library('form_validation');
 
-        ee()->update_member_group();
+        $instance->update_member_group();
 
-        if (ee()->output->getErrorMessage()) {
-            $this->error(ee()->output->getErrorMessage());
+		$this->getApplication()->checkForErrors(true);
 
-            return;
-        }
-
-        if (ee()->form_validation->_error_messages) {
-            foreach (ee()->form_validation->_error_messages as $error) {
-                $this->error($error);
-            }
-
-            return;
-        }
-
-        $query = ee()->db->select('group_id')
+        $query = $instance->db->select('group_id')
             ->where('group_title', $name)
             ->get('member_groups');
 

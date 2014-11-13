@@ -148,7 +148,7 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
      */
     protected function fire()
     {
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
+        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
         $name = $this->argument('name');
 
@@ -185,23 +185,11 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
             $_POST['field_id_'.$field->field_id] = $value;
         }
 
-        ee()->category_update();
+        $instance->category_update();
 
-        if (ee()->output->getErrorMessage()) {
-            $this->error(ee()->output->getErrorMessage());
+        $this->getApplication()->checkForErrors(true);
 
-            return;
-        }
-
-        if (ee()->form_validation->_error_messages) {
-            foreach (ee()->form_validation->_error_messages as $error) {
-                $this->error($error);
-            }
-
-            return;
-        }
-
-        $query = ee()->db->select('cat_id')
+        $query = $instance->db->select('cat_id')
             ->where('cat_name', $name)
             ->where('group_id', $groupId)
             ->order_by('cat_id', 'desc')

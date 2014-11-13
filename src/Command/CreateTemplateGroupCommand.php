@@ -57,19 +57,19 @@ class CreateTemplateGroupCommand extends Command implements HasExamples, HasLong
     {
         $names = $this->argument('name');
 
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
-        ee()->load->model('template_model');
+        $instance->load->model('template_model');
 
         foreach ($names as $groupName) {
 
             // if this is default turn off the other defaults
             /*
             if ($this->option('default')) {
-                ee()->db->update('templates', array(
+                $instance->db->update('templates', array(
                     'is_site_default' => 'n',
                 ), array(
-                    'site_id' => ee()->config->item('site_id'),
+                    'site_id' => $instance->config->item('site_id'),
                 ));
             }
             */
@@ -80,13 +80,9 @@ class CreateTemplateGroupCommand extends Command implements HasExamples, HasLong
                 'duplicate_group' => false,
             );
 
-            ee()->new_template_group();
+            $instance->new_template_group();
 
-            if (ee()->form_validation->_error_messages) {
-                foreach (ee()->form_validation->_error_messages as $error) {
-                    $this->error($error);
-                }
-
+            if ($this->getApplication()->checkForErrors()) {
                 continue;
             }
 

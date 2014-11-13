@@ -80,16 +80,16 @@ class CreateMemberCommand extends Command implements HasExamples, HasOptionExamp
      */
     protected function fire()
     {
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\MembersController');
+        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\MembersController');
 
-        ee()->load->helper(array('string', 'security'));
-        ee()->load->library('stats');
+        $instance->load->helper(array('string', 'security'));
+        $instance->load->library('stats');
 
         $username = $this->argument('username_or_email');
         $password = $this->option('password') ?: random_string('alnum', 16);
         $screenName = $this->option('screen_name');
         $email = $this->option('email') ?: $username;
-        $groupId = $this->option('member_group') ?: ee()->config->item('default_member_group');
+        $groupId = $this->option('member_group') ?: $instance->config->item('default_member_group');
 
         $_POST = array(
             'username' => $username,
@@ -112,23 +112,11 @@ class CreateMemberCommand extends Command implements HasExamples, HasOptionExamp
             'bio' => '',
         );
 
-        ee()->new_member_form();
+        $instance->new_member_form();
 
-        if (ee()->output->getErrorMessage()) {
-            $this->error(ee()->output->getErrorMessage());
+        $this->getApplication()->checkForErrors(true);
 
-            return;
-        }
-
-        if (ee()->form_validation->_error_messages) {
-            foreach (ee()->form_validation->_error_messages as $error) {
-                $this->error($error);
-            }
-
-            return;
-        }
-
-        $query = ee()->db->select('member_id')
+        $query = $instance->db->select('member_id')
             ->where('username', $username)
             ->get('members');
 

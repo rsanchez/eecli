@@ -2,6 +2,7 @@
 
 namespace eecli\CodeIgniter;
 
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConsoleOutput extends \EE_Output
@@ -23,8 +24,15 @@ class ConsoleOutput extends \EE_Output
      */
     protected $errorMessage;
 
-    public function __construct(OutputInterface $output)
+    /**
+     * @var \Symfony\Component\Console\Application
+     */
+    protected $app;
+
+    public function __construct(Application $app, OutputInterface $output)
     {
+        $this->app = $app;
+
         $this->output = $output;
 
         // you need to load the template library to override the fatal error
@@ -129,6 +137,10 @@ class ConsoleOutput extends \EE_Output
 
         if (! is_array($errors)) {
             $errors = array($errors);
+        }
+
+        foreach ($errors as $error) {
+            $this->app->addError($error);
         }
 
         $this->errorMessage = implode(PHP_EOL, $errors);
