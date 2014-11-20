@@ -41,7 +41,7 @@ class Functions extends \EE_Functions
      */
     protected $app;
 
-    public function __construct(Application $app, OutputInterface $output)
+    public function __construct(OutputInterface $output, Application $app)
     {
         $this->output = $output;
 

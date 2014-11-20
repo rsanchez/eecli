@@ -29,7 +29,7 @@ class ConsoleOutput extends \EE_Output
      */
     protected $app;
 
-    public function __construct(Application $app, OutputInterface $output)
+    public function __construct(OutputInterface $output, Application $app)
     {
         $this->app = $app;
 

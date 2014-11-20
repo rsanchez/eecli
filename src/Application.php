@@ -378,8 +378,8 @@ class Application extends ConsoleApplication
             }
 
             // override EE classes to print errors/messages to console
-            ee()->output = new CodeIgniterConsoleOutput($this, $output);
-            ee()->functions = new Functions($this, $output);
+            ee()->output = new CodeIgniterConsoleOutput($output, $this);
+            ee()->functions = new Functions($output, $this);
         }
 
         if ($this->doesCommandHaveRuntimeOptions($command)) {
