@@ -95,7 +95,6 @@ class DbDumpCommand extends Command implements HasExamples, HasLongDescription, 
 
         // set a default name <db>[-<env>]-<yyyymmddhhmmss>
         if (! $name) {
-
             $name = sanitize_filename(ee()->db->database);
 
             $env = $this->getApplication()->getEnvironment();
@@ -126,7 +125,6 @@ class DbDumpCommand extends Command implements HasExamples, HasLongDescription, 
 
         // check if we need to delete any old backups
         if (is_numeric($backups)) {
-
             $finder = new Finder();
 
             // look for other files in the path that use the

@@ -62,7 +62,6 @@ class CreateTemplateGroupCommand extends Command implements HasExamples, HasLong
         $instance->load->model('template_model');
 
         foreach ($names as $groupName) {
-
             // if this is default turn off the other defaults
             /*
             if ($this->option('default')) {

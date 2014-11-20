@@ -59,8 +59,8 @@ class DeleteGlobalVariableCommand extends Command implements HasExamples, HasLon
         $siteId = ee()->config->item('site_id');
         $siteName = ee()->config->item('site_short_name');
 
-        if ( ! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
-            $this->error('Did not delete global variable(s): ' . implode(' ', $names));
+        if (! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
+            $this->error('Did not delete global variable(s): '.implode(' ', $names));
 
             return;
         }
@@ -81,8 +81,8 @@ class DeleteGlobalVariableCommand extends Command implements HasExamples, HasLon
         $hasLowVariables = array_key_exists('Low_variables_ext', ee()->extensions->version_numbers);
 
         foreach ($names as $name) {
-            if ( ! isset($globalVariables[$name])) {
-                $this->error('Global variable ' . $name . ' not found.');
+            if (! isset($globalVariables[$name])) {
+                $this->error('Global variable '.$name.' not found.');
 
                 continue;
             }
@@ -90,7 +90,7 @@ class DeleteGlobalVariableCommand extends Command implements HasExamples, HasLon
             $globalVariable = $globalVariables[$name];
 
             if ($hasLowVariables && ee()->db->where('variable_id', $globalVariable->variable_id)->count_all_results('low_variables') > 0) {
-                $this->error('Could not delete Low Variable ' . $name . '.');
+                $this->error('Could not delete Low Variable '.$name.'.');
 
                 continue;
             }
@@ -99,7 +99,7 @@ class DeleteGlobalVariableCommand extends Command implements HasExamples, HasLon
 
             ee()->extensions->call('eecli_delete_global_variable', $globalVariable->variable_id, $globalVariable->variable_name, $globalVariable->variable_data, $siteId, $siteName);
 
-            $this->info('Global variable ' . $name . ' deleted.');
+            $this->info('Global variable '.$name.' deleted.');
         }
     }
 

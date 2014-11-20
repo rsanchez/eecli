@@ -171,7 +171,6 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrap, HasLo
 
                 $countRemainingChoices = count($remainingChoices);
             }
-
         } while ($countRemainingChoices > 0 && $choice !== 'DONE');
 
         return $userChoices;
@@ -396,7 +395,7 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrap, HasLo
             $this->template('upd.php.handlebars', $folder.'/upd.'.$this->vars['addonSlug'].'.php');
 
             if ($this->vars['hasModuleMod']) {
-              $this->template('mod.php.handlebars', $folder.'/mod.'.$this->vars['addonSlug'].'.php');
+                $this->template('mod.php.handlebars', $folder.'/mod.'.$this->vars['addonSlug'].'.php');
             }
 
             $this->template('mcp.php.handlebars', $folder.'/mcp.'.$this->vars['addonSlug'].'.php');

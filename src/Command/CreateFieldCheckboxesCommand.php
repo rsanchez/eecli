@@ -2,8 +2,6 @@
 
 namespace eecli\Command;
 
-use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
 
 class CreateFieldCheckboxesCommand extends AbstractCreateFieldNativeOptionsCommand
 {

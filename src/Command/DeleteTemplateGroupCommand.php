@@ -65,7 +65,6 @@ class DeleteTemplateGroupCommand extends Command implements HasExamples, HasLong
         }
 
         foreach ($templateGroups as $groupName) {
-
             $query = ee()->db->select('group_id')
                 ->where('group_name', $groupName)
                 ->get('template_groups');

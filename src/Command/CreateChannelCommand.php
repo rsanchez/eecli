@@ -152,7 +152,6 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
 
         if (! $data['field_group']) {
             if ($this->option('new_field_group')) {
-
                 ee()->load->model('field_model');
 
                 if (ee()->field_model->is_duplicate_field_group_name($channel_title)) {

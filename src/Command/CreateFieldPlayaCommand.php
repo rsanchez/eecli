@@ -3,7 +3,6 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\HasExamples;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
 class CreateFieldPlayaCommand extends AbstractCreateFieldCommand implements HasExamples
@@ -86,7 +85,7 @@ class CreateFieldPlayaCommand extends AbstractCreateFieldCommand implements HasE
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Limit',
-                100
+                100,
             ),
             array(
                 'order_by',

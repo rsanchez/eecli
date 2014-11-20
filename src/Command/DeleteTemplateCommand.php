@@ -68,7 +68,6 @@ class DeleteTemplateCommand extends Command implements HasExamples, HasLongDescr
         }
 
         foreach ($templates as $template) {
-
             if (! preg_match('#^[a-zA-Z0-9_\-]+/[a-zA-Z0-9_\-]+$#', $template)) {
                 $this->error('Template '.$template.' must be in <template_group>/<template_name> format.');
 

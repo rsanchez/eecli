@@ -225,9 +225,7 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
             }
 
             $query->free_result();
-
         } else {
-
             $query = $instance->db->get('sites');
 
             $sites = $query->result();
@@ -281,7 +279,7 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
 
         $instance->update_member_group();
 
-		$this->getApplication()->checkForErrors(true);
+        $this->getApplication()->checkForErrors(true);
 
         $query = $instance->db->select('group_id')
             ->where('group_title', $name)

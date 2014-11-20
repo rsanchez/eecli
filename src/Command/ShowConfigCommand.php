@@ -54,7 +54,6 @@ class ShowConfigCommand extends Command implements HasExamples
         $key = $this->argument('key');
 
         if ($key) {
-
             $value = $this->dump(ee()->config->item($key));
 
             $this->line($value);
@@ -71,7 +70,7 @@ class ShowConfigCommand extends Command implements HasExamples
         ksort($config);
 
         foreach ($config as $key => $value) {
-            if ( ! is_string($value) && ! is_int($value) && ! is_float($value)) {
+            if (! is_string($value) && ! is_int($value) && ! is_float($value)) {
                 $value = $this->dump($value);
             }
 

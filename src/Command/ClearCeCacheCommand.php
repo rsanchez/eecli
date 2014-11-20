@@ -82,13 +82,12 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
 
         // if there are no arguments, clear all caches
         if (! $items) {
-
             require_once PATH_THIRD.'ce_cache/libraries/Ce_cache_factory.php';
 
             $drivers = \Ce_cache_factory::factory($drivers);
 
             foreach ($drivers as $driver) {
-                $driverName = lang('ce_cache_driver_'. $driver->name());
+                $driverName = lang('ce_cache_driver_'.$driver->name());
 
                 if ($driver->clear() === false) {
                     $this->error(sprintf(lang('ce_cache_error_cleaning_driver_cache'), $driverName));
@@ -96,9 +95,7 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
                     $this->comment($driverName.' cache cleared.');
                 }
             }
-
         } else {
-
             require_once PATH_THIRD.'ce_cache/libraries/Ce_cache_break.php';
 
             $breaker = new \Ce_cache_break();
@@ -110,7 +107,6 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
             $defaultArgs = array(array(), array(), false);
 
             foreach ($items as $item) {
-
                 $args = $defaultArgs;
 
                 $args[$which][] = $item;

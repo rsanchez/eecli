@@ -45,7 +45,6 @@ class InitCommand extends Command implements ExemptFromBootstrap
         $systemPath = $this->getApplication()->getSystemPath();
 
         if ($systemPath) {
-
             $cwdLength = strlen($cwd);
 
             //check if the system path is in the cwd

@@ -147,11 +147,10 @@ class Application extends ConsoleApplication
         }
 
         if ($errors) {
-
             $consoleOutput = new ConsoleOutput();
 
             foreach ($errors as $error) {
-                $consoleOutput->writeln('<error>' . $error . '</error>');
+                $consoleOutput->writeln('<error>'.$error.'</error>');
             }
 
             $this->errors = array();
@@ -199,7 +198,7 @@ class Application extends ConsoleApplication
 
             $consoleOutput = new ConsoleOutput();
 
-            $consoleOutput->writeln('<error>' . $error . '</error>');
+            $consoleOutput->writeln('<error>'.$error.'</error>');
 
             return;
         }
@@ -294,7 +293,7 @@ class Application extends ConsoleApplication
 
     /**
      * Create a new global CI controller instance
-     * @param  string $className
+     * @param  string         $className
      * @return \CI_Controller
      */
     public function newInstance($className)
@@ -479,7 +478,6 @@ class Application extends ConsoleApplication
             $currentTime = microtime(true);
 
             if (($currentTime - $startTime) > 5) {
-
                 $consoleOutput->writeln('<error>Could not automatically find your system folder within 5 seconds. Please create a config file using eecli init and set your system folder manually.</error>');
 
                 exit;
@@ -501,7 +499,7 @@ class Application extends ConsoleApplication
         }
 
         if ($systemPath) {
-            $consoleOutput->writeln('<info>System folder ./' . str_replace(getcwd() . DIRECTORY_SEPARATOR, '', $systemPath) . ' found.</info>');
+            $consoleOutput->writeln('<info>System folder ./'.str_replace(getcwd().DIRECTORY_SEPARATOR, '', $systemPath).' found.</info>');
         } else {
             $consoleOutput->writeln('<error>Could not automatically find your system folder. Please create a config file using eecli init and set your system folder manually.</error>');
         }

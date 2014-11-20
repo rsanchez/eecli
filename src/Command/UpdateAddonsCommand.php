@@ -212,7 +212,7 @@ class UpdateAddonsCommand extends Command implements HasExamples, HasLongDescrip
                 $fieldtypesUpdated++;
 
                 $this->comment(sprintf('%s updated from %s to %s.', $name, $data['version'], $fieldtype->info['version']));
-           }
+            }
         }
 
         if ($fieldtypesUpdated > 0) {

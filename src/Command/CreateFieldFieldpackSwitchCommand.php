@@ -3,7 +3,6 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\HasExamples;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
 class CreateFieldFieldpackSwitchCommand extends AbstractCreateFieldCommand implements HasExamples
