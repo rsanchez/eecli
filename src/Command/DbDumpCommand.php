@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
 
 class DbDumpCommand extends Command implements HasExamples, HasLongDescription, HasOptionExamples
 {
@@ -68,6 +69,14 @@ class DbDumpCommand extends Command implements HasExamples, HasLongDescription, 
      */
     protected function fire()
     {
+        $process = new Process('mysqldump --version');
+
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException('mysqldump could not be found in your $PATH.');
+        }
+
         ee()->load->helper('security');
 
         // where to create the file, default to current dir
@@ -77,16 +86,14 @@ class DbDumpCommand extends Command implements HasExamples, HasLongDescription, 
 
         $gzip = $this->option('gzip');
 
-        if (! function_exists('system')) {
-            throw new \RuntimeException('The system function is disabled php.');
-        }
+        if ($gzip) {
+            $process = new Process('gzip --version');
 
-        if ($gzip && ! system('which gzip')) {
-            throw new \RuntimeException('gzip could not be found in your $PATH.');
-        }
+            $process->run();
 
-        if ($gzip && ! system('which mysqldump')) {
-            throw new \RuntimeException('mysqldump could not be found in your $PATH.');
+            if (! $process->isSuccessful()) {
+                throw new \RuntimeException('gzip could not be found in your $PATH.');
+            }
         }
 
         $extension = $gzip ? '.sql.gz' : '.sql';
@@ -110,16 +117,26 @@ class DbDumpCommand extends Command implements HasExamples, HasLongDescription, 
 
         // compile the mysqldump command using EE's db credentials
         $command = sprintf(
-            'MYSQL_PWD="%s" /usr/bin/env mysqldump -u "%s" -h "%s" "%s"%s > %s',
-            ee()->db->password,
-            ee()->db->username,
-            ee()->db->hostname,
-            ee()->db->database,
+            'MYSQL_PWD="%s" mysqldump -u "%s" -h "%s" "%s"%s > %s',
+            escapeshellarg(ee()->db->password),
+            escapeshellarg(ee()->db->username),
+            escapeshellarg(ee()->db->hostname),
+            escapeshellarg(ee()->db->database),
             $gzip ? ' | gzip' : '',
-            $file
+            escapeshellarg($file)
         );
 
-        $executed = system($command);
+        $process = new Process($command);
+
+        $process->setTimeout(3600);
+
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            $this->error('Could not execute mysqldump.');
+
+            return;
+        }
 
         $backups = $this->option('backups');
 
@@ -143,11 +160,7 @@ class DbDumpCommand extends Command implements HasExamples, HasLongDescription, 
             }
         }
 
-        if ($executed !== false) {
-            $this->info($file.' created.');
-        } else {
-            $this->error('Could not execute mysqldump.');
-        }
+        $this->info($file.' created.');
     }
 
     public function getOptionExamples()

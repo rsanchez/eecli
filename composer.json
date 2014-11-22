@@ -23,6 +23,7 @@
         "d11wtq/boris": "~1.0",
         "xamin/handlebars.php": "~0.9",
         "symfony/finder": "~2.5",
-        "doctrine/instantiator": "~1.0,>=1.0.2"
+        "doctrine/instantiator": "~1.0,>=1.0.2",
+        "symfony/process": "~2.5"
     }
 }
