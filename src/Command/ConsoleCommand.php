@@ -18,6 +18,15 @@ class ConsoleCommand extends Command implements HasLongDescription
      */
     protected $description = 'Start an interactive console.';
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->setAliases(array(
+            'repl',
+        ));
+    }
+
     /**
      * {@inheritdoc}
      */
