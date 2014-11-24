@@ -2,7 +2,6 @@
 
 namespace eecli\Command;
 
-
 class CreateFieldCheckboxesCommand extends AbstractCreateFieldNativeOptionsCommand
 {
     /**
