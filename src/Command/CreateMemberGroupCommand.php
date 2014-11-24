@@ -155,7 +155,7 @@ class CreateMemberGroupCommand extends Command implements HasExamples, HasOption
      */
     protected function fire()
     {
-        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\MembersController');
+        $instance = $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\MembersController');
 
         $instance->load->helper(array('string', 'security'));
         $instance->load->library('stats');

@@ -86,7 +86,7 @@ class CreateSnippetCommand extends Command implements HasExamples, HasLongDescri
 
         $tempContents = $contents ? $contents : '{!--TEMP--}';
 
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         $_POST = array(
             'snippet_name' => $name,

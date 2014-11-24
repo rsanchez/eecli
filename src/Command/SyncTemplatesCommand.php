@@ -21,7 +21,7 @@ class SyncTemplatesCommand extends Command
      */
     protected function fire()
     {
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         ee()->sync_templates();
 

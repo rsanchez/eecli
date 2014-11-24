@@ -56,7 +56,7 @@ class DeleteTemplateCommand extends Command implements HasExamples, HasLongDescr
     {
         $templates = $this->argument('template');
 
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         ee()->load->model('template_model');
         ee()->template = ee()->TMPL;

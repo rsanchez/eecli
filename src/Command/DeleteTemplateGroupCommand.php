@@ -56,7 +56,7 @@ class DeleteTemplateGroupCommand extends Command implements HasExamples, HasLong
     {
         $templateGroups = $this->argument('template_group');
 
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         if (! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
             $this->error('Did not delete template group(s): '.implode(' ', $templateGroups));

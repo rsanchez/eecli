@@ -60,7 +60,7 @@ class CreateStatusCommand extends Command implements HasExamples, HasOptionExamp
      */
     protected function fire()
     {
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
+        $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
         $status = $this->argument('status');
 

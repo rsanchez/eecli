@@ -79,7 +79,7 @@ class CreateGlobalVariableCommand extends Command implements HasExamples, HasLon
 
         $tempContents = $contents ? $contents : '{!--TEMP--}';
 
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         $_POST = array(
             'variable_name' => $name,

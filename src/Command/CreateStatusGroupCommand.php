@@ -38,7 +38,7 @@ class CreateStatusGroupCommand extends Command implements HasExamples
      */
     protected function fire()
     {
-        $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
+        $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
         $name = $this->argument('name');
 

@@ -279,9 +279,18 @@ class Application extends ConsoleApplication
         ee()->load->helper('form');
         ee()->load->helper('url');
         ee()->load->library('view');
-        ee()->view->disable('ee_menu');
         ee()->lang->loadfile('cp');
         ee()->load->library('logger');
+
+        if (version_compare(APP_VER, '2.6', '>=')) {
+            ee()->view->disable('ee_menu');
+        } else {
+            ee()->session->userdata['assigned_template_groups'] = array();
+        }
+
+        if (version_compare(APP_VER, '2.8', '<') && ! defined('XID_SECURE_HASH')) {
+            define('XID_SECURE_HASH', '');
+        }
 
         ee()->load->library('cp');
         ee()->cp = new Cp(ee()->cp->cp_theme, ee()->cp->cp_theme_url);
@@ -296,9 +305,15 @@ class Application extends ConsoleApplication
      * @param  string         $className
      * @return \CI_Controller
      */
-    public function newInstance($className)
+    public function newControllerInstance($className)
     {
         $oldInstance = get_instance();
+
+        if (version_compare(APP_VER, '2.6', '<')) {
+            require_once APPPATH.'controllers/ee.php';
+        } else {
+            require_once APPPATH.'core/EE_Controller.php';
+        }
 
         $instantiator = new Instantiator();
 

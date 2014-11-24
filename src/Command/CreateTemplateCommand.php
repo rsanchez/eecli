@@ -93,7 +93,7 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
     {
         $templates = $this->argument('template');
 
-        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $instance = $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         $instance->load->model('template_model');
 

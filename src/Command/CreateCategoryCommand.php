@@ -148,7 +148,7 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
      */
     protected function fire()
     {
-        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
+        $instance = $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
         $name = $this->argument('name');
 

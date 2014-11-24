@@ -84,7 +84,7 @@ class CreateUploadPrefCommand extends Command implements HasExamples
      */
     protected function fire()
     {
-        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\ContentFilesController');
+        $instance = $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\ContentFilesController');
 
         $instance->load->library('form_validation');
         $instance->load->model('file_model');

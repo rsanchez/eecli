@@ -57,7 +57,7 @@ class CreateTemplateGroupCommand extends Command implements HasExamples, HasLong
     {
         $names = $this->argument('name');
 
-        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
+        $instance = $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         $instance->load->model('template_model');
 

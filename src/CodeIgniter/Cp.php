@@ -15,6 +15,7 @@ class Cp extends \Cp
     {
         $this->cp_theme = $theme;
         $this->cp_theme_url = $themeUrl;
+        $this->EE = get_instance();
     }
 
     /**

@@ -128,7 +128,7 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
      */
     protected function fire()
     {
-        $instance = $this->getApplication()->newInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
+        $instance = $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
         $groupId = $this->argument('group_id');
 
