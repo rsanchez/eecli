@@ -93,6 +93,11 @@ class Application extends ConsoleApplication
     protected $globalInput;
 
     /**
+     * @var \Symfony\Component\Console\Output\ConsoleOutput
+     */
+    protected $consoleOutput;
+
+    /**
      * List of errors
      * @var array
      */
@@ -101,6 +106,14 @@ class Application extends ConsoleApplication
     public function __construct()
     {
         $this->setGlobalInput();
+
+        $this->consoleOutput = new ConsoleOutput();
+
+        if ($this->globalInput->hasParameterOption(array('--ansi'))) {
+            $this->consoleOutput->setDecorated(true);
+        } elseif ($this->globalInput->hasParameterOption(array('--no-ansi'))) {
+            $this->consoleOutput->setDecorated(false);
+        }
 
         parent::__construct(self::NAME, self::VERSION);
 
@@ -147,10 +160,8 @@ class Application extends ConsoleApplication
         }
 
         if ($errors) {
-            $consoleOutput = new ConsoleOutput();
-
             foreach ($errors as $error) {
-                $consoleOutput->writeln('<error>'.$error.'</error>');
+                $this->consoleOutput->writeln('<error>'.$error.'</error>');
             }
 
             $this->errors = array();
@@ -196,9 +207,7 @@ class Application extends ConsoleApplication
                 $error = 'eecli could not connect to your database. Please see the doc on troubleshooting: https://github.com/rsanchez/eecli/wiki/Troubleshooting';
             }
 
-            $consoleOutput = new ConsoleOutput();
-
-            $consoleOutput->writeln('<error>'.$error.'</error>');
+            $this->consoleOutput->writeln('<error>'.$error.'</error>');
 
             return;
         }
@@ -475,9 +484,7 @@ class Application extends ConsoleApplication
      */
     public function findSystemPath()
     {
-        $consoleOutput = new ConsoleOutput();
-
-        $consoleOutput->writeln('<comment>Searching for your system folder...</comment>');
+        $this->consoleOutput->writeln('<comment>Searching for your system folder...</comment>');
 
         $startTime = microtime(true);
 
@@ -493,7 +500,7 @@ class Application extends ConsoleApplication
             $currentTime = microtime(true);
 
             if (($currentTime - $startTime) > 5) {
-                $consoleOutput->writeln('<error>Could not automatically find your system folder within 5 seconds. Please create a config file using eecli init and set your system folder manually.</error>');
+                $this->consoleOutput->writeln('<error>Could not automatically find your system folder within 5 seconds. Please create a config file using eecli init and set your system folder manually.</error>');
 
                 exit;
             }
@@ -514,9 +521,9 @@ class Application extends ConsoleApplication
         }
 
         if ($systemPath) {
-            $consoleOutput->writeln('<info>System folder ./'.str_replace(getcwd().DIRECTORY_SEPARATOR, '', $systemPath).' found.</info>');
+            $this->consoleOutput->writeln('<info>System folder ./'.str_replace(getcwd().DIRECTORY_SEPARATOR, '', $systemPath).' found.</info>');
         } else {
-            $consoleOutput->writeln('<error>Could not automatically find your system folder. Please create a config file using eecli init and set your system folder manually.</error>');
+            $this->consoleOutput->writeln('<error>Could not automatically find your system folder. Please create a config file using eecli init and set your system folder manually.</error>');
         }
 
         return $systemPath;
