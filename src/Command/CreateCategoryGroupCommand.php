@@ -49,11 +49,7 @@ class CreateCategoryGroupCommand extends Command implements HasExamples
 
         ee()->update_category_group();
 
-        if (ee()->output->getErrorMessage()) {
-            $this->error(ee()->output->getErrorMessage());
-
-            return;
-        }
+        $this->getApplication()->checkForErrors(true);
 
         $query = ee()->db->select('group_id')
             ->where('group_name', $name)
