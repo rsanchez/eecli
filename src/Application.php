@@ -280,9 +280,6 @@ class Application extends ConsoleApplication
         define('PATH_CP_THEME', PATH_THEMES.'cp_themes/');
         define('BASE', SELF.'?S=0&amp;D=cp');
 
-        // superadmin
-        ee()->session->userdata['group_id'] = '1';
-
         ee()->benchmark = load_class('Benchmark', 'core');
         ee()->router = load_class('Router', 'core');
         ee()->load->helper('form');
@@ -300,6 +297,18 @@ class Application extends ConsoleApplication
         if (version_compare(APP_VER, '2.8', '<') && ! defined('XID_SECURE_HASH')) {
             define('XID_SECURE_HASH', '');
         }
+
+        $query = ee()->db->where('members.group_id', 1)
+            ->join('member_groups', 'member_groups.group_id = members.group_id')
+            ->limit(1)
+            ->get('members');
+
+        // superadmin
+        ee()->session->userdata = $query->row_array();
+        ee()->session->userdata['group_id'] = '1';
+        ee()->session->userdata['assigned_template_groups'] = array();
+
+        $query->free_result();
 
         ee()->load->library('cp');
         ee()->cp = new Cp(ee()->cp->cp_theme, ee()->cp->cp_theme_url);
