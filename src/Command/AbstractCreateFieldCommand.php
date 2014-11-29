@@ -170,7 +170,7 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
 
         $instance->field_edit();
 
-        $this->getApplication()->getIfErrors();
+        $this->getApplication()->checkForErrors(true);
 
         $query = ee()->db->select('field_id')
             ->where('field_name', $name)
