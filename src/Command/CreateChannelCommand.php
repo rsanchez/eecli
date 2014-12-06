@@ -28,12 +28,12 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
     {
         return array(
             array(
-                'channel_name',
+                'name',
                 InputArgument::REQUIRED,
                 'What is the short name of the channel? (ex. blog_articles)',
             ),
             array(
-                'channel_title',
+                'title',
                 InputArgument::OPTIONAL,
                 'What is the title of the channel? (ex. Blog Articles)',
             ),
@@ -51,18 +51,20 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
                 'f',
                 InputOption::VALUE_REQUIRED,
                 'Which field group do you want to assign this channel to?',
+                '',
             ),
             array(
                 'status_group',
                 's',
                 InputOption::VALUE_REQUIRED,
                 'Which status group do you want to assign this channel to?',
+                '',
             ),
             array(
                 'cat_group',
                 'c',
-                InputOption::VALUE_REQUIRED,
-                'Which cat group(s) do you want to assign this channel to? Separate multiple with | char.',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Which cat group(s) do you want to assign this channel to? Separate multiple with comma.',
             ),
             array(
                 'channel_url',
@@ -116,53 +118,29 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
      */
     protected function fire()
     {
-        ee()->load->model('channel_model');
+        $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
-        $channel_name = $this->argument('channel_name');
+        $name = $this->argument('name');
 
-        $query = ee()->db->where('channel_name', $channel_name)
-            ->where('site_id', ee()->config->item('site_id'))
-            ->get('channels');
+        $title = $this->argument('title') ?: ucwords(str_replace('_', ' ', $name));
 
-        if ($query->num_rows() > 0) {
-            $this->error("The channel \"{$channel_name}\" already exists.");
+        $fieldGroup = (string) $this->option('field_group');
 
-            return;
-        }
+        $statusGroup = (string) $this->option('status_group');
 
-        $query->free_result();
-
-        $channel_title = $this->argument('channel_title') ?: ucwords(str_replace('_', ' ', $channel_name));
-
-        $data = array(
-            'channel_name' => $channel_name,
-            'channel_title' => $channel_title,
-            'channel_url' => $this->option('channel_url'),
-            'channel_description' => $this->option('channel_description'),
-            'default_entry_title' => $this->option('default_entry_title'),
-            'url_title_prefix' => $this->option('url_title_prefix'),
-            'deft_status' => $this->option('deft_status'),
-            'deft_category' => $this->option('deft_category'),
-            'field_group' => $this->option('field_group'),
-            'status_group' => $this->option('status_group'),
-            'cat_group' => $this->option('field_group'),
-            'channel_lang' => ee()->config->item('xml_lang'),
-            'site_id' => ee()->config->item('site_id'),
-        );
-
-        if (! $data['field_group']) {
+        if (! $fieldGroup) {
             if ($this->option('new_field_group')) {
                 ee()->load->model('field_model');
 
-                if (ee()->field_model->is_duplicate_field_group_name($channel_title)) {
-                    $this->error("The field group \"{$channel_title}\" already exists. Channel not created.");
+                if (ee()->field_model->is_duplicate_field_group_name($title)) {
+                    $this->error("The field group \"{$title}\" already exists. Channel not created.");
 
                     return;
                 }
 
-                ee()->field_model->insert_field_group($channel_title);
+                ee()->field_model->insert_field_group($title);
 
-                $data['field_group'] = ee()->db->insert_id();
+                $fieldGroup = ee()->db->insert_id();
             } else {
                 //if there is only one field group assign it, otherwise for now leave unassigned
                 $query = ee()->db->select('group_id')
@@ -170,14 +148,14 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
                     ->get('field_groups');
 
                 if ($query->num_rows() === 1) {
-                    $data['field_group'] = $query->row('group_id');
+                    $fieldGroup = $query->row('group_id');
                 }
 
                 $query->free_result();
             }
         }
 
-        if (! $data['status_group']) {
+        if (! $statusGroup) {
             // trying to find the open/closed status group
             $query = ee()->db->select('group_id')
                 ->where('(SELECT COUNT(*) FROM exp_statuses WHERE exp_statuses.group_id = exp_status_groups.group_id) = 2', null, false)
@@ -187,20 +165,49 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
                 ->get('status_groups');
 
             if ($query->num_rows() > 0) {
-                $data['status_group'] = $query->row('group_id');
+                $statusGroup = $query->row('group_id');
             }
 
             $query->free_result();
         }
 
-        ee()->channel_model->create_channel($data);
+        $_POST = array(
+            'channel_title' => $title,
+            'channel_name' => $name,
+            'duplicate_channel_prefs' => '',
+            'cat_group' => $this->option('cat_group'),
+            'status_group' => $statusGroup,
+            'field_group' => $fieldGroup,
+            'channel_prefs_submit' => 'Submit',
+        );
 
-        $this->info("New channel {$channel_name} created");
+        ee()->channel_add();
+
+        $this->getApplication()->checkForErrors(true);
+
+        $query = ee()->db->select('channel_id')
+            ->where('channel_name', $name)
+            ->get('channels');
+
+        $channelId = $query->row('channel_id');
+
+        $query->free_result();
+
+        ee()->db->where('channel_id', $channelId)->update('channels', array(
+            'channel_url' => $this->option('channel_url'),
+            'channel_description' => $this->option('channel_description'),
+            'default_entry_title' => $this->option('default_entry_title'),
+            'url_title_prefix' => $this->option('url_title_prefix'),
+            'deft_status' => $this->option('deft_status'),
+            'deft_category' => $this->option('deft_category'),
+        ));
+
+        $this->info(sprintf('Channel %s (%s) created.', $name, $channelId));
     }
 
     public function getLongDescription()
     {
-        return 'Creates a channel. Pass in a channel short name using underscores only and optionally pass in a channel title. If you exclude the channel title, one will be auto-generated from your channel short name.';
+        return 'Create a channel. Pass in a channel short name using underscores only and optionally pass in a channel title. If you exclude the channel title, one will be auto-generated from your channel short name.';
     }
 
     public function getExamples()
@@ -210,7 +217,7 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
             'Create a channel with the title Test Channel' => 'test_channel "Test Channel"',
             'Create a channel with field group 5' => '--field_group=5 test_channel',
             'Create a channel with status group 5' => '--status_group=5 test_channel',
-            'Create a channel with cat group 5 and 6' => '--cat_group="5|6" test_channel',
+            'Create a channel with cat group 5 and 6' => '--cat_group="5,6" test_channel',
             'Create a channel with new field group with same title as channel' => '--new_field_group test_channel',
         );
     }
@@ -220,7 +227,7 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
         return array(
             'field_group' => '1',
             'status_group' => '1',
-            'cat_group' => '1',
+            'cat_group' => '1,2',
             'channel_url' => '/blog',
             'channel_description' => 'Your description here.',
             'default_entry_title' => 'Default Title',
