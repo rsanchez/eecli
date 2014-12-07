@@ -85,7 +85,14 @@ class CreateTemplateGroupCommand extends Command implements HasExamples, HasLong
                 continue;
             }
 
-            $this->comment('Template group '.$groupName.' created.');
+            $query = ee()->db->select('group_id')
+                ->where('site_id', ee()->config->item('site_id'))
+                ->where('group_name', $groupName)
+                ->get('template_groups');
+
+            $this->comment(sprintf('Template group %s (%s) created.', $groupName, $query->row('group_id')));
+
+            $query->free_result();
         }
     }
 
