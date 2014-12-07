@@ -65,7 +65,7 @@ class CreateGlobalVariableCommand extends Command implements HasExamples, HasLon
         $siteId = ee()->config->item('site_id');
         $siteName = ee()->config->item('site_short_name');
 
-        $contents = $this->argument('contents');
+        $contents = $this->argument('data');
 
         if ($this->option('stdin')) {
             $contents = '';
