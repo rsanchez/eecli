@@ -21,6 +21,12 @@ class SyncTemplatesCommand extends Command
      */
     protected function fire()
     {
+        if (ee()->config->item('save_tmpl_files') !== 'y' || ! ee()->config->item('tmpl_file_basepath')) {
+            $this->error('The "Save Templates as Files" system configuration must be turned on to use this command.');
+
+            return;
+        }
+
         $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\DesignController');
 
         ee()->sync_templates();
@@ -35,6 +41,12 @@ class SyncTemplatesCommand extends Command
                     $toggle[] = $match[1];
                 }
             }
+        }
+
+        if (empty($toggle)) {
+            $this->error('There are no templates to sync.');
+
+            return;
         }
 
         $_POST = array(
