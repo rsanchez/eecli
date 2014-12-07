@@ -63,6 +63,12 @@ class Functions extends \EE_Functions
         $this->successMessage = null;
         $this->errorMessage = null;
 
+        $location = str_replace('&amp;', '&', $location);
+
+        if (substr_count($location, '?') > 1) {
+            $location = substr($location, strpos($location, '?') + 1);
+        }
+
         parse_str(parse_url($location, PHP_URL_QUERY), $this->variables);
 
         $success = ee()->session->flashdata(':new:message_success');
