@@ -13,6 +13,8 @@ class DesignController extends \Design implements BootableInterface
     {
         $app->bootCp();
 
+        ee()->load->model('template_model');
+
         ee()->lang->loadfile('design');
     }
 }
