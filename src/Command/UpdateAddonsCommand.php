@@ -131,6 +131,8 @@ class UpdateAddonsCommand extends Command implements HasExamples, HasLongDescrip
     {
         ee()->load->model('addons_model');
 
+        ee()->load->library('addons');
+
         if (ee()->config->item('allow_extensions') !== 'y') {
             $this->comment('Extensions not enabled.');
 
@@ -184,6 +186,8 @@ class UpdateAddonsCommand extends Command implements HasExamples, HasLongDescrip
 
         ee()->api->instantiate('channel_fields');
 
+        ee()->load->library('addons');
+
         $fieldtypes = ee()->addons->get_installed('fieldtypes');
 
         $fieldtypesUpdated = 0;
@@ -229,6 +233,8 @@ class UpdateAddonsCommand extends Command implements HasExamples, HasLongDescrip
     protected function updateAccessories()
     {
         ee()->load->model('addons_model');
+
+        ee()->load->library('addons');
 
         $accessories = ee()->addons->get_installed('accessproes');
 
