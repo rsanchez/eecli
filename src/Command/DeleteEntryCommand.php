@@ -67,8 +67,12 @@ class DeleteEntryCommand extends Command implements HasExamples, HasLongDescript
             ->where($type, $name)
             ->get();
 
+        $name = is_numeric($name) ? $name : "“{$name}”";
+
         if ($query->num_rows() === 0) {
-            throw new \RuntimeException("The entry $name was not found");
+            $this->error(sprintf('Entry %s not found.', $name));
+
+            return;
         }
 
         if ($query->num_rows() > 1) {
@@ -88,7 +92,7 @@ class DeleteEntryCommand extends Command implements HasExamples, HasLongDescript
         ee()->session->userdata['can_delete_all_entries'] = 'y';
 
         if (! $this->option('force') && ! $this->confirm('Are you sure you want to delete? [Yn]', true)) {
-            $this->error('Did not delete entry '.$title);
+            $this->error(sprintf('Did not delete entry “%s” (%s)', $title, $entry_id));
 
             return;
         }
@@ -96,7 +100,7 @@ class DeleteEntryCommand extends Command implements HasExamples, HasLongDescript
         $delete = ee()->api_channel_entries->delete_entry((int) $entry_id);
 
         if ($delete) {
-            $this->info("$title entry was deleted");
+            $this->info(sprintf('Entry “%s” (%s) deleted.', $title, $entry_id));
         } else {
             foreach (ee()->api_channel_entries->errors as $error) {
                 $this->error($error);
