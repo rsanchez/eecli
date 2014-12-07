@@ -24,7 +24,20 @@ class Cp extends \Cp
      */
     public function getVariables()
     {
-        return $this->variables;
+        // get cached view vars
+        $reflector = new \ReflectionClass('EE_Loader');
+
+        $property = $reflector->getProperty('_ci_cached_vars');
+
+        $property->setAccessible(true);
+
+        $variables = $property->getValue(ee()->load);
+
+        if (! is_array($variables)) {
+            return $this->variables;
+        }
+
+        return array_merge($variables, $this->variables);
     }
 
     /**
