@@ -117,7 +117,7 @@ class DbDumpCommand extends Command implements HasExamples, HasLongDescription, 
 
         // compile the mysqldump command using EE's db credentials
         $command = sprintf(
-            'MYSQL_PWD="%s" mysqldump -u "%s" -h "%s" "%s"%s > %s',
+            'MYSQL_PWD=%s mysqldump -u %s -h %s %s %s > %s',
             escapeshellarg(ee()->db->password),
             escapeshellarg(ee()->db->username),
             escapeshellarg(ee()->db->hostname),
