@@ -227,7 +227,7 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                 continue;
             }
 
-            $this->info('Template '.$template.' created.');
+            $this->info(sprintf('Template %s (%s) created.', $template, $templateId));
         }
     }
 
