@@ -168,7 +168,9 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
 
         $_POST = array_merge($_POST, $this->getFieldtypeSettings());
 
-        $instance->field_edit();
+        $method = version_compare(APP_VER, '2.7', '<') ? 'field_update' : 'field_edit';
+
+        $instance->$method();
 
         $this->getApplication()->checkForErrors(true);
 
