@@ -8,34 +8,14 @@
 * build your own custom CLI commands, like import scripts or cron jobs
 * debug using an interactive shell
 
-Here are a few example commands:
-
-```
-$ eecli clear:cache:ee
-
-  EE cache cleared.
-
-$ eecli create:template site/about
-
-  Template site/about created.
-
-$ eecli generate:addon
-
-  Addon your_addon_name created.
-
-$ eecli db:dump
-
-  your_site-201401011200.sql created.
-
-$ eecli your_custom_command
-```
+![Screencast of a few example commands](https://github.com/rsanchez/eecli/wiki/images/home.gif)
 
 ## Installation
 
-The preferred installation method is to install globally with [Composer](https://getcomposer.org/). Refer the official composer documentation for more information on [installing Composer globally](https://getcomposer.org/doc/00-intro.md#globally)
+The preferred installation method is to install globally with [Composer](https://getcomposer.org/). Refer the official composer documentation for more information on [installing Composer globally](https://getcomposer.org/doc/00-intro.md#globally). Run this at the command line:
 
 ```
-composer global require eecli/eecli dev-master
+$ composer global require eecli/eecli
 ```
 
 Make sure your global Composer installation's bin folder is added to your PATH in your `~/.bash_profile` (or `~/.profile` or `~/.bashrc` or `~/.zshrc`) so that you may run the binary `eecli` from the command line:
