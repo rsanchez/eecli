@@ -3,10 +3,11 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\HasExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ShowConfigCommand extends Command implements HasExamples
+class ShowConfigCommand extends Command implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -16,7 +17,7 @@ class ShowConfigCommand extends Command implements HasExamples
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Show config items.';
+    protected $description = 'Display a list of config items.';
 
     /**
      * {@inheritdoc}
@@ -80,11 +81,26 @@ class ShowConfigCommand extends Command implements HasExamples
         $this->table($headers, $rows);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getExamples()
     {
         return array(
             'Show all config items' => '',
             'Show the specified config item' => 'site_label',
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLongDescription()
+    {
+        return <<<EOT
+Display a list of EE config items.
+
+![Screenshot of show:config command](https://github.com/rsanchez/eecli/wiki/images/show:config.png)
+EOT;
     }
 }

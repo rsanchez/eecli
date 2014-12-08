@@ -15,7 +15,7 @@ class ShowTemplatesCommand extends Command implements HasExamples
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Show a list of templates.';
+    protected $description = 'Display a list of templates.';
 
     /**
      * {@inheritdoc}
@@ -37,6 +37,9 @@ class ShowTemplatesCommand extends Command implements HasExamples
         $this->table(array('ID', 'Template'), $templates);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getExamples()
     {
         return array(

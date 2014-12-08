@@ -51,7 +51,7 @@ class ConsoleCommand extends Command implements HasLongDescription
     public function getLongDescription()
     {
         return <<<EOT
-Start a interactive console.
+Start an interactive console.
 
 ![Screencast of interactive console](https://github.com/rsanchez/eecli/wiki/images/console.gif)
 EOT;

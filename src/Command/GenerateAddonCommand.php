@@ -427,8 +427,11 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrap, HasLo
         $this->info($this->vars['addonName'].' created.');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLongDescription()
     {
-        return "Generate an addon using a wizard interface.\n\n![Screencast of addon generation](https://rsanchez.github.io/eecli/images/eecli-generate-addon.gif)";
+        return "Generate an addon using a wizard interface.\n\n![Screencast of addon generation](https://github.com/rsanchez/eecli/wiki/images/generate:addon.gif)";
     }
 }

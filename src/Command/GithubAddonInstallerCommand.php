@@ -84,6 +84,8 @@ class GithubAddonInstallerCommand extends Command implements HasLongDescription
         return <<<EOT
 Install Github-hosted addons using the `install:addon` wizard.
 
+![Screencast of addon installation](https://github.com/rsanchez/eecli/wiki/images/install:addon.gif)
+
 ```
 eecli install:addon
 ```

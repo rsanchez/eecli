@@ -3,9 +3,10 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\ExemptFromBootstrap;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 
-class InitCommand extends Command implements ExemptFromBootstrap
+class InitCommand extends Command implements ExemptFromBootstrap, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -15,7 +16,7 @@ class InitCommand extends Command implements ExemptFromBootstrap
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Creates a default configuration file.';
+    protected $description = 'Create a configuration file.';
 
     /**
      * {@inheritdoc}
@@ -78,5 +79,15 @@ class InitCommand extends Command implements ExemptFromBootstrap
         fclose($handle);
 
         $this->info('Configuration file created.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLongDescription()
+    {
+        return <<<EOT
+Create an [[`.eecli.php`|Configuration]] configuration file in the current directory.
+EOT;
     }
 }
