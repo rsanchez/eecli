@@ -61,7 +61,7 @@ For more details on installation, configuration and a command reference, see the
 
 ## Contributing
 
-See [CONTRIBUTING](https://github.com/rsanchez/eecli/blob/master/CONTRIBUTING.md) for mor information.
+See [CONTRIBUTING](https://github.com/rsanchez/eecli/blob/master/CONTRIBUTING.md) for more information.
 
 ## License
 
