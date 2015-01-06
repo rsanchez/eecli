@@ -61,7 +61,7 @@ class ConsoleOutput extends \EE_Output
     /**
      * {@inheritdoc}
      */
-    public function fatal_error($errorMessage)
+    public function fatal_error($errorMessage = '', $useLang = true)
     {
         $errorMessage = str_replace('&#171; Back', '', $errorMessage);
 
@@ -93,12 +93,14 @@ class ConsoleOutput extends \EE_Output
     /**
      * {@inheritdoc}
      */
-    public function send_ajax_response($data)
+    public function send_ajax_response($data, $error = false)
     {
         $this->resetMessages();
 
+        $property = $error ? 'errorMessage' : 'successMessage';
+
         if (is_scalar($data)) {
-            $this->successMessage = $data;
+            $this->{$property} = $data;
         } elseif (! empty($data['error'])) {
             $this->errorMessage = $data['error'];
         } elseif (! empty($data['message_failure'])) {
@@ -108,16 +110,16 @@ class ConsoleOutput extends \EE_Output
         } elseif (! empty($data['message_success'])) {
             $this->successMessage = $data['message_success'];
         } elseif (is_array($data) && is_string(current($data))) {
-            $this->successMessage = implode(PHP_EOL, $data);
+            $this->{$property} = implode(PHP_EOL, $data);
         } else {
-            $this->successMessage = print_r($data, true);
+            $this->{$property} = print_r($data, true);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function show_message($data)
+    public function show_message($data, $xhtml = true)
     {
         $this->resetMessages();
 
@@ -131,7 +133,7 @@ class ConsoleOutput extends \EE_Output
     /**
      * {@inheritdoc}
      */
-    public function show_user_error($type = null, $errors)
+    public function show_user_error($type, $errors, $heading = '')
     {
         $this->resetMessages();
 
