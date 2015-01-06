@@ -10,6 +10,7 @@ use eecli\CodeIgniter\ConsoleOutput as CodeIgniterConsoleOutput;
 use eecli\CodeIgniter\BootableInterface;
 use eecli\CodeIgniter\Cp;
 use eecli\CodeIgniter\Functions;
+use eecli\Db\ConnectionTester;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
@@ -214,6 +215,22 @@ class Application extends ConsoleApplication
             }
 
             $this->consoleOutput->writeln('<error>'.$error.'</error>');
+
+            //test the db connection
+            $tester = ConnectionTester::create(
+                ee()->db->dbdriver,
+                ee()->db->hostname,
+                ee()->db->username,
+                ee()->db->password,
+                ee()->db->database
+            );
+
+            if (! $tester->test()) {
+                if ($tester->getError()) {
+                    $this->consoleOutput->writeln('');
+                    $this->consoleOutput->writeln('<error>'.$tester->getError().'</error>');
+                }
+            }
 
             return;
         }
