@@ -52,6 +52,12 @@ class Application extends ConsoleApplication
     protected $userDefinedCommands = array();
 
     /**
+     * A list of Command dirs
+     * @var array
+     */
+    protected $userDefinedCommandDirs = array();
+
+    /**
      * A list of callbacks to fire on events
      * @var array
      */
@@ -628,6 +634,10 @@ class Application extends ConsoleApplication
             $this->userDefinedCommands = $config['commands'];
         }
 
+        if (isset($config['commandDirs']) && is_array($config['commandDirs'])) {
+            $this->userDefinedCommandDirs = $config['commandDirs'];
+        }
+
         // Add event callbacks from the config
         if (isset($config['callbacks']) && is_array($config['callbacks'])) {
             $this->eventCallbacks = $config['callbacks'];
@@ -760,6 +770,12 @@ class Application extends ConsoleApplication
         foreach ($this->userDefinedCommands as $class) {
             $this->registerCommand($class);
         }
+
+        foreach ($this->userDefinedCommandDirs as $commandNamespace => $commandDir) {
+            foreach ($this->findCommandsInDir($commandDir, $commandNamespace) as $class) {
+                $this->registerCommand($class);
+            }
+        }
     }
 
     /**
@@ -772,6 +788,54 @@ class Application extends ConsoleApplication
         foreach (self::$globalCommands as $class) {
             $this->registerCommand($class);
         }
+    }
+
+    /**
+     * Get a list of Symfony Console Commands classes
+     * in the specified directory
+     *
+     * @param  string $dir
+     * @param  string $namespace
+     * @return array
+     */
+    public function findCommandsInDir($dir, $namespace = null)
+    {
+        $commands = array();
+
+        if ($namespace) {
+            $namespace = rtrim($namespace, '\\').'\\';
+        }
+
+        $finder = new Finder();
+
+        $finder->files()
+            ->in($dir)
+            ->depth('== 0')
+            ->name('*.php');
+
+        foreach ($finder as $file) {
+            $class = $namespace.$file->getBasename('.php');
+
+            if (! class_exists($class)) {
+                continue;
+            }
+
+            $reflectionClass = new ReflectionClass($class);
+
+            $parentClass = null;
+
+            while ($reflectionClass = $reflectionClass->getParentClass()) {
+                $parentClass = $reflectionClass->getName();
+            }
+
+            if ($parentClass !== 'Symfony\\Component\\Console\\Command\\Command') {
+                continue;
+            }
+
+            $commands[] = $class;
+        }
+
+        return $commands;
     }
 
     /**

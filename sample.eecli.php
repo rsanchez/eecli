@@ -65,6 +65,18 @@ return array(
     ),
 
     /**
+     * Custom command directories
+     *
+     * An array of directories, keyed by a namespace prefix,
+     * which will be crawled for Command classes.
+     */
+    'commandDirs' => array(
+        /*
+        '\\Your\\Namespace' => '/path/to/commands',
+        */
+    ),
+
+    /**
      * Event Callbacks
      *
      * An array of callback functions to be
