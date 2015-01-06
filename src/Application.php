@@ -371,7 +371,7 @@ class Application extends ConsoleApplication
         $reflectedClass = new ReflectionClass('CI_Controller');
         $reflectedProperty = $reflectedClass->getProperty('instance');
         $reflectedProperty->setAccessible(true);
-        $reflectedProperty = $reflectedProperty->setValue($newInstance);
+        $reflectedProperty->setValue($newInstance);
 
         // boot the new instance, if necessaory
         if ($newInstance instanceof BootableInterface) {
