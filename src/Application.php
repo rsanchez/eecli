@@ -839,6 +839,10 @@ class Application extends ConsoleApplication
 
             $reflectionClass = new ReflectionClass($class);
 
+            if (! $reflectionClass->isInstantiable()) {
+                continue;
+            }
+
             $parentClass = null;
 
             while ($reflectionClass = $reflectionClass->getParentClass()) {
