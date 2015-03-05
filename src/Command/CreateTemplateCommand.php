@@ -77,6 +77,13 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                 null, // default value
             ),
             array(
+                'notes', // name
+                'tn', // shortcut
+                InputOption::VALUE_OPTIONAL, // mode
+                'Template Notes', // description
+                null, // default value
+            ),
+            array(
                 'type', // name
                 't', // shortcut
                 InputOption::VALUE_REQUIRED, // mode
@@ -152,7 +159,7 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                         $_POST = array(
                             'template_id' => $query->row('template_id'),
                             'template_data' => '',
-                            'template_notes' => '',
+                            'template_notes' => $this->option('notes'),
                             'save_template_file' => 'y',
                             'save_template_revision' => $instance->config->item('save_tmpl_revisions'),
                         );
@@ -185,6 +192,7 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                 'template_name' => $templateName,
                 'group_id' => $groupId,
                 'template_type' => $templateType,
+                'template_notes' => $this->option('notes'),
             );
 
             $instance->template = $instance->TMPL;
@@ -198,7 +206,7 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
             $_POST = array(
                 'template_id' => $templateId,
                 'template_data' => $templateData,
-                'template_notes' => '',
+                'template_notes' => $this->option('notes'),
                 'save_template_file' => $instance->config->item('save_tmpl_files'),
                 'save_template_revision' => $instance->config->item('save_tmpl_revisions'),
             );
@@ -213,6 +221,7 @@ class CreateTemplateCommand extends Command implements HasExamples, HasLongDescr
                 'template_id' => $templateId,
                 'template_name' => $templateName,
                 'template_type' => $templateType,
+                'template_notes' => $this->option('notes'),
                 'cache' => $this->option('cache') ? 'y' : 'n',
                 'refresh' => $this->option('cache') ?: 0,
                 'allow_php' => $this->option('php') ? 'y' : 'n',
