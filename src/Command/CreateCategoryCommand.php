@@ -35,7 +35,7 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
                 'The category name.', // description
             ),
             array(
-                'category_group', // name
+                'cat_group', // name
                 InputArgument::REQUIRED, // mode
                 'The category group ID or name.', // description
             ),
