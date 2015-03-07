@@ -172,20 +172,6 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
             $query->free_result();
         }
 
-        if(!is_numeric($groupId)) {
-
-            $query = ee()->db->select('group_id')
-                ->where('group_name', $groupId)
-                ->limit(1)
-                ->get('field_groups');
-
-            if ($query->num_rows() > 0) {
-                $groupId = $query->row('group_id');
-            }
-
-            $query->free_result();
-        }
-
         $name = $this->argument('short_name');
 
         // get field order

@@ -121,9 +121,8 @@ class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand implemen
 
         $channelIds = array();
 
-        foreach($this->option('channel') as $channelId) {
-            if(!is_numeric($channelId)) {
-
+        foreach ($this->option('channel') as $channelId) {
+            if (! is_numeric($channelId)) {
                 $query = ee()->db->select('channel_id')
                     ->where('channel_name', $channelId)
                     ->limit(1)
@@ -138,7 +137,6 @@ class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand implemen
 
             $channelIds[] = $channelId;
         }
-
 
         return array(
             'relationship_channels' => $channelIds ?: array('--'),
