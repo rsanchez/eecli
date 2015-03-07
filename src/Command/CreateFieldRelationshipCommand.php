@@ -30,7 +30,7 @@ class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand implemen
                 'channel',
                 null,
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                'ID of channel(s) to relate (Leave blank to allow all)',
+                'ID or name of channel(s) to relate (Leave blank to allow all)',
             ),
             array(
                 'expired',
@@ -119,8 +119,27 @@ class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand implemen
             $authors[] = '--';
         }
 
+        $channelIds = array();
+
+        foreach ($this->option('channel') as $channelId) {
+            if (! is_numeric($channelId)) {
+                $query = ee()->db->select('channel_id')
+                    ->where('channel_name', $channelId)
+                    ->limit(1)
+                    ->get('channels');
+
+                if ($query->num_rows() > 0) {
+                    $channelId = $query->row('channel_id');
+                }
+
+                $query->free_result();
+            }
+
+            $channelIds[] = $channelId;
+        }
+
         return array(
-            'relationship_channels' => $this->option('channel') ?: array('--'),
+            'relationship_channels' => $channelIds ?: array('--'),
             'relationship_expired' => $this->option('expired'),
             'relationship_future' => $this->option('future'),
             'relationship_categories' => $this->option('category') ?: array('--'),
@@ -148,7 +167,7 @@ class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand implemen
     {
         return array(
             'Create a Relationships field in field group 1' => '"Your Field Name" your_field_name 1',
-            'Create a Relationships field with multiple channels' => '--channel=1 --channel=2 "Your Field Name" your_field_name 1',
+            'Create a Relationships field with multiple channels' => '--channel=1 --channel=blogs "Your Field Name" your_field_name 1',
             'Create a Relationships field with multiple statuses' => '--status=closed --status=open "Your Field Name" your_field_name 1',
             'Create a Relationships field with multiple selection' => '--multiple "Your Field Name" your_field_name 1',
         );

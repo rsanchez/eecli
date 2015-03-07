@@ -64,7 +64,7 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
                 'cat_group',
                 'c',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Which category group(s) (ID or name) do you want to assign this channel to? Separate multiple with comma.',
+                'Which category group(s) (ID or name) do you want to assign this channel to?',
             ),
             array(
                 'channel_url',

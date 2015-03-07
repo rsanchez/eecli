@@ -36,7 +36,7 @@ class CreateFieldPlayaCommand extends AbstractCreateFieldCommand implements HasE
                 'channel',
                 null,
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                'ID of channel(s) to relate (Leave blank to allow all)',
+                'ID or name of channel(s) to relate (Leave blank to allow all)',
             ),
             array(
                 'expired',
@@ -115,10 +115,29 @@ class CreateFieldPlayaCommand extends AbstractCreateFieldCommand implements HasE
      */
     protected function getFieldtypeSettings()
     {
+        $channelIds = array();
+
+        foreach ($this->option('channel') as $channelId) {
+            if (! is_numeric($channelId)) {
+                $query = ee()->db->select('channel_id')
+                    ->where('channel_name', $channelId)
+                    ->limit(1)
+                    ->get('channels');
+
+                if ($query->num_rows() > 0) {
+                    $channelId = $query->row('channel_id');
+                }
+
+                $query->free_result();
+            }
+
+            $channelIds[] = $channelId;
+        }
+
         return array(
             'playa' => array(
                 'sites' => $this->option('site') ?: array('any'),
-                'channels' => $this->option('channel') ?: array('any'),
+                'channels' => $channelIds ?: array('any'),
                 'expired' => $this->option('expired') ? 'y' : 'n',
                 'future' => $this->option('future') ? 'y' : 'n',
                 'editable' => $this->option('editable') ? 'y' : 'n',
@@ -151,7 +170,7 @@ class CreateFieldPlayaCommand extends AbstractCreateFieldCommand implements HasE
     {
         return array(
             'Create a Playa field in field group 1' => '"Your Field Name" your_field_name 1',
-            'Create a Playa field with multiple channels' => '--channel=1 --channel=2 "Your Field Name" your_field_name 1',
+            'Create a Playa field with multiple channels' => '--channel=1 --channel=blog "Your Field Name" your_field_name 1',
             'Create a Playa field with multiple statuses' => '--status=closed --status=open "Your Field Name" your_field_name 1',
             'Create a Playa field with multiple selection' => '--multiple "Your Field Name" your_field_name 1',
         );
