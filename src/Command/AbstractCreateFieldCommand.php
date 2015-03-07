@@ -11,19 +11,46 @@ use Symfony\Component\Console\Input\InputOption;
 abstract class AbstractCreateFieldCommand extends Command implements Conditional, HasOptionExamples
 {
     /**
+     * List of fieldtypes installed here
+     * @var array
+     */
+    protected static $fieldtypesInstalled;
+
+    /**
      * The name of the fieldtype, e.g. 'text'
      * @return string
      */
     abstract protected function getFieldtype();
 
     /**
+     * Load up all fieldtypes so we can determine which
+     * are applicable
+     * @return void
+     */
+    protected static function loadInstalledFieldtypes()
+    {
+        if (is_null(static::$fieldtypesInstalled)) {
+            static::$fieldtypesInstalled = [];
+
+            $query = ee()->db->select('name')
+                ->get('fieldtypes');
+
+            foreach ($query->result() as $row) {
+                static::$fieldtypesInstalled[$row->name] = true;
+            }
+
+            $query->free_result();
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isApplicable()
     {
-        ee()->load->model('addons_model');
+        static::loadInstalledFieldtypes();
 
-        return ee()->addons_model->fieldtype_installed($this->getFieldtype());
+        return isset(static::$fieldtypesInstalled[$this->getFieldtype()]);
     }
 
     /**
