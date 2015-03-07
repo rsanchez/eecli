@@ -76,7 +76,7 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
                 'The short name of the field.', // description
             ),
             array(
-                'group_id', // name
+                'field_group', // name
                 InputArgument::REQUIRED, // mode
                 'The ID or name of the field group.', // description
             ),
@@ -130,7 +130,7 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
     {
         $instance = $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
-        $groupId = $this->argument('group_id');
+        $groupId = $this->argument('field_group');
 
         if (! is_numeric($groupId)) {
             $query = ee()->db->select('group_id')
