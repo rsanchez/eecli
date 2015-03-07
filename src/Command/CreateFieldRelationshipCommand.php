@@ -119,8 +119,29 @@ class CreateFieldRelationshipCommand extends AbstractCreateFieldCommand implemen
             $authors[] = '--';
         }
 
+        $channelIds = array();
+
+        foreach($this->option('channel') as $channelId) {
+            if(!is_numeric($channelId)) {
+
+                $query = ee()->db->select('channel_id')
+                    ->where('channel_name', $channelId)
+                    ->limit(1)
+                    ->get('channels');
+
+                if ($query->num_rows() > 0) {
+                    $channelId = $query->row('channel_id');
+                }
+
+                $query->free_result();
+            }
+
+            $channelIds[] = $channelId;
+        }
+
+
         return array(
-            'relationship_channels' => $this->option('channel') ?: array('--'),
+            'relationship_channels' => $channelIds ?: array('--'),
             'relationship_expired' => $this->option('expired'),
             'relationship_future' => $this->option('future'),
             'relationship_categories' => $this->option('category') ?: array('--'),
