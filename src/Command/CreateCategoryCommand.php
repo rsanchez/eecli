@@ -35,7 +35,7 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
                 'The category name.', // description
             ),
             array(
-                'category_group', // name
+                'cat_group', // name
                 InputArgument::REQUIRED, // mode
                 'The category group ID or name.', // description
             ),
@@ -123,7 +123,7 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
      */
     public function getRuntimeOptions(Application $app, InputInterface $input)
     {
-        $group = $input->getArgument('category_group');
+        $group = $input->getArgument('cat_group');
 
         $groupId = $this->getCategoryGroupId($group);
 
@@ -152,7 +152,7 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
 
         $name = $this->argument('name');
 
-        $group = $this->argument('category_group');
+        $group = $this->argument('cat_group');
 
         $groupId = $this->getCategoryGroupId($group);
 
