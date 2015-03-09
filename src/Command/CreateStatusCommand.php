@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateStatusCommand extends Command implements HasExamples, HasOptionExamples
+class CreateStatusCommand extends AbstractCommand implements HasExamples, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -65,20 +65,10 @@ class CreateStatusCommand extends Command implements HasExamples, HasOptionExamp
         $status = $this->argument('status');
 
         $group = $this->argument('status_group');
+        $group = $this->transformKeyToId('status_group', $group);
 
-        if (is_numeric($group)) {
-            $query = ee()->db->select('group_id')
-                ->where('group_id', $group)
-                ->get('status_groups');
+        if ($group) {
 
-            if ($query->num_rows() === 0) {
-                throw new \RuntimeException('Invalid group ID.');
-            }
-
-            $groupId = $query->row('group_id');
-
-            $query->free_result();
-        } else {
             $query = ee()->db->select('group_id')
                 ->where('group_name', $group)
                 ->get('status_groups');

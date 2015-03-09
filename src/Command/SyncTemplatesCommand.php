@@ -4,7 +4,7 @@ namespace eecli\Command;
 
 use Illuminate\Console\Command;
 
-class SyncTemplatesCommand extends Command
+class SyncTemplatesCommand extends AbstractCommand
 {
     /**
      * {@inheritdoc}

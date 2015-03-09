@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 
-class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExamples, HasOptionExamples
+class CreateCategoryCommand extends AbstractCommand implements HasRuntimeOptions, HasExamples, HasOptionExamples
 {
     /**
      * {@inheritdoc}
@@ -73,34 +73,6 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
     }
 
     /**
-     * Get the category group ID from a name or number
-     * @param  string            $group the name of a group or the ID of the group
-     * @return string            the group ID
-     * @throws \RuntimeException if the category group is not found
-     */
-    protected function getCategoryGroupId($group)
-    {
-        if (is_numeric($group)) {
-            ee()->db->where('group_id', $group);
-        } else {
-            ee()->db->where('group_name', $group);
-        }
-
-        $query = ee()->db->select('group_id')
-            ->get('category_groups');
-
-        if ($query->num_rows() === 0) {
-            throw new \RuntimeException('Invalid group.');
-        }
-
-        $groupId = $query->row('group_id');
-
-        $query->free_result();
-
-        return $groupId;
-    }
-
-    /**
      * Get category fields by group ID
      * @param  string $groupId
      * @return array  of \stdClass
@@ -123,9 +95,8 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
      */
     public function getRuntimeOptions(Application $app, InputInterface $input)
     {
-        $group = $input->getArgument('category_group');
-
-        $groupId = $this->getCategoryGroupId($group);
+        $groupId = $input->getArgument('category_group');
+        $groupId = $this->transformKeyToId('category_group', $groupId);
 
         $fields = $this->getCategoryGroupFields($groupId);
 
@@ -152,9 +123,8 @@ class CreateCategoryCommand extends Command implements HasRuntimeOptions, HasExa
 
         $name = $this->argument('name');
 
-        $group = $this->argument('category_group');
-
-        $groupId = $this->getCategoryGroupId($group);
+        $groupId = $this->argument('category_group');
+        $groupId = $this->transformKeyToId('category_group', $groupId);
 
         $fields = $this->getCategoryGroupFields($groupId);
 

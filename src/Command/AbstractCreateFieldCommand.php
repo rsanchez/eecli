@@ -4,18 +4,11 @@ namespace eecli\Command;
 
 use eecli\Command\Contracts\Conditional;
 use eecli\Command\Contracts\HasOptionExamples;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-abstract class AbstractCreateFieldCommand extends Command implements Conditional, HasOptionExamples
+abstract class AbstractCreateFieldCommand extends AbstractCommand implements Conditional, HasOptionExamples
 {
-    /**
-     * List of fieldtypes installed here
-     * @var array
-     */
-    protected static $fieldtypesInstalled;
-
     /**
      * The name of the fieldtype, e.g. 'text'
      * @return string
@@ -23,34 +16,13 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
     abstract protected function getFieldtype();
 
     /**
-     * Load up all fieldtypes so we can determine which
-     * are applicable
-     * @return void
-     */
-    protected static function loadInstalledFieldtypes()
-    {
-        if (is_null(static::$fieldtypesInstalled)) {
-            static::$fieldtypesInstalled = [];
-
-            $query = ee()->db->select('name')
-                ->get('fieldtypes');
-
-            foreach ($query->result() as $row) {
-                static::$fieldtypesInstalled[$row->name] = true;
-            }
-
-            $query->free_result();
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function isApplicable()
     {
-        static::loadInstalledFieldtypes();
+        ee()->load->model('addons_model');
 
-        return isset(static::$fieldtypesInstalled[$this->getFieldtype()]);
+        return ee()->addons_model->fieldtype_installed($this->getFieldtype());
     }
 
     /**
@@ -81,7 +53,7 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
      */
     public function __construct()
     {
-        $this->name = 'create:field:'.$this->getFieldtype();
+        $this->name = 'create:field:' . $this->getFieldtype();
 
         parent::__construct();
     }
@@ -103,9 +75,9 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
                 'The short name of the field.', // description
             ),
             array(
-                'field_group', // name
+                'group_id', // name
                 InputArgument::REQUIRED, // mode
-                'The ID or name of the field group.', // description
+                'The ID of the field group.', // description
             ),
         );
     }
@@ -157,27 +129,15 @@ abstract class AbstractCreateFieldCommand extends Command implements Conditional
     {
         $instance = $this->getApplication()->newControllerInstance('\\eecli\\CodeIgniter\\Controller\\AdminContentController');
 
-        $groupId = $this->argument('field_group');
-
-        if (! is_numeric($groupId)) {
-            $query = ee()->db->select('group_id')
-                ->where('group_name', $groupId)
-                ->limit(1)
-                ->get('field_groups');
-
-            if ($query->num_rows() > 0) {
-                $groupId = $query->row('group_id');
-            }
-
-            $query->free_result();
-        }
+        $groupId = $this->argument('group_id');
+        $groupId = $this->transformKeyToId('field_group', $groupId);
 
         $name = $this->argument('short_name');
 
         // get field order
         $order = $this->option('order');
 
-        if (! $order && $order !== '0') {
+        if (!$order && $order !== '0') {
             $query = $instance->db->select('field_order')
                 ->where('group_id', $groupId)
                 ->order_by('field_order', 'desc')

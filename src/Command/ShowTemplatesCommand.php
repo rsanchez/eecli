@@ -5,7 +5,7 @@ namespace eecli\Command;
 use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 
-class ShowTemplatesCommand extends Command implements HasExamples
+class ShowTemplatesCommand extends AbstractCommand implements HasExamples
 {
     /**
      * {@inheritdoc}

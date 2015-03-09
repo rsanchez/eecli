@@ -6,7 +6,7 @@ use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ClearEECacheCommand extends Command implements HasExamples
+class ClearEECacheCommand extends AbstractCommand implements HasExamples
 {
     /**
      * {@inheritdoc}

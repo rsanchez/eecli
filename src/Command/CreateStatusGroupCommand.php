@@ -6,7 +6,7 @@ use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class CreateStatusGroupCommand extends Command implements HasExamples
+class CreateStatusGroupCommand extends AbstractCommand implements HasExamples
 {
     /**
      * {@inheritdoc}

@@ -6,7 +6,7 @@ use eecli\Command\Contracts\HasExamples;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class CreateFieldGroupCommand extends Command implements HasExamples
+class CreateFieldGroupCommand extends AbstractCommand implements HasExamples
 {
     /**
      * {@inheritdoc}

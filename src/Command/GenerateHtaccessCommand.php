@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
-class GenerateHtaccessCommand extends Command implements HasLongDescription, HasExamples
+class GenerateHtaccessCommand extends AbstractCommand implements HasLongDescription, HasExamples
 {
     /**
      * {@inheritdoc}

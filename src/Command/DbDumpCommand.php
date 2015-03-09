@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 
-class DbDumpCommand extends Command implements HasExamples, HasLongDescription, HasOptionExamples
+class DbDumpCommand extends AbstractCommand implements HasExamples, HasLongDescription, HasOptionExamples
 {
     /**
      * {@inheritdoc}

@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Boris\Boris;
 use eecli\Command\Contracts\HasLongDescription;
 
-class ConsoleCommand extends Command implements HasLongDescription
+class ConsoleCommand extends AbstractCommand implements HasLongDescription
 {
     /**
      * {@inheritdoc}

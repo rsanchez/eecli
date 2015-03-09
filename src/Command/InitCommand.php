@@ -6,7 +6,7 @@ use eecli\Command\Contracts\ExemptFromBootstrap;
 use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 
-class InitCommand extends Command implements ExemptFromBootstrap, HasLongDescription
+class InitCommand extends AbstractCommand implements ExemptFromBootstrap, HasLongDescription
 {
     /**
      * {@inheritdoc}
