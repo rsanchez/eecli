@@ -26,6 +26,6 @@
         "symfony/process": "~2.5"
     },
     "require-dev": {
-        "d11wtq/boris": "~1.0",
+        "d11wtq/boris": "~1.0"
     }
 }
