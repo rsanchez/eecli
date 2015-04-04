@@ -283,8 +283,8 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
             'Create a channel with field group 5' => '--field_group=5 test_channel',
             'Create a channel with field group "Blog"' => '--field_group="Blog" test_channel',
             'Create a channel with status group "Statuses"' => '--status_group="Statuses" test_channel',
-            'Create a channel with category group 5 and 6' => '--cat_group="5,6" test_channel',
-            'Create a channel with category group "Apparel" and "Accessories"' => '--cat_group="Apparel,Accessories" test_channel',
+            'Create a channel with category group 5 and 6' => '--cat_group=5 --cat_group=6 test_channel',
+            'Create a channel with category group "Apparel" and "Accessories"' => '--cat_group="Apparel" --cat_group="Accessories" test_channel',
             'Create a channel with new field group with same title as channel' => '--new_field_group test_channel',
         );
     }
@@ -294,7 +294,7 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
         return array(
             'field_group' => '1',
             'status_group' => '1',
-            'cat_group' => '1,2',
+            'cat_group' => '1',
             'channel_url' => '/blog',
             'channel_description' => 'Your description here.',
             'default_entry_title' => 'Default Title',
