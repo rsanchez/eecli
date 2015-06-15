@@ -38,6 +38,18 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Which driver to clear',
             ),
+            array(
+                'refresh',
+                null,
+                InputOption::VALUE_NONE,
+                'Whether to refresh cache after clearing',
+            ),
+            array(
+                'refresh_time',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Number of seconds to wait between refreshing and deleting items'
+            ),
         );
     }
 
@@ -65,6 +77,9 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
         $items = $this->argument('items');
         $tags = $this->option('tags');
         $drivers = $this->option('driver');
+        $refresh = $this->option('refresh') ? true : false;
+        $refresh_time = $this->option('refresh_time');
+
 
         $defaultDrivers = array('file', 'db', 'static', 'apc', 'memcache', 'memcached', 'redis', 'dummy');
 
@@ -104,7 +119,9 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
 
             $which = $tags ? 1 : 0;
 
-            $defaultArgs = array(array(), array(), false);
+            $time = $refresh_time ?: 1;
+
+            $defaultArgs = array(array(), array(), $refresh, $time);
 
             foreach ($items as $item) {
                 $args = $defaultArgs;
@@ -114,6 +131,10 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
                 call_user_func_array(array($breaker, 'break_cache'), $args);
 
                 $this->comment($name.' '.$item.' cleared.');
+
+                if ($refresh) {
+                    $this->comment($name.' '.$item.' will be refreshed');
+                }
             }
         }
 
@@ -131,6 +152,8 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
             'Clear specific items' => 'local/foo/item local/bar/item',
             'Clear specific tags' => '--tags foo bar',
             'Clear specific driver' => '--driver="file"',
+            'Set cache to refresh after clear' => '--refresh',
+            'Set the number of seconds to wait before refreshing and deleting items' => '--refresh-time="2"',
         );
     }
 
