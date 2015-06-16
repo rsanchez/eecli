@@ -4,11 +4,12 @@ namespace eecli\Command;
 
 use eecli\Command\Contracts\HasExamples;
 use eecli\Command\Contracts\HasOptionExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamples
+class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -157,10 +158,16 @@ class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamp
         );
     }
 
+    public function getLongDescription()
+    {
+        return "Clears the CE Cache.\n\nBe sure to set your [`http_host`](Global Options) when using the `refresh` option, so `eecli` will know your site's URL.";
+    }
+
     public function getOptionExamples()
     {
         return array(
             'driver' => 'file',
+            'refresh-time' => '1',
         );
     }
 }
