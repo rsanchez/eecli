@@ -62,17 +62,6 @@ class CreateTemplateGroupCommand extends AbstractCommand implements HasExamples,
         $instance->load->model('template_model');
 
         foreach ($names as $groupName) {
-            // if this is default turn off the other defaults
-            /*
-            if ($this->option('default')) {
-                $instance->db->update('templates', array(
-                    'is_site_default' => 'n',
-                ), array(
-                    'site_id' => $instance->config->item('site_id'),
-                ));
-            }
-            */
-
             $_POST = array(
                 'group_name' => $groupName,
                 'is_site_default' => $this->option('default') ? 'y' : 'n',
@@ -88,11 +77,46 @@ class CreateTemplateGroupCommand extends AbstractCommand implements HasExamples,
             $query = ee()->db->select('group_id')
                 ->where('site_id', ee()->config->item('site_id'))
                 ->where('group_name', $groupName)
+                ->limit(1)
                 ->get('template_groups');
 
-            $this->comment(sprintf('Template group %s (%s) created.', $groupName, $query->row('group_id')));
+            $groupId = $query->row('group_id');
 
             $query->free_result();
+
+            if (ee()->config->item('save_tmpl_files') === 'y' && ee()->config->item('tmpl_file_basepath')) {
+                // find the newly created index template
+                $query = ee()->db->select('template_id')
+                    ->where('site_id', ee()->config->item('site_id'))
+                    ->where('group_id', $groupId)
+                    ->where('template_name', 'index')
+                    ->limit(1)
+                    ->get('templates');
+
+                $templateId = $query->row('template_id');
+
+                $query->free_result();
+
+                // create the template file for the index template
+                $fileCreated = $instance->update_template_file(array(
+                    'template_group' => $groupName,
+                    'template_id' => $templateId,
+                    'template_name' => 'index',
+                    'template_type' => 'webpage',
+                    'template_data' => '',
+                ));
+
+                // set the index template to save to file
+                ee()->db->update('templates', array('save_template_file' => 'y'), array('template_id' => $templateId));
+
+                if (! $fileCreated) {
+                    $path = ee()->config->slash_item('tmpl_file_basepath').ee()->config->slash_item('site_short_name').$groupName.'.group/';
+
+                    $this->error(sprintf('Could not write to %s', $path));
+                }
+            }
+
+            $this->comment(sprintf('Template group %s (%s) created.', $groupName, $groupId));
         }
     }
 
