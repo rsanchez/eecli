@@ -11,15 +11,21 @@ class MysqliTester extends ConnectionTester
      */
     public function test()
     {
-        $mysqli = new mysqli($this->hostname, $this->username, $this->password, $this->database);
+        $connection = @mysqli_connect($this->hostname, $this->username, $this->password, $this->database);
 
-        if ($mysqli->connect_error) {
-            $this->setError($mysqli->connect_error);
+        if ($connection === false) {
+            $error = mysqli_connect_error();
+
+            if ($error === 'No such file or directory') {
+                $error = sprintf('Could not connect to socket %s', @ini_get('mysqli.default_socket'));
+            }
+
+            $this->setError($error);
 
             return false;
         }
 
-        $mysqli->close();
+        @mysqli_close($connection);
 
         return true;
     }

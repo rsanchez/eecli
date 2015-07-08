@@ -4,11 +4,12 @@ namespace eecli\Command;
 
 use eecli\Command\Contracts\HasExamples;
 use eecli\Command\Contracts\HasOptionExamples;
+use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class ClearCeCacheCommand extends AbstractCommand implements HasExamples, HasOptionExamples
+class ClearCeCacheCommand extends AbstractCommand implements HasExamples, HasOptionExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -38,6 +39,18 @@ class ClearCeCacheCommand extends AbstractCommand implements HasExamples, HasOpt
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Which driver to clear',
             ),
+            array(
+                'refresh',
+                null,
+                InputOption::VALUE_NONE,
+                'Whether to refresh cache after clearing',
+            ),
+            array(
+                'refresh_time',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Number of seconds to wait between refreshing and deleting items'
+            ),
         );
     }
 
@@ -65,6 +78,9 @@ class ClearCeCacheCommand extends AbstractCommand implements HasExamples, HasOpt
         $items = $this->argument('items');
         $tags = $this->option('tags');
         $drivers = $this->option('driver');
+        $refresh = $this->option('refresh') ? true : false;
+        $refresh_time = $this->option('refresh_time');
+
 
         $defaultDrivers = array('file', 'db', 'static', 'apc', 'memcache', 'memcached', 'redis', 'dummy');
 
@@ -104,7 +120,9 @@ class ClearCeCacheCommand extends AbstractCommand implements HasExamples, HasOpt
 
             $which = $tags ? 1 : 0;
 
-            $defaultArgs = array(array(), array(), false);
+            $time = $refresh_time ?: 1;
+
+            $defaultArgs = array(array(), array(), $refresh, $time);
 
             foreach ($items as $item) {
                 $args = $defaultArgs;
@@ -114,6 +132,10 @@ class ClearCeCacheCommand extends AbstractCommand implements HasExamples, HasOpt
                 call_user_func_array(array($breaker, 'break_cache'), $args);
 
                 $this->comment($name.' '.$item.' cleared.');
+
+                if ($refresh) {
+                    $this->comment($name.' '.$item.' will be refreshed');
+                }
             }
         }
 
@@ -131,13 +153,21 @@ class ClearCeCacheCommand extends AbstractCommand implements HasExamples, HasOpt
             'Clear specific items' => 'local/foo/item local/bar/item',
             'Clear specific tags' => '--tags foo bar',
             'Clear specific driver' => '--driver="file"',
+            'Set cache to refresh after clear' => '--refresh',
+            'Set the number of seconds to wait before refreshing and deleting items' => '--refresh-time="2"',
         );
+    }
+
+    public function getLongDescription()
+    {
+        return "Clears the CE Cache.\n\nBe sure to set your [`http_host`](Global Options) when using the `refresh` option, so `eecli` will know your site's URL.";
     }
 
     public function getOptionExamples()
     {
         return array(
             'driver' => 'file',
+            'refresh-time' => '1',
         );
     }
 }
