@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class ClearCeCacheCommand extends Command implements HasExamples, HasOptionExamples, HasLongDescription
+class ClearCeCacheCommand extends AbstractCommand implements HasExamples, HasOptionExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}

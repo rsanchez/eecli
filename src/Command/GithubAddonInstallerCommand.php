@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use eecli\GithubAddonInstaller\Application as InstallerApplication;
 
-class GithubAddonInstallerCommand extends Command implements HasLongDescription
+class GithubAddonInstallerCommand extends AbstractCommand implements HasLongDescription
 {
     /**
      * {@inheritdoc}

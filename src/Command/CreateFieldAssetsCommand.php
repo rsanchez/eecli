@@ -67,6 +67,7 @@ class CreateFieldAssetsCommand extends AbstractCreateFieldCommand implements Has
     protected function getFieldtypeSettings()
     {
         $dirs = $this->option('upload_dir');
+        $dirs = $this->transformKeyToId('upload_dir', $dirs);
 
         // validate these as ee:1, etc
         if ($dirs) {

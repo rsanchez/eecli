@@ -7,7 +7,7 @@ use eecli\Command\Contracts\HasLongDescription;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ShowConfigCommand extends Command implements HasExamples, HasLongDescription
+class ShowConfigCommand extends AbstractCommand implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}

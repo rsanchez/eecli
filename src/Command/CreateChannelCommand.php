@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateChannelCommand extends Command implements HasExamples, HasOptionExamples, HasLongDescription
+class CreateChannelCommand extends AbstractCommand implements HasExamples, HasOptionExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -125,22 +125,18 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
         $title = $this->argument('title') ?: ucwords(str_replace('_', ' ', $name));
 
         $fieldGroup = (string) $this->option('field_group');
+        $fieldGroup = $this->transformKeyToId('field_group', $fieldGroup);
 
-        if ($fieldGroup) {
-            // find the group ID by name
-            if (! is_numeric($fieldGroup)) {
-                $query = ee()->db->select('group_id')
-                    ->where('group_name', $fieldGroup)
-                    ->limit(1)
-                    ->get('field_groups');
+        $statusGroup = (string) $this->option('status_group');
+        $statusGroup = $this->transformKeyToId('status_group', $statusGroup);
 
-                if ($query->num_rows() > 0) {
-                    $fieldGroup = $query->row('group_id');
-                }
+        $catGroup = $this->option('cat_group');
+        $catGroup = $this->transformKeyToId('cat_group', $catGroup);
 
-                $query->free_result();
-            }
-        } else {
+        $deftCategory = $this->option('deft_category');
+        $deftCategory = $this->transformKeyToId('category', $deftCategory);
+
+        if (!$fieldGroup) {
             if ($this->option('new_field_group')) {
                 ee()->load->model('field_model');
 
@@ -167,23 +163,7 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
             }
         }
 
-        $statusGroup = (string) $this->option('status_group');
-
-        if ($statusGroup) {
-            // find the group ID by name
-            if (! is_numeric($statusGroup)) {
-                $query = ee()->db->select('group_id')
-                    ->where('group_name', $statusGroup)
-                    ->limit(1)
-                    ->get('status_groups');
-
-                if ($query->num_rows() > 0) {
-                    $statusGroup = $query->row('group_id');
-                }
-
-                $query->free_result();
-            }
-        } else {
+        if (!$statusGroup) {
             // trying to find the open/closed status group
             $query = ee()->db->select('group_id')
                 ->where('(SELECT COUNT(*) FROM exp_statuses WHERE exp_statuses.group_id = exp_status_groups.group_id) = 2', null, false)
@@ -199,31 +179,11 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
             $query->free_result();
         }
 
-        $catGroups = array();
-
-        foreach ($this->option('cat_group') as $catGroup) {
-            // find the group ID by name
-            if (! is_numeric($catGroup)) {
-                $query = ee()->db->select('group_id')
-                    ->where('group_name', $catGroup)
-                    ->limit(1)
-                    ->get('category_groups');
-
-                if ($query->num_rows() > 0) {
-                    $catGroup = $query->row('group_id');
-                }
-
-                $query->free_result();
-            }
-
-            $catGroups[] = $catGroup;
-        }
-
         $_POST = array(
             'channel_title' => $title,
             'channel_name' => $name,
             'duplicate_channel_prefs' => '',
-            'cat_group' => $catGroups,
+            'cat_group' => $catGroup,
             'status_group' => $statusGroup,
             'field_group' => $fieldGroup,
             'channel_prefs_submit' => 'Submit',
@@ -240,23 +200,6 @@ class CreateChannelCommand extends Command implements HasExamples, HasOptionExam
         $channelId = $query->row('channel_id');
 
         $query->free_result();
-
-        $deftCategory = $this->option('deft_category');
-
-        // find the group ID by name
-        if (! is_numeric($deftCategory)) {
-            $query = ee()->db->select('cat_id')
-                ->where('cat_url_title', $deftCategory)
-                ->or_where('cat_name', $deftCategory)
-                ->limit(1)
-                ->get('categories');
-
-            if ($query->num_rows() > 0) {
-                $deftCategory = $query->row('cat_id');
-            }
-
-            $query->free_result();
-        }
 
         ee()->db->where('channel_id', $channelId)->update('channels', array(
             'channel_url' => $this->option('channel_url'),

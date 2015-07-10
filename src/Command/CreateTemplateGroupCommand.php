@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateTemplateGroupCommand extends Command implements HasExamples, HasLongDescription
+class CreateTemplateGroupCommand extends AbstractCommand implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}

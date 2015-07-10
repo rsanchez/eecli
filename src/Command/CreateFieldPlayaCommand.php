@@ -115,24 +115,8 @@ class CreateFieldPlayaCommand extends AbstractCreateFieldCommand implements HasE
      */
     protected function getFieldtypeSettings()
     {
-        $channelIds = array();
-
-        foreach ($this->option('channel') as $channelId) {
-            if (! is_numeric($channelId)) {
-                $query = ee()->db->select('channel_id')
-                    ->where('channel_name', $channelId)
-                    ->limit(1)
-                    ->get('channels');
-
-                if ($query->num_rows() > 0) {
-                    $channelId = $query->row('channel_id');
-                }
-
-                $query->free_result();
-            }
-
-            $channelIds[] = $channelId;
-        }
+        $channelIds = $this->option('channel');
+        $channelIds = $this->transformKeyToId('channel', $channelIds);
 
         return array(
             'playa' => array(

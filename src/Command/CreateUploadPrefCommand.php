@@ -7,7 +7,7 @@ use eecli\Command\Contracts\HasExamples;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateUploadPrefCommand extends Command implements HasExamples
+class CreateUploadPrefCommand extends AbstractCommand implements HasExamples
 {
     /**
      * {@inheritdoc}

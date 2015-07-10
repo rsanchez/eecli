@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CreateTemplateCommand extends Command implements HasExamples, HasLongDescription, HasOptionExamples
+class CreateTemplateCommand extends AbstractCommand implements HasExamples, HasLongDescription, HasOptionExamples
 {
     /**
      * {@inheritdoc}

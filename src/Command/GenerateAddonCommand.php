@@ -9,7 +9,7 @@ use Symfony\Component\Console\Question\Question;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
-class GenerateAddonCommand extends Command implements ExemptFromBootstrap, HasLongDescription
+class GenerateAddonCommand extends AbstractCommand implements ExemptFromBootstrap, HasLongDescription
 {
     /**
      * {@inheritdoc}

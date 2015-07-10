@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class DeleteGlobalVariableCommand extends Command implements HasExamples, HasLongDescription
+class DeleteGlobalVariableCommand extends AbstractCommand implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}

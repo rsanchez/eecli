@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class DeleteEntryCommand extends Command implements HasExamples, HasLongDescription
+class DeleteEntryCommand extends AbstractCommand implements HasExamples, HasLongDescription
 {
     /**
      * {@inheritdoc}
@@ -57,7 +57,6 @@ class DeleteEntryCommand extends Command implements HasExamples, HasLongDescript
         $name = $this->argument('entry');
 
         $siteId = ee()->config->item('site_id');
-        $siteName = ee()->config->item('site_short_name');
 
         $type = is_numeric($name) ? 'entry_id' : 'url_title';
 

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
-class GenerateCommandCommand extends Command implements ExemptFromBootstrap, HasExamples, HasOptionExamples
+class GenerateCommandCommand extends AbstractCommand implements ExemptFromBootstrap, HasExamples, HasOptionExamples
 {
     /**
      * {@inheritdoc}
