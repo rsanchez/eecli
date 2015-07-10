@@ -81,6 +81,7 @@ class CreateImageManipulationCommand extends AbstractCommand implements HasExamp
 
         $data = array(
             'site_id' => $ee->config->item('site_id'),
+            'title' => $this->argument('title'),
             'short_name' => $this->argument('short_name'),
             'upload_location_id' => $this->transformKeyToId('upload_pref', $this->argument('upload_location')),
             'resize_type' => $this->option('resize_type'),
