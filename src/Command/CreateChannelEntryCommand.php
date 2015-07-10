@@ -208,32 +208,24 @@ class CreateChannelEntryCommand extends Command implements HasExamples, HasOptio
     public function getExamples()
     {
         return array(
-            /*
-            'Create a channel with the short name test_channel' => 'test_channel',
-            'Create a channel with the title Test Channel' => 'test_channel "Test Channel"',
-            'Create a channel with field group 5' => '--field_group=5 test_channel',
-            'Create a channel with field group "Blog"' => '--field_group="Blog" test_channel',
-            'Create a channel with status group "Statuses"' => '--status_group="Statuses" test_channel',
-            'Create a channel with category group 5 and 6' => '--cat_group=5 --cat_group=6 test_channel',
-            'Create a channel with category group "Apparel" and "Accessories"' => '--cat_group="Apparel" --cat_group="Accessories" test_channel',
-            'Create a channel with new field group with same title as channel' => '--new_field_group test_channel',
-             */
+            'Create an entry in channel "test_channel" with title "Test Entry"' => '"Test Entry" test_channel',
+            'Create an entry in channel "test_channel" with title "Test Entry" and url_title "test-entry-2015"' => '"Test Entry" test_channel --url_title="test-entry-2015"',
+            'Create an entry in channel "test_channel" with title "Test Entry" by an author member ID' => '"Test Entry" test_channel --author="1"',
+            'Create an entry in channel "test_channel" with title "Test Entry" with "closed" status' => '"Test Entry" test_channel --status="closed"',
+            'Create an entry in channel "test_channel" with title "Test Entry" with multiple categories' => '"Test Entry" test_channel --categories="trending" --categories="hip"',
+            'Create an entry in channel "test_channel" with title "Test Entry" with entry data piped to the command as JSON' => '"Test Entry" test_channel --stdin --datatype=json',
+            'Create an entry in channel "test_channel" with title "Test Entry" with entry data piped to the command as a serialized PHP object' => '"Test Entry" test_channel --stdin --datatype=serialize',
         );
     }
 
     public function getOptionExamples()
     {
         return array(
-            /*
-            'field_group' => '1',
-            'status_group' => '1',
-            'cat_group' => '1',
-            'channel_url' => '/blog',
-            'channel_description' => 'Your description here.',
-            'default_entry_title' => 'Default Title',
-            'url_title_prefix' => 'blog_',
-            'deft_category' => '1',
-             */
+            'url_title' => 'my-test-entry-2015',
+            'status' => 'draft',
+            'categories' => 'trending',
+            'author' => 'johndoe',
+            'datatype' => 'json',
         );
     }
 
