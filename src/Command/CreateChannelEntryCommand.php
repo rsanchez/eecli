@@ -72,6 +72,20 @@ class CreateChannelEntryCommand extends Command implements HasExamples, HasOptio
                 InputOption::VALUE_REQUIRED,
                 'What is the author (member ID or username) for this channel?',
             ),
+            array(
+                'stdin', // name
+                null, // shortcut
+                InputOption::VALUE_NONE, // mode
+                'Use stdin as data contents.', // description
+                null, // default value
+            ),
+            array(
+                'datatype', // name
+                null, // shortcut
+                InputOption::VALUE_REQUIRED, // mode
+                'Declare the data type for the stdin content (json, serialize)', // description
+                'json', // default value
+            ),
         );
     }
 
@@ -112,6 +126,7 @@ class CreateChannelEntryCommand extends Command implements HasExamples, HasOptio
         $urlTitleParam = $this->option('url_title');
         $authorParam = $this->option('author');
         $statusParam = $this->option('status');
+        $stdInDataType = $this->option('datatype');
 
         // get the channel
         $channel = $this->getChannel($channelParam);
@@ -152,6 +167,11 @@ class CreateChannelEntryCommand extends Command implements HasExamples, HasOptio
 
         $entryData = array();
         $entryFinalData = $metaData;
+
+        // are we accepting a data string to use for the entry?
+        if ($this->option('stdin')) {
+            $entryData = $this->processStdInData($stdInDataType);
+        }
 
         // get the field mapping
         $fieldMapping = $this->getFields();
@@ -217,6 +237,50 @@ class CreateChannelEntryCommand extends Command implements HasExamples, HasOptio
         );
     }
 
+    /**
+     * Find the data coming from the stdin, transform it and return an array
+     *
+     * @param string $dataType
+     *
+     * @return array
+     */
+    protected function processStdInData($dataType)
+    {
+        $entryData = array();
+
+        $handle = fopen('php://stdin', 'r');
+        $inputData = '';
+        while (($buffer = fgets($handle, 4096)) !== false) {
+            $inputData .= $buffer;
+        }
+
+        switch ($dataType) {
+            case 'json':
+                $entryData = json_decode($inputData, true);
+                $jsonError = json_last_error();
+
+                // abort if the JSON is invalid
+                if (JSON_ERROR_NONE !== $jsonError) {
+                    throw new \RuntimeException(sprintf('Invalid JSON received (code: %s)', $jsonError));
+                }
+
+                break;
+            case 'serialize':
+                $entryData = unserialize($inputData);
+
+                // abort if the data is false as this is what `serialize` will return if there's a problem
+                if (false === $entryData) {
+                    throw new \RuntimeException('Invalid serialized data received');
+                }
+
+                break;
+            default:
+                throw new \RuntimeException(sprintf('Invalid datatype "%s" option specified', $dataType));
+                break;
+        }
+
+        return $entryData;
+    }
 
     /**
      * Find the matching categories using the parameters
@@ -325,7 +389,7 @@ class CreateChannelEntryCommand extends Command implements HasExamples, HasOptio
 
         $fields = array();
         foreach ($query->result_array() as $fieldRow) {
-            $fields[$fieldRow['field_id']] = $fieldRow['field_name'];
+            $fields[$fieldRow['field_name']] = $fieldRow['field_id'];
         }
 
         $query->free_result();
