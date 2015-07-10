@@ -55,10 +55,15 @@ abstract class AbstractCommand extends Command
             'idField' => 'group_id',
             'keyField' => 'group_title'
         ),
-        'upload_dirs' => array(
+        'upload_pref' => array(
             'table' => 'upload_prefs',
             'idField' => 'id',
             'keyField' => 'name'
+        ),
+        'watermark_pref' => array(
+            'table' => 'file_watermarks',
+            'idField' => 'wm_id',
+            'keyField' => 'wm_name'
         )
     );
 
