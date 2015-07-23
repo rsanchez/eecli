@@ -2,7 +2,6 @@
     "chmod": "0755",
     "directories": ["src"],
     "extract": false,
-    "compression": "GZ",
     "files": [
         "vendor/autoload.php"
     ],
