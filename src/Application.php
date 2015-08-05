@@ -524,6 +524,7 @@ class Application extends ConsoleApplication
 
         $finder->files()
             ->in(getcwd())
+            ->ignoreUnreadableDirs()
             ->name('CodeIgniter.php');
 
         $systemPath = null;
