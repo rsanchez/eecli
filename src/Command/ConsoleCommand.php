@@ -2,7 +2,6 @@
 
 namespace eecli\Command;
 
-use Illuminate\Console\Command;
 use Boris\Boris;
 use eecli\Command\Contracts\HasLongDescription;
 

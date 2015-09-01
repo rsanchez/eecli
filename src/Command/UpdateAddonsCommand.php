@@ -4,7 +4,6 @@ namespace eecli\Command;
 
 use eecli\Command\Contracts\HasExamples;
 use eecli\Command\Contracts\HasLongDescription;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
 class UpdateAddonsCommand extends Command implements HasExamples, HasLongDescription

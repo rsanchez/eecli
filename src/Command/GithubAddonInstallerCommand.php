@@ -3,7 +3,6 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\HasLongDescription;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use eecli\GithubAddonInstaller\Application as InstallerApplication;
 

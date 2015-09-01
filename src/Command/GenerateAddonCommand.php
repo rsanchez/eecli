@@ -4,7 +4,6 @@ namespace eecli\Command;
 
 use eecli\Command\Contracts\ExemptFromBootstrap;
 use eecli\Command\Contracts\HasLongDescription;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Question\Question;
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;

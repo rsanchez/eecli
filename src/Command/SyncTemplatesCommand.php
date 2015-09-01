@@ -2,8 +2,6 @@
 
 namespace eecli\Command;
 
-use Illuminate\Console\Command;
-
 class SyncTemplatesCommand extends Command
 {
     /**

@@ -2,7 +2,6 @@
 
 namespace eecli\Command;
 
-use Illuminate\Console\Command;
 use eecli\Command\Contracts\HasExamples;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;

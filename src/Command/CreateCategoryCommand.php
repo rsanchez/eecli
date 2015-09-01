@@ -6,7 +6,6 @@ use eecli\Application;
 use eecli\Command\Contracts\HasOptionExamples;
 use eecli\Command\Contracts\HasRuntimeOptions;
 use eecli\Command\Contracts\HasExamples;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;

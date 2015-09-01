@@ -3,7 +3,6 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\HasExamples;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
 class CreateCategoryGroupCommand extends Command implements HasExamples

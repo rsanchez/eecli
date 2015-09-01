@@ -5,7 +5,6 @@ namespace eecli\Command;
 use eecli\Command\Contracts\ExemptFromBootstrap;
 use eecli\Command\Contracts\HasExamples;
 use eecli\Command\Contracts\HasOptionExamples;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Handlebars\Handlebars;

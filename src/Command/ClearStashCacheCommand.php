@@ -3,7 +3,6 @@
 namespace eecli\Command;
 
 use eecli\Command\Contracts\HasExamples;
-use Illuminate\Console\Command;
 
 class ClearStashCacheCommand extends Command implements HasExamples
 {
