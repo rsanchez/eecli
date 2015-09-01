@@ -1,7 +1,11 @@
 <?php
 
 if (! isset($vendor_path)) {
-    $vendor_path = __DIR__.'/../../../';
+    if (file_exists(__DIR__.'/../vendor/autoload.php')) {
+        $vendor_path = __DIR__.'/../vendor/';
+    } else {
+        $vendor_path = __DIR__.'/../../../';
+    }
 }
 
 require $vendor_path.'autoload.php';
