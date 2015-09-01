@@ -717,11 +717,16 @@ class Application extends ConsoleApplication
         $finder->files()
             ->in(__DIR__.'/Command')
             ->depth('== 0')
-            ->name('*Command.php')
-            ->notName('Abstract*');
+            ->name('*Command.php');
 
         foreach ($finder as $file) {
             $class = '\\eecli\\Command\\'.$file->getBasename('.php');
+
+            $reflectionClass = new ReflectionClass($class);
+
+            if (! $reflectionClass->isInstantiable()) {
+                continue;
+            }
 
             $command = new $class();
 
