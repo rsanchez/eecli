@@ -1,5 +1,7 @@
 <?php
 
+global $vendor_path;
+
 if (! isset($vendor_path)) {
     if (file_exists(__DIR__.'/../vendor/autoload.php')) {
         $vendor_path = __DIR__.'/../vendor/';
