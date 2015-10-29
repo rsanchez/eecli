@@ -45,6 +45,8 @@ class Functions extends \EE_Functions
     {
         $this->output = $output;
 
+        $this->app = $app;
+
         // for EE 2.5
         $this->EE = get_instance();
     }
