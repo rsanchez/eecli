@@ -6,7 +6,7 @@ use eecli\Command\Contracts\ExemptFromBootstrap;
 use eecli\Command\Contracts\HasLongDescription;
 use Symfony\Component\Console\Question\Question;
 use Handlebars\Handlebars;
-use Handlebars\Loader\FilesystemLoader;
+use eecli\Handlebars\Loader\FilesystemLoader;
 
 class GenerateAddonCommand extends Command implements ExemptFromBootstrap, HasLongDescription
 {
@@ -42,7 +42,13 @@ class GenerateAddonCommand extends Command implements ExemptFromBootstrap, HasLo
     {
         parent::__construct();
 
-        $this->templatePath = __DIR__.'/../../../addon-templates/app/templates';
+        global $vendor_path;
+
+        if ($vendor_path) {
+            $this->templatePath = rtrim($vendor_path, '/').'/eecli/addon-templates/app/templates';
+        } else {
+            $this->templatePath = __DIR__.'/../../../addon-templates/app/templates';
+        }
     }
 
     /**

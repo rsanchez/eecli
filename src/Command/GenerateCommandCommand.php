@@ -8,7 +8,7 @@ use eecli\Command\Contracts\HasOptionExamples;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Handlebars\Handlebars;
-use Handlebars\Loader\FilesystemLoader;
+use eecli\Handlebars\Loader\FilesystemLoader;
 
 class GenerateCommandCommand extends Command implements ExemptFromBootstrap, HasExamples, HasOptionExamples
 {
