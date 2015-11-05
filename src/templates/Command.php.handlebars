@@ -4,7 +4,7 @@
 namespace {{namespace}};
 {{/if}}
 
-use Illuminate\Console\Command;{{#if hasArguments}}
+use eecli\Command\Command;{{#if hasArguments}}
 use Symfony\Component\Console\Input\InputArgument;{{/if}}{{#if hasOptions}}
 use Symfony\Component\Console\Input\InputOption;{{/if}}
 
