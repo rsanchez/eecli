@@ -19,12 +19,20 @@
             "in": "vendor/doctrine/instantiator/src"
         },
         {
-            "name": "*.php",
+            "name": "/\\.(php|handlebars)$/",
             "in": "vendor/eecli"
         },
         {
             "name": "*.php",
             "in": "vendor/illuminate"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/nesbot"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/danielstjules/stringy/src"
         },
         {
             "name": "*.php",
