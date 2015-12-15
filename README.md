@@ -1,6 +1,6 @@
 # eecli
 
-`eecli` is a command line interface for ExpressionEngine. It can be used to:
+`eecli` is a command line interface for ExpressionEngine 2. It can be used to:
 
 * aid in development, like creating new channels or generating a custom addon.
 * run post-deployment tasks on your staging/production server(s), like clearing cache.
@@ -57,7 +57,7 @@ For more details on installation, configuration and a command reference, see the
 ## Requirements
 
 * PHP 5.3+
-* ExpressionEngine 2.5+
+* ExpressionEngine 2.5 - 2.10 (Does *not* work with ExpressionEngine 3).
 
 ## Contributing
 
