@@ -71,6 +71,12 @@ class Application extends ConsoleApplication
     protected $systemPath = 'system';
 
     /**
+     * Path to the Composer vendor folder
+     * @var string
+     */
+    protected $vendorPath;
+
+    /**
      * Author name for generated addons
      * @var string
      */
@@ -290,6 +296,15 @@ class Application extends ConsoleApplication
         $this->globalInput = new GlobalArgvInput(null, true);
 
         $this->globalInput->bind($inputDefinition);
+    }
+
+    /**
+     * Set the path to the Composer vendor folder
+     * @param string $vendorPath
+     */
+    public function setVendorPath($vendorPath)
+    {
+        $this->vendorPath = $vendorPath;
     }
 
     /**
@@ -712,29 +727,10 @@ class Application extends ConsoleApplication
      */
     public function addCoreCommands()
     {
-        $finder = new Finder();
+        $commands = $this->findCommandsInDir(__DIR__.'/Command', '\\eecli\\Command\\');
 
-        $finder->files()
-            ->in(__DIR__.'/Command')
-            ->depth('== 0')
-            ->name('*Command.php');
-
-        foreach ($finder as $file) {
-            $class = '\\eecli\\Command\\'.$file->getBasename('.php');
-
-            $reflectionClass = new ReflectionClass($class);
-
-            if (! $reflectionClass->isInstantiable()) {
-                continue;
-            }
-
-            $command = new $class();
-
-            if ($command instanceof Conditional) {
-                $this->conditionalCommands[] = $command;
-            } else {
-                $this->add($command);
-            }
+        foreach ($commands as $command) {
+            $this->addWithConditionalCheck(new $command);
         }
     }
 
@@ -814,6 +810,78 @@ class Application extends ConsoleApplication
     }
 
     /**
+     * Find any Command plugins installed via composer
+     * and add them to the Application
+     * @return void
+     */
+    public function addComposerCommands()
+    {
+        if (! $this->vendorPath) {
+            return;
+        }
+
+        $installedJsonPath = rtrim($this->vendorPath, '/').'/composer/installed.json';
+
+        if (! file_exists($installedJsonPath)) {
+            return;
+        }
+
+        $installedJsonContents = file_get_contents($installedJsonPath);
+
+        if (! $installedJsonContents) {
+            return;
+        }
+
+        $installed = json_decode($installedJsonContents, TRUE);
+
+        if (! $installed || ! is_array($installed)) {
+            return;
+        }
+
+        $plugins = array_filter($installed, function($package) {
+            return ! empty($package['extra']['eecli']['commands']) || ! empty($package['extra']['eecli']['commandDirs']);
+        });
+
+        foreach ($plugins as $package) {
+            $namespace = isset($package['extra']['eecli']['namespace'])
+                ? rtrim($package['extra']['eecli']['namespace'], '\\').'\\'
+                : null;
+
+            if (! empty($package['extra']['eecli']['commandDirs'])) {
+                foreach ($package['extra']['eecli']['commandDirs'] as $commandDir) {
+                    $path = rtrim($this->vendorPath, '/').'/'.$package['name'].'/'.$commandDir;
+
+                    $commands = $this->findCommandsInDir($path, $namespace);
+
+                    foreach ($commands as $command) {
+                        $this->addWithConditionalCheck(new $namespace.$command);
+                    }
+                }
+            }
+
+            if (! empty($package['extra']['eecli']['commands'])) {
+                foreach ($package['extra']['eecli']['commands'] as $command) {
+                    $this->addWithConditionalCheck(new $namespace.$command);
+                }
+            }
+        }
+    }
+
+    /**
+     * Add a command, check if it's a conditional command
+     * If so, add to the conditional commands array
+     * @param Symfony\Component\Console\Command\Command $command
+     */
+    protected function addWithConditionalCheck(SymfonyCommand $command)
+    {
+        if ($command instanceof Conditional) {
+            $this->conditionalCommands[] = $command;
+        } else {
+            $this->add($command);
+        }
+    }
+
+    /**
      * Get a list of Symfony Console Commands classes
      * in the specified directory
      *
@@ -849,13 +917,7 @@ class Application extends ConsoleApplication
                 continue;
             }
 
-            $parentClass = null;
-
-            while ($reflectionClass = $reflectionClass->getParentClass()) {
-                $parentClass = $reflectionClass->getName();
-            }
-
-            if ($parentClass !== 'Symfony\\Component\\Console\\Command\\Command') {
+            if (! $reflectionClass->isSubclassOf('Symfony\\Component\\Console\\Command\\Command')) {
                 continue;
             }
 

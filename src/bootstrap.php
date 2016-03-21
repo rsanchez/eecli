@@ -18,6 +18,8 @@ $assign_to_config = array();
 
 $app = new eecli\Application();
 
+$app->setVendorPath($vendor_path);
+
 $app->fire('bootstrap.before');
 
 if ($app->canBeBootstrapped()) {
@@ -26,6 +28,7 @@ if ($app->canBeBootstrapped()) {
 
 $app->fire('bootstrap.after');
 
+$app->addComposerCommands();
 $app->addConditionalCommands();
 $app->addThirdPartyCommands();
 $app->addUserDefinedCommands();
