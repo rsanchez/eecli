@@ -293,9 +293,7 @@ class Application extends ConsoleApplication
             ),
         ));
 
-        $this->globalInput = new GlobalArgvInput(null, true);
-
-        $this->globalInput->bind($inputDefinition);
+        $this->globalInput = new GlobalArgvInput(null, $inputDefinition);
     }
 
     /**
@@ -456,7 +454,7 @@ class Application extends ConsoleApplication
         if ($this->doesCommandHaveRuntimeOptions($command)) {
             // we use this to allow the command to access cli arguments
             // during the getRuntimeOptions call
-            $input = new GlobalArgvInput($event->getCommand()->getDefinition());
+            $input = new GlobalArgvInput(null, $event->getCommand()->getDefinition());
 
             foreach ($command->getRuntimeOptions($this, $input) as $option) {
                 $this->getDefinition()->addOption($option);
@@ -746,7 +744,7 @@ class Application extends ConsoleApplication
 
         foreach ($this->conditionalCommands as $command) {
             if ($command->isApplicable()) {
-                $this->add($command);
+                $this->registerCommand($command);
             }
         }
     }
@@ -773,7 +771,7 @@ class Application extends ConsoleApplication
         if (is_array($commands)) {
             foreach ($commands as $command) {
                 if ($command instanceof SymfonyCommand) {
-                    $this->add($command);
+                    $this->registerCommand($command);
                 }
             }
         }
@@ -877,7 +875,7 @@ class Application extends ConsoleApplication
         if ($command instanceof Conditional) {
             $this->conditionalCommands[] = $command;
         } else {
-            $this->add($command);
+            $this->registerCommand($command);
         }
     }
 
@@ -947,10 +945,17 @@ class Application extends ConsoleApplication
     {
         // is it a callback or a string?
         if (is_callable($class)) {
-            $this->add(call_user_func($class, $this));
+            $command = call_user_func($class, $this);
         } else {
-            $this->add(new $class());
+            $command = new $class();
         }
+
+        // add global options to this command
+        foreach ($this->globalInput->getDefinition()->getOptions() as $option) {
+            $command->getDefinition()->addOption($option);
+        }
+
+        $this->add($command);
     }
 
     /**

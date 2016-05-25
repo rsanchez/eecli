@@ -4,6 +4,7 @@ namespace eecli\Command;
 
 use eecli\Command\Contracts\HasLongDescription;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Helper\ProgressBar;
 use eecli\GithubAddonInstaller\Application as InstallerApplication;
 
 class GithubAddonInstallerCommand extends Command implements HasLongDescription
@@ -51,7 +52,12 @@ class GithubAddonInstallerCommand extends Command implements HasLongDescription
         $installerApp = new InstallerApplication(PATH_THIRD, PATH_THIRD_THEMES, $tempPath);
 
         $installerApp->getApi()->setOutput($this->output);
-        $installerApp->getApi()->setProgressHelper($this->getHelperSet()->get('progress'));
+
+        if (class_exists('\Symfony\Component\Console\Helper\ProgressBar')) {
+            $installerApp->getApi()->setProgressBar(new ProgressBar($this->output));
+        } else {
+            $installerApp->getApi()->setProgressHelper($this->getHelperSet()->get('progress'));
+        }
 
         $manifest = $installerApp->getManifest();
 
