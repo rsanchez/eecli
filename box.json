@@ -19,6 +19,14 @@
             "in": "vendor/doctrine/instantiator/src"
         },
         {
+            "name": "*.php",
+            "in": "vendor/doctrine/inflector/lib"
+        },
+        {
+            "name": "*.php",
+            "in": "vendor/paragonie/random_compat/lib"
+        },
+        {
             "name": "/\\.(php|handlebars)$/",
             "in": "vendor/eecli"
         },
@@ -29,10 +37,6 @@
         {
             "name": "*.php",
             "in": "vendor/nesbot"
-        },
-        {
-            "name": "*.php",
-            "in": "vendor/danielstjules/stringy/src"
         },
         {
             "name": "*.php",
